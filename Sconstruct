@@ -6,8 +6,8 @@ src = './src/'
 build = './build/'
 
 environ = os.environ
-
 current_plt = platform.system()
+
 config_plt = 'pc'
 gcc = ''
 
@@ -16,17 +16,17 @@ abs_path = Path('.').absolute()
 # global env
 nasm_env = Environment(ENV=environ, AS='nasm', ASFLAGS='-f bin', OBJSUFFIX='.o')
 gcc_env = Environment(ENV=environ,
-                  CC=gcc + 'gcc',
-                  LD=gcc + 'ld',
-                  CXX=gcc + 'g++',
-                  AR=gcc + 'ar',
-                  STRIP=gcc + 'strip',
-                  RANLIB=gcc + 'ranlib',
-                  OBJCOPY=gcc + 'objcopy',
-                  AS=gcc + 'as',
-                  SRC=abs_path / src,
-                  BUILD=abs_path / build,
-                  ROOT=abs_path)
+                      CC=gcc + 'gcc',
+                      LD=gcc + 'ld',
+                      CXX=gcc + 'g++',
+                      AR=gcc + 'ar',
+                      STRIP=gcc + 'strip',
+                      RANLIB=gcc + 'ranlib',
+                      OBJCOPY=gcc + 'objcopy',
+                      AS=gcc + 'as',
+                      SRC=abs_path / src,
+                      BUILD=abs_path / build,
+                      ROOT=abs_path)
 
 Export('nasm_env')
 Export('gcc_env')
