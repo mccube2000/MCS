@@ -1,0 +1,13 @@
+import os
+from pathlib import Path, PurePath
+
+root = PurePath(Path('.').absolute())
+
+Import('nasm_env')
+Import('gcc_env')
+env = gcc_env
+now_env = nasm_env
+
+build = str(env['BUILD'] / root.relative_to(env['SRC']))
+
+now_env.Object(f'{build}/boot', ['mbr.asm'])
