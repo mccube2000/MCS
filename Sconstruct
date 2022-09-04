@@ -30,5 +30,4 @@ gcc_env = Environment(ENV=environ,
 
 Export('nasm_env')
 Export('gcc_env')
-
 SConscript(dirs=[f'{src}boot/x86'])
