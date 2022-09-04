@@ -12,8 +12,9 @@ build = str(env['BUILD'] / root.relative_to(env['SRC']))
 o_list = []
 for source in sources:
     name = source.name
-    o_list.append(name)
     name = name.split('.')[0]
+    o_list.append(f'{build}/{name}')
     env.Object(f'{build}/{name}', source)
 
-env.Library(o_list)
+env.Ld(f'{build}/kernel', o_list)
+env.Objcopy(f'{build}/kernel')
