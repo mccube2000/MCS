@@ -2,4 +2,8 @@
     "editor.rulers": [
         36, 48
     ],
+    "files.associations": {
+        "*.rmd": "markdown",
+        "types.h": "c"
+    },
 }

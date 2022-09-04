@@ -2,32 +2,44 @@ import os
 import platform
 from pathlib import Path
 
-src = './src/'
-build = './build/'
+src = 'src/'
+build = 'build/'
 
 environ = os.environ
 current_plt = platform.system()
-
 config_plt = 'pc'
+upper_config_plt = config_plt.upper()
 gcc = ''
 
 abs_path = Path('.').absolute()
 
+platform_dict = {
+    'pc': 'x86',
+}
+
+arch = platform_dict[config_plt]
+
 # global env
-nasm_env = Environment(ENV=environ, AS='nasm', ASFLAGS='-f bin', OBJSUFFIX='.o')
-gcc_env = Environment(ENV=environ,
-                      CC=gcc + 'gcc',
-                      LD=gcc + 'ld',
-                      CXX=gcc + 'g++',
-                      AR=gcc + 'ar',
-                      STRIP=gcc + 'strip',
-                      RANLIB=gcc + 'ranlib',
-                      OBJCOPY=gcc + 'objcopy',
-                      AS=gcc + 'as',
-                      SRC=abs_path / src,
-                      BUILD=abs_path / build,
-                      ROOT=abs_path)
+nasm_env = Environment(ENV=environ,
+                       AS='nasm',
+                       ASFLAGS='-f bin',
+                       SRC=abs_path / src,
+                       BUILD=abs_path / build,
+                       ROOT=abs_path)
+gcc_env = Environment(
+    ENV=environ,
+    CFLAGS=
+    f'-Wall -m32 -I {src}libs/include -g -nostdlib -nostdinc -std=c99 -std=gnu99 -D {upper_config_plt}',
+    LINKFLAGS='-nostdlib',
+    # OBJCOPYFLAGS='-S -g',
+    OBJCOPYFLAGS='-S -O binary',
+    LINKLD='linker/link.ld',
+    PLATFORM=config_plt,
+    ARCH=arch,
+    SRC=abs_path / src,
+    BUILD=abs_path / build,
+    ROOT=abs_path)
 
 Export('nasm_env')
 Export('gcc_env')
-SConscript(dirs=[f'{src}boot/x86'])
+SConscript(dirs=[src])
