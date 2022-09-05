@@ -10,4 +10,4 @@ build = str(env['BUILD'] / root.relative_to(env['SRC']))
 
 SConscript(dirs=[f'boot\\{env["ARCH"]}', 'kernel'])
 
-env.Copy(f'{build}\\kernel.sys', [f'{build}\\boot\\x86\\boot.obj', f'{build}\\kernel\\kernel.bin'])
+env.Copy(f'{build}\\MSC', [f'{build}\\boot\\x86\\boot.obj', f'{build}\\kernel\\kernel.bin'])

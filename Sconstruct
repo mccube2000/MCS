@@ -62,7 +62,10 @@ def action_copy(target, source, env):
     return None
 
 
-copy_builder = Builder(action=action_copy)
+copy_builder = Builder(
+    action=action_copy,
+    suffix='.sys',
+)
 
 # global env
 nasm_env = Environment(ENV=environ,
