@@ -24,7 +24,7 @@ def action_ld(target, source, env):
     source_str = ''
     for src in source:
         source_str += ' ' + str(src)
-    cmd = f'ld -m i386pe -nostdlib -T src\\linker\\link.ld{source_str} -o {target[0]}'
+    cmd = f'ld {env["LDFLAGS"]} -T {env["LD"]}{source_str} -o {target[0]}'
     print(cmd)
     os.system(cmd)
     return None
@@ -38,7 +38,7 @@ ld_builder = Builder(
 
 
 def action_objcopy(target, source, env):
-    cmd = f'objcopy -S -O binary {source[0]} {target[0]}'
+    cmd = f'objcopy {env["OBJCOPYFLAGS"]} {source[0]} {target[0]}'
     print(cmd)
     os.system(cmd)
     return None
@@ -82,10 +82,10 @@ gcc_env = Environment(
         'Copy': copy_builder,
     },
     CFLAGS=
-    f'-Wall -m32 -I {src}libs\\include -g -nostdlib -nostdinc -std=c99 -std=gnu99 -D {upper_config_plt}',
-    LINKFLAGS='-nostdlib',
+    f'-Wall -m32 -I {src}libs\\include -g -nostdlib -nostdinc -std=c99 -D {upper_config_plt}',
+    LDFLAGS='-m i386pe -nostdlib',
+    LD=f'{src}linker\\link.ld',
     OBJCOPYFLAGS='-S -O binary',
-    LINKLD=f'{src}linker\\link.ld',
     PLATFORM=config_plt,
     ARCH=arch,
     SRC=abs_path / src,
