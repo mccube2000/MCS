@@ -81,8 +81,7 @@ gcc_env = Environment(
         'Objcopy': objcopy_builder,
         'Copy': copy_builder,
     },
-    CFLAGS=
-    f'-Wall -m32 -I {src}libs\\include -g -nostdlib -nostdinc -std=c99 -D {upper_config_plt}',
+    CFLAGS=f'-Wall -m32 -I {src}libs\\include -g -nostdlib -nostdinc -std=c99 -D {upper_config_plt}',
     LDFLAGS='-m i386pe -nostdlib',
     LD=f'{src}linker\\link.ld',
     OBJCOPYFLAGS='-S -O binary',
