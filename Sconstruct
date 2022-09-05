@@ -2,8 +2,8 @@ import os
 import platform
 from pathlib import Path
 
-src = 'src/'
-build = 'build/'
+src = 'src\\'
+build = 'build\\'
 
 environ = os.environ
 current_plt = platform.system()
@@ -24,7 +24,7 @@ def action_ld(target, source, env):
     source_str = ''
     for src in source:
         source_str += ' ' + str(src)
-    cmd = f'ld -m i386pe -nostdlib -T src/linker/link.ld{source_str} -o {target[0]}'
+    cmd = f'ld -m i386pe -nostdlib -T src\\linker\\link.ld{source_str} -o {target[0]}'
     print(cmd)
     os.system(cmd)
     return None
@@ -50,6 +50,20 @@ objcopy_builder = Builder(
     src_suffix='.b',
 )
 
+
+def action_copy(target, source, env):
+    source_str = ''
+    for src in source:
+        source_str += '+' + str(src)
+    source_str = source_str[1:]
+    cmd = f'copy /B {source_str} {target[0]}'
+    print(cmd)
+    os.system(cmd)
+    return None
+
+
+copy_builder = Builder(action=action_copy)
+
 # global env
 nasm_env = Environment(ENV=environ,
                        AS='nasm',
@@ -61,13 +75,14 @@ gcc_env = Environment(
     ENV=environ,
     BUILDERS={
         'Ld': ld_builder,
-        'Objcopy': objcopy_builder
+        'Objcopy': objcopy_builder,
+        'Copy': copy_builder,
     },
     CFLAGS=
-    f'-Wall -m32 -I {src}libs/include -g -nostdlib -nostdinc -std=c99 -std=gnu99 -D {upper_config_plt}',
+    f'-Wall -m32 -I {src}libs\\include -g -nostdlib -nostdinc -std=c99 -std=gnu99 -D {upper_config_plt}',
     LINKFLAGS='-nostdlib',
     OBJCOPYFLAGS='-S -O binary',
-    LINKLD=f'{src}linker/link.ld',
+    LINKLD=f'{src}linker\\link.ld',
     PLATFORM=config_plt,
     ARCH=arch,
     SRC=abs_path / src,

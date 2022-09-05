@@ -13,8 +13,8 @@ o_list = []
 for source in sources:
     name = source.name
     name = name.split('.')[0]
-    o_list.append(f'{build}/{name}')
-    env.Object(f'{build}/{name}', source)
+    o_list.append(f'{build}\\{name}')
+    env.Object(f'{build}\\{name}', source)
 
-env.Ld(f'{build}/kernel', o_list)
-env.Objcopy(f'{build}/kernel')
+env.Ld(f'{build}\\kernel', o_list)
+env.Objcopy(f'{build}\\kernel')

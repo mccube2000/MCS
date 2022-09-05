@@ -10,6 +10,7 @@
 *.bin
 *.ko
 *.obj
+*.sys
 *.elf
 
 # Linker output

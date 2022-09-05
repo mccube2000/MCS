@@ -1,3 +1,4 @@
+import os
 from pathlib import Path, PurePath
 
 root = PurePath(Path('.').absolute())
@@ -7,4 +8,6 @@ env = gcc_env
 
 build = str(env['BUILD'] / root.relative_to(env['SRC']))
 
-SConscript(dirs=[f'boot/{env["ARCH"]}','kernel'])
+SConscript(dirs=[f'boot\\{env["ARCH"]}', 'kernel'])
+
+env.Copy(f'{build}\\kernel.sys', [f'{build}\\boot\\x86\\boot.obj', f'{build}\\kernel\\kernel.bin'])
