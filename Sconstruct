@@ -6,6 +6,7 @@ src = 'src\\'
 build = 'build\\'
 
 environ = os.environ
+environ['PATH'] = 'C:\\Users\\mccube\\Downloads\\w64devkit-1.16.0\\w64devkit\\bin;C:\\Users\\mccube\\User\\Tools\\nasm;'
 current_plt = platform.system()
 config_plt = 'pc'
 upper_config_plt = config_plt.upper()

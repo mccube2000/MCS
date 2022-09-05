@@ -32,6 +32,11 @@ section mbr vstart=0x7c00
     mov ah, 0x00
     int 0x10
 
+    ; mov byte [vmode], 16
+	; mov word [scrnX], 80
+	; mov word [scrnY], 25
+    ; mov dword [vram], 0xb_8000
+
 ; 设置GDT
     ; 计算GDT所在的逻辑段地址
     mov eax, [cs: pgdt + 0x02]      ; GDT的32位物理地址 
