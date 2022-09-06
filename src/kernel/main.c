@@ -1,5 +1,5 @@
-#include "func.h"
 #include "kernel/mbr.h"
+#include "kernel/asmfunc.h"
 #include "types.h"
 
 void MSC_main() {
@@ -20,6 +20,6 @@ void MSC_main() {
     }
 
     while (1) {
-        ;
+        io_hlt();
     }
 }

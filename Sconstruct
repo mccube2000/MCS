@@ -6,7 +6,11 @@ src = 'src\\'
 build = 'build\\'
 
 environ = os.environ
-environ['PATH'] = 'C:\\Users\\mccube\\Downloads\\w64devkit-1.16.0\\w64devkit\\bin;C:\\Users\\mccube\\User\\Tools\\nasm;'
+# 'C:\\Users\\mccube\\User\\Code\\C\\os\\z_tool\\mingw\\bin'
+# 'C:\\Users\\mccube\\Downloads\\w64devkit-1.16.0\\w64devkit\\bin'
+environ[
+    'PATH'] = 'C:\\Users\\mccube\\Downloads\\w64devkit-1.16.0\\w64devkit\\bin;C:\\Users\\mccube\\User\\Tools\\nasm;'
+vhd = 'C:\\Users\\mccube\\VirtualBox_VMs\\MCS\\MCS.vhd'
 current_plt = platform.system()
 config_plt = 'pc'
 upper_config_plt = config_plt.upper()
@@ -71,7 +75,7 @@ copy_builder = Builder(
 # global env
 nasm_env = Environment(ENV=environ,
                        AS='nasm',
-                       ASFLAGS='-f bin',
+                       ASFLAGS='-f elf',
                        SRC=abs_path / src,
                        BUILD=abs_path / build,
                        ROOT=abs_path)
@@ -95,3 +99,10 @@ gcc_env = Environment(
 Export('nasm_env')
 Export('gcc_env')
 SConscript(dirs=[src])
+
+cmd = f'dd if={build}boot\\x86\\boot.bin of={vhd} bs=512 count=1 conv=notrunc'
+print(cmd)
+os.system(cmd)
+cmd = f'dd if={build}kernel\\kernel.bin of={vhd} bs=512 count=100 seek=1 conv=notrunc'
+print(cmd)
+os.system(cmd)

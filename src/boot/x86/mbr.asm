@@ -97,7 +97,8 @@ flush:
     call read_hard_disk_0           ; 以下读取程序的起始部分（一个扇区）
 
     ; 以下判断整个程序有多大
-    mov eax, [edi]                  ; 核心程序尺寸
+    ; mov eax, [edi]                ; 核心程序尺寸
+    mov eax, 102400                 ; 核心程序尺寸102400
     xor edx, edx
     mov ecx, 512                    ; 512字节每扇区
     div ecx
@@ -167,7 +168,7 @@ flush:
     ;而且很难想到问题会出在这里。 
     add esp, 0x80000000
 
-    jmp [0x80040004]
+    jmp 0x80040004
 
 read_hard_disk_0:
     ; EAX=逻辑扇区号

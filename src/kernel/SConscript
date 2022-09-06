@@ -3,9 +3,12 @@ from pathlib import Path, PurePath
 root = PurePath(Path('.').absolute())
 
 Import('gcc_env')
+Import('nasm_env')
 env = gcc_env
+nasm = nasm_env
 
 sources = Glob("*.c")
+nasm_sources = 'asmfunc.asm'
 
 build = str(env['BUILD'] / root.relative_to(env['SRC']))
 
@@ -15,6 +18,9 @@ for source in sources:
     name = name.split('.')[0]
     o_list.append(f'{build}\\{name}')
     env.Object(f'{build}\\{name}', source)
+
+nasm.Object(f'{build}\\asmfunc', [nasm_sources])
+o_list.append(f'{build}\\asmfunc.obj')
 
 env.Ld(f'{build}\\kernel', o_list)
 env.Objcopy(f'{build}\\kernel')
