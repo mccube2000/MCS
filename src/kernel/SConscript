@@ -19,7 +19,7 @@ for source in sources:
     o_list.append(f'{build}\\{name}')
     env.Object(f'{build}\\{name}', source)
 
-nasm.Object(f'{build}\\asmfunc', [nasm_sources])
+nasm.Object(f'{build}\\asmfunc', [nasm_sources], ASFLAGS='-f elf')
 o_list.append(f'{build}\\asmfunc.obj')
 
 env.Ld(f'{build}\\kernel', o_list)

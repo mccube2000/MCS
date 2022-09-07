@@ -7,6 +7,14 @@ scrnX               equ 0x0ff4      ; 屏幕X分辨率
 scrnY               equ 0x0ff6      ; 屏幕Y分辨率
 vram                equ 0x0ff8      ; 图像缓冲区的起始地址
 
+; 显示模式
+; 0x100 :  640 x  400 x 8bit 彩色
+; 0x101 :  640 x  480 x 8bit 彩色
+; 0x103 :  800 x  600 x 8bit 彩色
+; 0x105 : 1024 x  768 x 8bit 彩色
+; 0x107 : 1280 x 1024 x 8bit 彩色
+vbe_mode            equ 0x105       ; 1024 x 768 x 8bit 彩色
+
 section mbr vstart=0x7c00
 ; 初始化寄存器
     mov ax, cs
@@ -20,7 +28,52 @@ section mbr vstart=0x7c00
     int 0x16                        ; keyboard BIOS
     mov [leds], al
 
+; ; 设置VBE显示模式
+;     ; 检查VBE
+;     mov ax, 0x9000
+;     mov es, ax
+;     mov di, 0
+;     mov ax, 0x4f00
+;     int 0x10
+;     cmp ax, 0x004f
+;     jne scrn320
+    
+;     ; 检查VBE的版本
+;     mov ax, [es: di + 4]
+;     cmp ax, 0x0200
+;     jb scrn320                      ; if (AX < 0x0200) goto scrn320
+
+;     ; 取得画面模式信息
+;     mov cx, vbe_mode
+;     mov ax, 0x4f01
+;     int 0x10
+;     cmp ax,0x004f
+;     jne scrn320
+
+;     ; 画面模式信息的确认
+;     cmp byte [es: di + 0x19], 8     ; 颜色数必须为8
+;     jne scrn320
+;     cmp byte [es: di+0x1b], 4       ; 颜色的指定方法必须为4(4是调色板模式)
+;     jne scrn320
+;     mov ax, [es: di]                ; 模式属性bit7不是1就不能加上0x4000
+;     and ax, 0x0080
+;     jz scrn320                      ; 模式属性的bit7是0，所以放弃
+
+;     ; 画面设置
+;     mov bx, vbe_mode + 0x4000
+;     mov ax, 0x4f02
+;     int 0x10
+;     mov byte [vmode], 8
+;     mov ax, [es: di + 0x12]
+;     mov [scrnX], ax
+;     mov ax, [es: di + 0x14]
+;     mov [scrnY], ax
+;     mov ax, [es: di + 0x28]
+;     mov [vram], eax
+;     jmp GDT
+    
 ; VGA显卡，320x200x8bit
+scrn320:
     ; 保存显示信息
     mov byte [vmode], 8
     mov word [scrnX], 320
@@ -32,12 +85,8 @@ section mbr vstart=0x7c00
     mov ah, 0x00
     int 0x10
 
-    ; mov byte [vmode], 16
-	; mov word [scrnX], 80
-	; mov word [scrnY], 25
-    ; mov dword [vram], 0xb_8000
-
 ; 设置GDT
+GDT:
     ; 计算GDT所在的逻辑段地址
     mov eax, [cs: pgdt + 0x02]      ; GDT的32位物理地址 
     xor edx, edx
@@ -50,11 +99,12 @@ section mbr vstart=0x7c00
     ; 跳过0#号描述符的槽位
 
     ; 创建1#描述符，保护模式下的代码段描述符
-    mov dword [ebx + 0x08], 0x0000_ffff         ; 基地址为0，界限0xFFFFF，DPL=00
+    mov ecx, 0x0000_ffff
+    mov dword [ebx + 0x08], ecx                 ; 基地址为0，界限0xFFFFF，DPL=00
     mov dword [ebx + 0x0c], 0x00cf_9800         ; 4KB粒度，代码段描述符，向上扩展
 
     ; 创建2#描述符，保护模式下的数据段和堆栈段描述符 
-    mov dword [ebx + 0x10], 0x0000_ffff         ; 基地址为0，界限0xFFFFF，DPL=00
+    mov dword [ebx + 0x10], ecx                 ; 基地址为0，界限0xFFFFF，DPL=00
     mov dword [ebx + 0x14], 0x00cf_9200         ; 4KB粒度，数据段描述符，向上扩展
 
     ; 初始化描述符表寄存器GDTR
@@ -122,7 +172,8 @@ flush:
 ; 开启分页
     pge:
         ; 创建系统内核的页目录表PDT
-        mov ebx, 0x00020000         ; 页目录表PDT的物理地址
+        mov ecx, 0x00020000
+        mov ebx, ecx         ; 页目录表PDT的物理地址
 
         ; 在页目录内创建指向页目录表自己的目录项
         mov dword [ebx + 4092], 0x00020003
@@ -150,23 +201,24 @@ flush:
         jl .b1
 
     ; 令CR3寄存器指向页目录，并正式开启页功能 
-    mov eax, 0x00020000             ; PCD = PWT = 0
+    mov eax, ecx                    ; PCD = PWT = 0
     mov cr3, eax
 
     ; 将GDT的线性地址映射到从0x80000000开始的相同位置 
+    mov ecx, 0x80000000
     sgdt [pgdt]
     mov ebx, [pgdt + 2]
-    add dword [pgdt + 2], 0x80000000; GDTR也用的是线性地址
+    add dword [pgdt + 2], ecx       ; GDTR也用的是线性地址
     lgdt [pgdt]
 
     mov eax, cr0
-    or eax, 0x80000000
+    or eax, ecx
     mov cr0, eax                    ; 开启分页机制
 
     ;将堆栈映射到高端，这是非常容易被忽略的一件事。应当把内核的所有东西
     ;都移到高端，否则，一定会和正在加载的用户任务局部空间里的内容冲突，
     ;而且很难想到问题会出在这里。 
-    add esp, 0x80000000
+    add esp, ecx
 
     jmp 0x80040004
 

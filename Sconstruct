@@ -66,6 +66,12 @@ def action_copy(target, source, env):
     print(cmd)
     os.system(cmd)
 
+    cmd = f'dd if={build}boot\\x86\\boot.bin of={vhd} bs=512 count=1 conv=notrunc'
+    print(cmd)
+    os.system(cmd)
+    cmd = f'dd if={build}kernel\\kernel.bin of={vhd} bs=512 count=100 seek=1 conv=notrunc'
+    print(cmd)
+    os.system(cmd)
 
 copy_builder = Builder(
     action=action_copy,
@@ -84,13 +90,12 @@ def action_vhd(target, source, env):
 
 vhd_builder = Builder(
     action=action_vhd,
-    suffix='.sys',
 )
 
 # global env
 nasm_env = Environment(ENV=environ,
                        AS='nasm',
-                       ASFLAGS='-f elf',
+                       ASFLAGS='-f bin',
                        SRC=abs_path / src,
                        BUILD=abs_path / build,
                        ROOT=abs_path)
