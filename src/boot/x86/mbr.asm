@@ -28,57 +28,63 @@ section mbr vstart=0x7c00
     int 0x16                        ; keyboard BIOS
     mov [leds], al
 
-; ; 设置VBE显示模式
-;     ; 检查VBE
-;     mov ax, 0x9000
-;     mov es, ax
-;     mov di, 0
-;     mov ax, 0x4f00
-;     int 0x10
-;     cmp ax, 0x004f
-;     jne scrn320
+; 设置VBE显示模式
+    ; 检查VBE
+    mov ax, 0x9000
+    mov es, ax
+    mov di, 0
+    mov ax, 0x4f00
+    int 0x10
+    cmp ax, 0x004f
+    ; jne scrn320
+    je scrn320
     
-;     ; 检查VBE的版本
-;     mov ax, [es: di + 4]
-;     cmp ax, 0x0200
-;     jb scrn320                      ; if (AX < 0x0200) goto scrn320
+    ; 检查VBE的版本
+    mov ax, [es: di + 4]
+    cmp ax, 0x0200
+    jb scrn320                      ; if (AX < 0x0200) goto scrn320
 
-;     ; 取得画面模式信息
-;     mov cx, vbe_mode
-;     mov ax, 0x4f01
-;     int 0x10
-;     cmp ax,0x004f
-;     jne scrn320
+    ; 取得画面模式信息
+    mov cx, vbe_mode
+    mov ax, 0x4f01
+    int 0x10
+    cmp ax,0x004f
+    jne scrn320
 
-;     ; 画面模式信息的确认
-;     cmp byte [es: di + 0x19], 8     ; 颜色数必须为8
-;     jne scrn320
-;     cmp byte [es: di+0x1b], 4       ; 颜色的指定方法必须为4(4是调色板模式)
-;     jne scrn320
-;     mov ax, [es: di]                ; 模式属性bit7不是1就不能加上0x4000
-;     and ax, 0x0080
-;     jz scrn320                      ; 模式属性的bit7是0，所以放弃
+    ; 画面模式信息的确认
+    cmp byte [es: di + 0x19], 8     ; 颜色数必须为8
+    jne scrn320
+    cmp byte [es: di + 0x1b], 4     ; 颜色的指定方法必须为4(4是调色板模式)
+    jne scrn320
+    mov ax, [es: di]                ; 模式属性bit7不是1就不能加上0x4000
+    and ax, 0x0080
+    jz scrn320                      ; 模式属性的bit7是0，所以放弃
 
-;     ; 画面设置
-;     mov bx, vbe_mode + 0x4000
-;     mov ax, 0x4f02
-;     int 0x10
-;     mov byte [vmode], 8
-;     mov ax, [es: di + 0x12]
-;     mov [scrnX], ax
-;     mov ax, [es: di + 0x14]
-;     mov [scrnY], ax
-;     mov ax, [es: di + 0x28]
-;     mov [vram], eax
-;     jmp GDT
+    ; 画面设置
+    mov bx, vbe_mode + 0x4000
+    mov ax, 0x4f02
+    int 0x10
+    mov byte [vmode], 8
+    mov ax, [es: di + 0x12]
+    mov [scrnX], ax
+    mov ax, [es: di + 0x14]
+    mov [scrnY], ax
+    mov eax, [es: di + 0x28]
+    mov [vram], eax
+    jmp GDT
     
 ; VGA显卡，320x200x8bit
 scrn320:
     ; 保存显示信息
-    mov byte [vmode], 8
-    mov word [scrnX], 320
-    mov word [scrnY], 200
-    mov dword [vram], 0xa_0000
+    mov byte [vmode], 16
+    mov word [scrnX], 80
+    mov word [scrnY], 25
+    mov dword [vram], 0xb800
+
+    ; mov byte [vmode], 8
+    ; mov word [scrnX], 320
+    ; mov word [scrnY], 200
+    ; mov dword [vram], 0xa_0000
 
     ; 转化图像模式
     mov al, 0x13
@@ -173,7 +179,7 @@ flush:
     pge:
         ; 创建系统内核的页目录表PDT
         mov ecx, 0x00020000
-        mov ebx, ecx         ; 页目录表PDT的物理地址
+        mov ebx, ecx                ; 页目录表PDT的物理地址
 
         ; 在页目录内创建指向页目录表自己的目录项
         mov dword [ebx + 4092], 0x00020003
@@ -220,7 +226,7 @@ flush:
     ;而且很难想到问题会出在这里。 
     add esp, ecx
 
-    jmp 0x80040004
+    jmp 0x80040000
 
 read_hard_disk_0:
     ; EAX=逻辑扇区号

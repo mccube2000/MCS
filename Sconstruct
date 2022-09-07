@@ -72,6 +72,10 @@ def action_copy(target, source, env):
     cmd = f'dd if={build}kernel\\kernel.bin of={vhd} bs=512 count=100 seek=1 conv=notrunc'
     print(cmd)
     os.system(cmd)
+    # cmd = 'C:\\Progra~1\\Oracle\\VirtualBox\\VirtualBoxVm.exe --startvm "MCS" --debug-command-line --start-paused'
+    cmd = 'C:\\Progra~1\\Oracle\\VirtualBox\\VirtualBoxVm.exe --startvm "MCS" --debug-command-line'
+    print(cmd)
+    os.system(cmd)
 
 copy_builder = Builder(
     action=action_copy,
