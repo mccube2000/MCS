@@ -10,7 +10,7 @@ environ = os.environ
 # 'C:\\Users\\mccube\\User\\Code\\C\\os\\z_tool\\mingw\\bin'
 # 'C:\\Users\\mccube\\Downloads\\w64devkit-1.16.0\\w64devkit\\bin'
 environ[
-    'PATH'] = 'C:\\Users\\mccube\\Downloads\\w64devkit-1.16.0\\w64devkit\\bin;C:\\Users\\mccube\\User\\Tools\\nasm;'
+    'PATH'] = 'C:\\Users\\mccube\\User\\Code\\C\\os\\z_tool\\mingw\\bin;C:\\Users\\mccube\\User\\Tools\\nasm;'
 vhd = 'C:\\Users\\mccube\\VirtualBox_VMs\\MCS\\MCS.vhd'
 current_plt = platform.system()
 config_plt = 'pc'
@@ -66,34 +66,10 @@ def action_copy(target, source, env):
     print(cmd)
     os.system(cmd)
 
-    cmd = f'dd if={build}boot\\x86\\boot.bin of={vhd} bs=512 count=1 conv=notrunc'
-    print(cmd)
-    os.system(cmd)
-    cmd = f'dd if={build}kernel\\kernel.bin of={vhd} bs=512 count=100 seek=1 conv=notrunc'
-    print(cmd)
-    os.system(cmd)
-    # cmd = 'C:\\Progra~1\\Oracle\\VirtualBox\\VirtualBoxVm.exe --startvm "MCS" --debug-command-line --start-paused'
-    cmd = 'C:\\Progra~1\\Oracle\\VirtualBox\\VirtualBoxVm.exe --startvm "MCS" --debug-command-line'
-    print(cmd)
-    os.system(cmd)
 
 copy_builder = Builder(
     action=action_copy,
     suffix='.sys',
-)
-
-
-def action_vhd(target, source, env):
-    cmd = f'dd if={build}boot\\x86\\boot.bin of={vhd} bs=512 count=1 conv=notrunc'
-    print(cmd)
-    os.system(cmd)
-    cmd = f'dd if={build}kernel\\kernel.bin of={vhd} bs=512 count=100 seek=1 conv=notrunc'
-    print(cmd)
-    os.system(cmd)
-
-
-vhd_builder = Builder(
-    action=action_vhd,
 )
 
 # global env
@@ -123,13 +99,8 @@ Export('nasm_env')
 Export('gcc_env')
 
 # build src
-SConscript(dirs=[src])
+src_script = SConscript(dirs=[src])
 
-# vhd env
-vhd_env = Environment(
-    ENV=environ,
-    BUILDERS={
-        'Vhd': vhd_builder,
-    },
-)
-vhd_env.Vhd()
+builder_script = SConscript(dirs=[f'{src}builder'])
+
+Depends(builder_script, src_script)

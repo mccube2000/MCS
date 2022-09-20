@@ -76,15 +76,15 @@ section mbr vstart=0x7c00
 ; VGA显卡，320x200x8bit
 scrn320:
     ; 保存显示信息
-    mov byte [vmode], 16
-    mov word [scrnX], 80
-    mov word [scrnY], 25
-    mov dword [vram], 0xb800
+    ; mov byte [vmode], 16
+    ; mov word [scrnX], 80
+    ; mov word [scrnY], 25
+    ; mov dword [vram], 0xb800
 
-    ; mov byte [vmode], 8
-    ; mov word [scrnX], 320
-    ; mov word [scrnY], 200
-    ; mov dword [vram], 0xa_0000
+    mov byte [vmode], 8
+    mov word [scrnX], 320
+    mov word [scrnY], 200
+    mov dword [vram], 0xa_0000
 
     ; 转化图像模式
     mov al, 0x13
@@ -168,7 +168,7 @@ flush:
 
     ; 读取剩余的扇区
     mov ecx, eax                    ;32位模式下的LOOP使用ECX
-    mov eax,core_start_sector
+    mov eax, core_start_sector
     inc eax                         ; 从下一个逻辑扇区接着读
     @2:
         call read_hard_disk_0

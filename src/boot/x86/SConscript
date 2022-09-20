@@ -9,5 +9,5 @@ build = str(env['BUILD'] / root.relative_to(env['SRC']))
 
 env.Object(
     f'{build}\\boot.bin',
-    ['mbr.asm'],
+    ['bootsect.asm'],
 )

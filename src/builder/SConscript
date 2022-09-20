@@ -1,0 +1,56 @@
+import os
+from pathlib import Path, PurePath
+
+root = PurePath(Path('.').absolute())
+
+Import('gcc_env')
+env = gcc_env
+vhd = 'C:\\Users\\mccube\\VirtualBox_VMs\\MCS\\MCS.vhd'
+build = env['BUILD']
+AddOption(
+    '--run',
+    dest='run',
+    nargs=1,
+    type='string',
+    action='store',
+    metavar='DIR',
+    help='run img',
+)
+env = env.Clone(run=GetOption('run'))
+
+# def action_vhd(target, source, env):
+#     cmd = f'dd if={build}boot\\x86\\boot.bin of={vhd} bs=512 count=1 conv=notrunc'
+#     print(cmd)
+#     os.system(cmd)
+#     cmd = f'dd if={build}kernel\\kernel.bin of={vhd} bs=512 count=100 seek=1 conv=notrunc'
+#     print(cmd)
+#     os.system(cmd)
+
+# vhd_builder = Builder(action=action_vhd, )
+
+# # vhd env
+# vhd_env = Environment(
+#     ENV=env['ENV'],
+#     BUILDERS={
+#         'Vhd': vhd_builder,
+#     },
+# )
+
+cmd = ''
+print(env['run'])
+if env['run'] != None:
+    bcmd = f'dd if={build}\\boot\\x86\\boot.bin of={vhd} bs=512 count=1'
+    print(bcmd)
+    os.system(bcmd)
+    bcmd = f'dd if={build}\\kernel\\kernel.bin of={vhd} bs=512 count=100 seek=1'
+    print(bcmd)
+    os.system(bcmd)
+    if env['run'] == 'vhd':
+        cmd = 'C:\\Progra~1\\Oracle\\VirtualBox\\VirtualBoxVm.exe --startvm'
+    elif env['run'] == 'vhd-debug':
+        cmd = 'C:\\Progra~1\\Oracle\\VirtualBox\\VirtualBoxVm.exe --debug-command-line --start-paused --startvm'
+
+if cmd != '':
+    print(cmd + ' "MCS"')
+    os.system(cmd + ' "MCS"')
+    env.Command('vhd', ['"MCS"'], cmd)
