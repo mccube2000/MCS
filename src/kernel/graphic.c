@@ -40,7 +40,7 @@ void gui_boxfill(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x1,
 
 void gui_putf_816(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x,
                   uint16_t y, uint8_t *font) {
-    uint8_t i, j;
+    uint8_t i;
     uint8_t *p, d; // data
     for (i = 0; i < 16; i++) {
         p = vram + (y + i) * scr_x + x;

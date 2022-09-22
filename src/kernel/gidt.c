@@ -12,7 +12,8 @@ void init_gdtidt() {
     	set_segmdesc(gdt + i, 0, 0, 0);
     }
 
-    set_segmdesc(gdt + 1, BOOTdata_size, BOOT_adr, AR_CODE32_ER);
+    // set_segmdesc(gdt + 1, BOOTdata_size, BOOT_adr, AR_CODE32_ER);
+    set_segmdesc(gdt + 1, 0xffffffff, 0x00000000, AR_CODE32_ER);
     set_segmdesc(gdt + 2, 0xffffffff, 0x00000000, AR_DATA32_RW);
 
     load_gdtr(GDT_size, GDT_adr);

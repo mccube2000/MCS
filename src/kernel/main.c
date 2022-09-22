@@ -11,17 +11,16 @@ void MSC_main() {
     scr_x = bootinfo->scrnX;
     scr_y = bootinfo->scrnY;
 
-    int32_t i, j;
-
     init_gdtidt();
     init_pic();
-    io_sti();
 
-    io_out8(PIC0_IMR, 0xf9);        // 开放PIC1和键盘中断(11111001)
-    // io_out8(PIC1_IMR, 0xef);        // 开放鼠标中断(11101111)
+    io_out8(PIC0_IMR, 0xf9); // 开放PIC1和键盘中断(11111001)
+    io_out8(PIC1_IMR, 0xef); // 开放鼠标中断(11101111)
+    io_sti();
 
     init_palette();
 
+    // int32_t i, j;
     // for (j = 0; j < scr_y; j++) {
     //     for (i = 0; i < scr_x; i++) {
     //         vram[i + j * scr_x] = i / 16;
@@ -35,6 +34,9 @@ void MSC_main() {
     uint8_t s[20] = "MCS OS\0";
     gui_putfs_asc816(vram, scr_x, 0, 140, 82, s);
     gui_putfs_asc816(vram, scr_x, 15, 141, 83, s);
+
+    __asm volatile("int $0x21");
+    __asm volatile("int $0x27");
 
     while (1) {
         io_hlt();
