@@ -1,4 +1,5 @@
-// PIC
+#include "types.h"
+
 #define PIC0_ICW1 0x0020
 #define PIC0_OCW2 0x0020
 #define PIC0_IMR 0x0021
@@ -13,3 +14,6 @@
 #define PIC1_ICW4 0x00a1
 
 void init_pic(void);
+void inthandler21(int32_t *esp);
+void inthandler2c(int32_t *esp);
+void inthandler27(int32_t *esp);

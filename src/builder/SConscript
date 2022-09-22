@@ -48,7 +48,7 @@ if env['run'] != None:
     if env['run'] == 'vhd':
         cmd = 'C:\\Progra~1\\Oracle\\VirtualBox\\VirtualBoxVm.exe --startvm'
     elif env['run'] == 'vhd-debug':
-        cmd = 'C:\\Progra~1\\Oracle\\VirtualBox\\VirtualBoxVm.exe --debug-command-line --start-paused --startvm'
+        cmd = 'C:\\Progra~1\\Oracle\\VirtualBox\\VirtualBoxVm.exe --debug-command-line --startvm'
 
 if cmd != '':
     print(cmd + ' "MCS"')

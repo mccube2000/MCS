@@ -12,15 +12,17 @@ nasm_sources = 'asmfunc.asm'
 
 build = str(env['BUILD'] / root.relative_to(env['SRC']))
 
-o_list = []
+o_list = [f'{build}\\main']
 for source in sources:
     name = source.name
     name = name.split('.')[0]
-    o_list.append(f'{build}\\{name}')
+    if name != 'main':
+        o_list.append(f'{build}\\{name}')
     env.Object(f'{build}\\{name}', source)
 
 nasm.Object(f'{build}\\asmfunc', [nasm_sources], ASFLAGS='-f elf')
 o_list.append(f'{build}\\asmfunc.obj')
+o_list.append(f'{build}\\hankaku.obj')
 
 env.Ld(f'{build}\\kernel', o_list)
 env.Objcopy(f'{build}\\kernel')

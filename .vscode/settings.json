@@ -7,6 +7,7 @@
         "types.h": "c",
         "mbr.h": "c",
         "asmfunc.h": "c",
-        "int.h": "c"
+        "int.h": "c",
+        "gidt.h": "c"
     },
 }

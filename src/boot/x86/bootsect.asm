@@ -1,4 +1,4 @@
-core_base_address   equ 0x00040000  ; 内核加载的起始内存地址 
+core_base_address   equ 0x00280000  ; 内核加载的起始内存地址 
 core_start_sector   equ 0x00000001  ; 内核的起始逻辑扇区号 
 cyls                equ 0x0ff0      ; 引导扇区设置
 leds                equ 0x0ff1      ; led灯
@@ -34,6 +34,7 @@ section mbr vstart=0x7c00
     int 0x10
     cmp ax, 0x004f
     jne scrn320
+    ; je scrn320
     
     ; 检查VBE的版本
     mov ax, [es: di + 4]
@@ -102,22 +103,22 @@ start:
 
 ; 进入保护模式
     ; 清流水线并串行化处理器
-    jmp dword 0x0008: flush         ; 16位的描述符选择子：32位偏移
+    jmp dword 0x0008: flush         ; 16位的描述符选择子：32位偏移, 选择GDT对应的第1项
 
 [bits 32]
 
 flush:
-    mov eax, 0x00010                ; 加载数据段(4GB)选择子
+    mov eax, 0x0010                 ; 加载数据段(4GB)选择子, 选择GDT对应的第2项
     mov ds, eax
     mov es, eax
     mov fs, eax
     mov gs, eax
     mov ss, eax                     ; 加载堆栈段(4GB)选择子
-    mov esp, 0x7000                 ; 堆栈指针
+    mov esp, 0x7c00                 ; 堆栈指针
 
 
 ; 加载内核至内存
-    mov ecx, 10                     ; 32位模式下的LOOP使用ECX，读取扇区数量
+    mov ecx, 100                     ; 32位模式下的LOOP使用ECX，读取扇区数量
     mov eax, core_start_sector
     mov ebx, core_base_address      ; 起始地址
     @2:
@@ -125,11 +126,7 @@ flush:
         inc eax
         loop @2                     ; 循环读
 
-    jmp 0x00040000
-
-h:
-    hlt
-    jmp h
+    jmp core_base_address
 
 read_hard_disk_0:
     ; EAX=逻辑扇区号
@@ -194,8 +191,9 @@ pgdt:
 
 gdt:
     resb    8
-    dw      0xffff, 0x0000, 0x9a00, 0x00cf
-    dw      0xffff, 0x0000, 0x9200, 0x00cf
+    ; times 8 dw 0
+    dw      0xffff, 0x0000, 0x9a00, 0x00cf      ; 代码段
+    dw      0xffff, 0x0000, 0x9200, 0x00cf      ; 数据段
     dw      0
 
 times 510-($-$$) db 0
