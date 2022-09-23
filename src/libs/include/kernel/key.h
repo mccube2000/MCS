@@ -8,8 +8,20 @@
 #define KEYCMD_WRITE_MODE 0x60
 #define KBC_MODE 0x47
 
-void wait_KBC_sendready();
+#define KEYCMD_SENDTO_MOUSE 0xd4
+#define MOUSECMD_ENABLE 0xf4
 
-void init_keyboard(SqQueue *q, int32_t data0);
+typedef struct {
+    uint8_t buf[4], step;
+    int32_t x, y, btn;
+} mouse_data;
+
+void wait_KBC_sendready();
+void init_keyboard(sq_queue *q, int32_t data0);
 
 void inthandler21(int32_t *esp);
+
+void enable_mouse(sq_queue *q, int32_t data0);
+int8_t mouse_dec(mouse_data *md, uint32_t data);
+
+void inthandler2c(int32_t *esp);

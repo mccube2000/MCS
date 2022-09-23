@@ -4,25 +4,25 @@
 
 #define MaxSize 10
 
-// 定义元素类型 ElemType
-typedef int32_t ElemType;
+// 定义元素类型 elem_type
+typedef int32_t elem_type;
 
 // CircQueue1
 typedef struct {
-    ElemType data[MaxSize];
+    elem_type data[MaxSize];
     int front, rear;
-} SqQueue;
+} sq_queue;
 
 // 初始化
-void InitQueue(SqQueue *Q);
+void InitQueue(sq_queue *Q);
 
 // 判空
-bool isEmpty(SqQueue *Q);
+bool isEmpty(sq_queue *Q);
 
 // 入队
-bool EnQueue(SqQueue *Q, ElemType x);
+bool EnQueue(sq_queue *Q, elem_type x);
 
 // 出队
-bool DeQueue(SqQueue *Q, ElemType *x);
+bool DeQueue(sq_queue *Q, elem_type *x);
 
 #endif
