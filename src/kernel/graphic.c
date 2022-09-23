@@ -1,7 +1,7 @@
 #include "kernel/graphic.h"
 #include "kernel/asmfunc.h"
 #include "kernel/mbr.h"
-#include "types.h"
+#include "kernel/types.h"
 
 // GUI
 void init_palette() {
@@ -98,6 +98,37 @@ void gui_putfx(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x,
     return;
 }
 
+void gui_putf_x(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x,
+                uint16_t y, uint16_t len, int32_t num, uint8_t mod) {
+    uint8_t buf[32] = {0};
+    uint8_t i, f, temp;
+    int32_t m;
+    f = 0;
+    i = 30;
+    m = num;
+    if (len > 32)
+        len = 32;
+    if (num < 0)
+        m = -m, f = 1;
+    len++;
+    for (; len-- && m; i--) {
+        temp = m % mod;
+        if (temp >= 0 && temp <= 9)
+            buf[i] = temp + '0';
+        else
+            buf[i] = temp + 55;
+        m /= mod;
+    }
+    if (f)
+        buf[i] = '-', i--;
+    for (; len-- && len >= 0; i--)
+        buf[i] = ' ';
+
+    buf[31] = '\0';
+    gui_putfs_asc816(vram, scr_x, color, x, y, buf + i + 1);
+    return;
+}
+
 void init_screen(uint8_t *vram, uint16_t x, uint16_t y) {
     /*
     uint8_t h=20;
@@ -146,10 +177,8 @@ void init_screen(uint8_t *vram, uint16_t x, uint16_t y) {
 
 void init_mouse_cursor(uint8_t *mouse, uint8_t bc) {
     static uint8_t cursor[16][8] = {
-        "*.......", "**......", "*O*.....", "*OO*....", "*OOO*...",
-        "*OOOO*..",
-        "*OOOOO*.", "*OOOOOO*", "*OOO****", "*OO*O*..", "*O**O*..",
-        "**..*O*.",
+        "*.......", "**......", "*O*.....", "*OO*....", "*OOO*...", "*OOOO*..",
+        "*OOOOO*.", "*OOOOOO*", "*OOO****", "*OO*O*..", "*O**O*..", "**..*O*.",
         "....*O*.", ".....*O*", ".....*O*", "......*."};
     uint16_t x, y;
 

@@ -1,4 +1,4 @@
-#include "types.h"
+#include "kernel/types.h"
 
 #define IDT_adr 0x0026f800
 #define IDT_size 0x000007ff

@@ -19,7 +19,4 @@ struct GATE_DESCRIPTOR {
     int16_t offset_high;
 };
 
-static uint8_t *vram;
-static uint16_t scr_x, scr_y;
-
 #endif

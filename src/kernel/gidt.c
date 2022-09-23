@@ -1,7 +1,7 @@
 #include "kernel/gidt.h"
 #include "kernel/asmfunc.h"
 #include "kernel/mbr.h"
-#include "types.h"
+#include "kernel/types.h"
 
 void init_gdtidt() {
     struct SEGMENT_DESCRIPTOR *gdt = (struct SEGMENT_DESCRIPTOR *)GDT_adr;

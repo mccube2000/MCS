@@ -4,10 +4,9 @@
     ],
     "files.associations": {
         "*.rmd": "markdown",
-        "types.h": "c",
         "mbr.h": "c",
         "asmfunc.h": "c",
         "int.h": "c",
-        "gidt.h": "c"
+        "gidt.h": "c",
     },
 }

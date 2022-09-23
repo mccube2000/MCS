@@ -1,4 +1,4 @@
-#include "types.h"
+#include "kernel/types.h"
 
 #ifndef ASMFUNC_H
 #define ASMFUNC_H
@@ -7,7 +7,7 @@ extern void io_hlt(void);
 extern void io_cli(void);
 extern void io_sti(void);
 
-extern void load_gdt(int32_t limit, int32_t base);
+extern void load_gdtr(int32_t limit, int32_t base);
 extern void load_idtr(int32_t limit, int32_t base);
 
 extern uint8_t io_in8(uint32_t port);
