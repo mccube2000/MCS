@@ -1,3 +1,4 @@
+#include "algorithm/queue.h"
 #include "kernel/asmfunc.h"
 #include "kernel/gidt.h"
 #include "kernel/graphic.h"
@@ -31,13 +32,17 @@ void MSC_main() {
     //         vram[i + j * scr_x] = i / 16;
     //     }
     // }
-
-    uint8_t s1[61] = "3.141592653589793238462643383279502";
-    gui_putfs_asc816(vram, scr_x, 0, 0, 150, s1);
+    SqQueue queue;
+    InitQueue(&queue);
+    EnQueue(&queue, vram);
+    int xa;
+    DeQueue(&queue, &xa);
+    gui_putf_x(vram, scr_x, 7, 0, 150, 10, xa, 16);
+    gui_putf_x(vram, scr_x, 0, 100, 150, 10, isEmpty(&queue), 10);
 
     uint8_t s[20] = "MCS OS\0";
-    gui_putfs_asc816(vram, scr_x, 0, 140, 82, s);
-    gui_putfs_asc816(vram, scr_x, 15, 141, 83, s);
+    gui_putfs_asc816(vram, scr_x, 0, scr_x / 2, scr_y / 2, s);
+    gui_putfs_asc816(vram, scr_x, 15, scr_x / 2 + 1, scr_y / 2 + 1, s);
 
     i = 0;
     j = 0;

@@ -122,7 +122,7 @@ void gui_putf_x(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x,
     if (f)
         buf[i] = '-', i--;
     for (; len-- && len >= 0; i--)
-        buf[i] = ' ';
+        buf[i] = '0';
 
     buf[31] = '\0';
     gui_putfs_asc816(vram, scr_x, color, x, y, buf + i + 1);

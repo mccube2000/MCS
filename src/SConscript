@@ -7,6 +7,23 @@ env = gcc_env
 
 build = str(env['BUILD'] / root.relative_to(env['SRC']))
 
-SConscript(dirs=[f'boot\\{env["ARCH"]}', 'kernel'])
+dir_list = [f'boot\\{env["ARCH"]}', 'kernel', 'libs']
+
+SConscript(dirs=dir_list)
 # env.Copy(f'{build}\\MSC', [f'{build}\\boot\\x86\\boot.bin', f'{build}\\kernel\\kernel.bin'])
+
+o_list = [f'{build}\\kernel\\main']
+
+for dir in dir_list:
+    sources = Glob(dir + '\\*.c')
+    for file in sources:
+        if file.name != 'main.c':
+            o_list.append(f'{build}\\{dir}\\{file.name.split(".")[0]}')
+
+o_list.append(f'{build}\\kernel\\asmfunc.obj')
+o_list.append(f'{build}\\libs\\libs.obj')
+o_list.append(f'{build}\\kernel\\hankaku.obj')
+
+env.Ld(f'{build}\\kernel\\kernel', o_list)
+env.Objcopy(f'{build}\\kernel\\kernel')
 env.Copy(f'{build}\\MSC', [f'{build}\\kernel\\kernel.bin'])
