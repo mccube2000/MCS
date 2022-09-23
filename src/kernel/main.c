@@ -3,6 +3,7 @@
 #include "kernel/gidt.h"
 #include "kernel/graphic.h"
 #include "kernel/int.h"
+#include "kernel/key.h"
 #include "kernel/mbr.h"
 #include "types.h"
 
@@ -34,16 +35,13 @@ void MSC_main() {
     // }
     SqQueue queue;
     InitQueue(&queue);
-    EnQueue(&queue, vram);
-    int xa;
-    DeQueue(&queue, &xa);
-    gui_putf_x(vram, scr_x, 7, 0, 150, 10, xa, 16);
-    gui_putf_x(vram, scr_x, 0, 100, 150, 10, isEmpty(&queue), 10);
+    init_keyboard(&queue, 256);
 
     uint8_t s[20] = "MCS OS\0";
     gui_putfs_asc816(vram, scr_x, 0, scr_x / 2, scr_y / 2, s);
     gui_putfs_asc816(vram, scr_x, 15, scr_x / 2 + 1, scr_y / 2 + 1, s);
 
+    int info;
     i = 0;
     j = 0;
     while (1) {
@@ -54,6 +52,13 @@ void MSC_main() {
             gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 200, 200, 220);
             gui_putf_x(vram, scr_x, 0, 0, 200, 10, j, 10);
         }
+        if (!isEmpty(&queue)) {
+            DeQueue(&queue, &info);
+            gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 300, 200, 320);
+            gui_putf_x(vram, scr_x, 0, 0, 300, 10, info - 256, 10);
+        }
+        // gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 100, 200, 120);
+        // gui_putf_x(vram, scr_x, 0, 0, 100, 10, i, 10);
         // io_hlt();
     }
 }

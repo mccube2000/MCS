@@ -1,3 +1,4 @@
+#include "kernel/key.h"
 #include "algorithm/queue.h"
 #include "kernel/asmfunc.h"
 #include "kernel/int.h"
@@ -34,8 +35,7 @@ void inthandler21(int32_t *esp) {
     int32_t data;
     io_out8(PIC0_OCW2, 0x61);
     data = io_in8(PORT_KEYDAT);
-	
-    // fifo32_put(key_fifo, data + keydata0);
+    EnQueue(queue, base_data + data);
     return;
 }
 

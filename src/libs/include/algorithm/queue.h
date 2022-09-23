@@ -1,3 +1,5 @@
+#ifndef _QUEUE_H_
+#define _QUEUE_H_
 #include "types.h"
 
 #define MaxSize 10
@@ -22,3 +24,5 @@ bool EnQueue(SqQueue *Q, ElemType x);
 
 // 出队
 bool DeQueue(SqQueue *Q, ElemType *x);
+
+#endif

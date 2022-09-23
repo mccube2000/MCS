@@ -9,6 +9,7 @@
         "int.h": "c",
         "gidt.h": "c",
         "types.h": "c",
-        "queue.h": "c"
+        "queue.h": "c",
+        "key.h": "c"
     },
 }
