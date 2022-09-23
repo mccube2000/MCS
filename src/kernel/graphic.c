@@ -17,7 +17,7 @@ void init_palette() {
 void set_palette(int32_t start, int32_t end, uint8_t *rgb) {
     int32_t i, eflags;
     eflags = io_load_eflags();
-    io_cli();
+    cli();
     io_out8(0x03c8, start);
     for (i = start; i <= end; i++) {
         io_out8(0x03c9, rgb[0] / 4);

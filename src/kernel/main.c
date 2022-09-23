@@ -25,16 +25,12 @@ void MSC_main() {
 
     io_out8(PIC0_IMR, 0xf9); // 开放PIC1和键盘中断(11111001)
     io_out8(PIC1_IMR, 0xef); // 开放鼠标中断(11101111)
-    io_sti();
+    sti();
 
     int32_t i, j;
-    // for (j = 0; j < scr_y; j++) {
-    //     for (i = 0; i < scr_x; i++) {
-    //         vram[i + j * scr_x] = i / 16;
-    //     }
-    // }
     sq_queue queue;
     mouse_data md;
+    md.step = 0;
     int32_t mx = scr_x / 2, my = scr_y / 2, new_mx = -1, new_my = -1;
     InitQueue(&queue);
     init_keyboard(&queue, 256);
@@ -46,7 +42,7 @@ void MSC_main() {
     int info;
     i = 0;
     j = 0;
-    while (1) {
+    for (;;) {
         i++;
         if (i % 1000000 == 0) {
             i = 0;
@@ -81,6 +77,6 @@ void MSC_main() {
         }
         // gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 100, 200, 120);
         // gui_putf_x(vram, scr_x, 0, 0, 100, 10, i, 10);
-        // io_hlt();
+        // hlt();
     }
 }

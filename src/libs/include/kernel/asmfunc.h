@@ -3,9 +3,12 @@
 #ifndef ASMFUNC_H
 #define ASMFUNC_H
 
-extern void io_hlt(void);
-extern void io_cli(void);
-extern void io_sti(void);
+#define hlt() __asm__ ("hlt"::)
+#define cli() __asm__ ("cli"::)
+#define sti() __asm__ ("sti"::)
+#define nop() __asm__ ("nop"::)
+
+#define iret() __asm__ ("iret"::)
 
 extern void load_gdtr(int32_t limit, int32_t base);
 extern void load_idtr(int32_t limit, int32_t base);

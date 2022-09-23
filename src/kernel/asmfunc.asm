@@ -1,6 +1,6 @@
 [BITS 32]						; 3制作32位模式用的机器语言
 
-		GLOBAL	_io_hlt, _io_cli, _io_sti, _io_stihlt
+		GLOBAL	_io_stihlt
 		GLOBAL	_io_in8,  _io_in16,  _io_in32
 		GLOBAL	_io_out8, _io_out16, _io_out32
 		GLOBAL	_io_load_eflags, _io_store_eflags
@@ -11,18 +11,6 @@
 		EXTERN	_inthandler21, _inthandler27, _inthandler2c
 
 SECTION .text
-
-_io_hlt:	; void io_hlt(void);
-		HLT
-		RET
-
-_io_cli:	; void io_cli(void);
-		CLI
-		RET
-
-_io_sti:	; void io_sti(void);
-		STI
-		RET
 
 _io_stihlt:	; void io_stihlt(void);
 		STI
