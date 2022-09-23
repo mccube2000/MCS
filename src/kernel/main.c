@@ -3,7 +3,7 @@
 #include "kernel/graphic.h"
 #include "kernel/int.h"
 #include "kernel/mbr.h"
-#include "kernel/types.h"
+#include "types.h"
 
 struct BOOT_INFO *bootinfo;
 uint8_t *vram;

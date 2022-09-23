@@ -1,7 +1,7 @@
 #ifndef _MBR_H_
 #define _MBR_H_
 
-#include "kernel/types.h"
+#include "types.h"
 
 #define DISKIMG_addr 0x00100000
 #define BIOS_info_addr 0x0ff0

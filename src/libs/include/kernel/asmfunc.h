@@ -1,4 +1,4 @@
-#include "kernel/types.h"
+#include "types.h"
 
 #ifndef ASMFUNC_H
 #define ASMFUNC_H

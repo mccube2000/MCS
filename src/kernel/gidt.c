@@ -1,11 +1,11 @@
 #include "kernel/gidt.h"
 #include "kernel/asmfunc.h"
 #include "kernel/mbr.h"
-#include "kernel/types.h"
+#include "types.h"
 
 void init_gdtidt() {
-    struct SEGMENT_DESCRIPTOR *gdt = (struct SEGMENT_DESCRIPTOR *)GDT_adr;
-    struct GATE_DESCRIPTOR *idt = (struct GATE_DESCRIPTOR *)IDT_adr;
+    SEGMENT_DESCRIPTOR *gdt = (SEGMENT_DESCRIPTOR *)GDT_adr;
+    GATE_DESCRIPTOR *idt = (GATE_DESCRIPTOR *)IDT_adr;
     uint16_t i;
 
     for (i = 0; i < 8192; i++) {
@@ -22,16 +22,16 @@ void init_gdtidt() {
         set_gatedesc(idt + i, 0, 0, 0);
     }
 
-    set_gatedesc(idt + 0x21, (int32_t)asm_inthandler21, 2 << 2, AR_INTGATE32);
-    set_gatedesc(idt + 0x27, (int32_t)asm_inthandler27, 2 << 2, AR_INTGATE32);
-    set_gatedesc(idt + 0x2c, (int32_t)asm_inthandler2c, 2 << 2, AR_INTGATE32);
+    set_gatedesc(idt + 0x21, (int32_t)asm_inthandler21, 8, AR_INTGATE32);
+    set_gatedesc(idt + 0x27, (int32_t)asm_inthandler27, 8, AR_INTGATE32);
+    set_gatedesc(idt + 0x2c, (int32_t)asm_inthandler2c, 8, AR_INTGATE32);
 
     load_idtr(IDT_size, IDT_adr);
 
     return;
 }
 
-void set_segmdesc(struct SEGMENT_DESCRIPTOR *sd, uint32_t limit, int32_t base,
+void set_segmdesc(SEGMENT_DESCRIPTOR *sd, uint32_t limit, int32_t base,
                   int32_t ar) {
     if (limit > 0xfffff) {
         ar |= 0x8000;
@@ -46,7 +46,7 @@ void set_segmdesc(struct SEGMENT_DESCRIPTOR *sd, uint32_t limit, int32_t base,
     return;
 }
 
-void set_gatedesc(struct GATE_DESCRIPTOR *gd, int32_t offset, int32_t selector,
+void set_gatedesc(GATE_DESCRIPTOR *gd, int32_t offset, int32_t selector,
                   int32_t ar) {
     gd->offset_low = offset & 0xffff;
     gd->selector = selector;

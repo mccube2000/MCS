@@ -8,5 +8,6 @@
         "asmfunc.h": "c",
         "int.h": "c",
         "gidt.h": "c",
+        "types.h": "c"
     },
 }

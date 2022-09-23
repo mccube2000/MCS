@@ -1,7 +1,7 @@
 #include "kernel/int.h"
 #include "kernel/asmfunc.h"
 #include "kernel/graphic.h"
-#include "kernel/types.h"
+#include "types.h"
 
 extern struct BOOT_INFO *bootinfo;
 extern uint8_t *vram;
@@ -24,14 +24,6 @@ void init_pic() {
     io_out8(PIC0_IMR, 0xfb); // 11111011 PIC1以外全部禁止
     io_out8(PIC1_IMR, 0xff); // 11111111 禁止所有中断
 
-    return;
-}
-
-void inthandler21(int32_t *esp) {
-    uint8_t data = io_in8(0x60);
-    io_out8(PIC0_OCW2, 0x61); /* 通知PIC IRQ-01 已经受理完毕 */
-    gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 0, 32 * 8 - 1, 15);
-    gui_putf_x(vram, scr_x, 0, 0, 0, 10, data, 16);
     return;
 }
 

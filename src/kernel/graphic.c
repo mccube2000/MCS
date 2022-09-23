@@ -1,7 +1,7 @@
 #include "kernel/graphic.h"
 #include "kernel/asmfunc.h"
 #include "kernel/mbr.h"
-#include "kernel/types.h"
+#include "types.h"
 
 // GUI
 void init_palette() {

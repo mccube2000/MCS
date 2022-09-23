@@ -190,11 +190,10 @@ pgdt:
     dd     gdt                      ; GDT的物理/线性地址
 
 gdt:
-    resb    8
-    ; times 8 dw 0
-    dw      0xffff, 0x0000, 0x9a00, 0x00cf      ; 代码段
-    dw      0xffff, 0x0000, 0x9200, 0x00cf      ; 数据段
-    dw      0
+    dd      0, 0
+    dd      0x0000ffff, 0x00cf9a00  ; 代码段
+    dd      0x0000ffff, 0x00cf9200  ; 数据段
+    dd      0, 0
 
 times 510-($-$$) db 0
 db 0x55, 0xaa
