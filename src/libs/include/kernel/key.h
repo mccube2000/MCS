@@ -2,6 +2,7 @@
 #define _KEY_H_
 
 #include "algorithm/queue.h"
+#include "types.h"
 
 #define PORT_KEYDAT 0x0060
 #define PORT_KEYCMD 0x0064
@@ -15,8 +16,8 @@
 #define MOUSECMD_ENABLE 0xf4
 
 typedef struct {
-    uint8_t buf[4], step;
-    int32_t x, y, btn;
+    int8_t x, y;
+    bool left, mid, right;
 } mouse_data;
 
 void wait_KBC_sendready();
@@ -25,7 +26,7 @@ void init_keyboard(sq_queue *q, uint32_t data0);
 void inthandler21(int32_t *esp);
 
 void enable_mouse(sq_queue *q, uint32_t data0);
-int8_t mouse_dec(mouse_data *md, uint32_t data);
+void mouse_dec(mouse_data *md, uint32_t data);
 
 void inthandler2c(int32_t *esp);
 #endif

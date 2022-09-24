@@ -5,11 +5,11 @@
 
 // GUI
 void init_palette() {
-    static uint8_t table_rgb[16 * 3] = {
-        0x00, 0x00, 0x00, 0xff, 0x00, 0x00, 0x00, 0xff, 0x00, 0xff, 0xff, 0x00,
-        0x00, 0x00, 0xff, 0xff, 0x00, 0xff, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff,
-        0xc6, 0xc6, 0xc6, 0x84, 0x00, 0x00, 0x00, 0x84, 0x00, 0x84, 0x84, 0x00,
-        0x00, 0x00, 0x84, 0x84, 0x00, 0x84, 0x00, 0x84, 0x84, 0x84, 0x84, 0x84};
+    static uint8_t table_rgb[16 * 3] = {0x00, 0x00, 0x00, 0xff, 0x00, 0x00, 0x00, 0xff, 0x00, 0xff,
+                                        0xff, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0xff, 0x00, 0xff,
+                                        0xff, 0xff, 0xff, 0xff, 0xc6, 0xc6, 0xc6, 0x84, 0x00, 0x00,
+                                        0x00, 0x84, 0x00, 0x84, 0x84, 0x00, 0x00, 0x00, 0x84, 0x84,
+                                        0x00, 0x84, 0x00, 0x84, 0x84, 0x84, 0x84, 0x84};
     set_palette(0, 15, table_rgb);
 }
 
@@ -27,16 +27,16 @@ void set_palette(int32_t start, int32_t end, uint8_t *rgb) {
     io_store_eflags(eflags);
 }
 
-void gui_boxfill(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x1,
-                 uint16_t y1, uint16_t x2, uint16_t y2) {
+void gui_boxfill(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x1, uint16_t y1,
+                 uint16_t x2, uint16_t y2) {
     int i, j;
     for (i = x1; i <= x2; i++)
         for (j = y1; j <= y2; j++)
             vram[j * scr_x + i] = color;
 }
 
-void gui_putf_816(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x,
-                  uint16_t y, uint8_t *font) {
+void gui_putf_816(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, uint16_t y,
+                  uint8_t *font) {
     uint8_t i;
     uint8_t *p, d; // data
     for (i = 0; i < 16; i++) {
@@ -69,8 +69,8 @@ void gui_putf_816(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x,
     }
 }
 
-void gui_putfs_asc816(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x,
-                      uint16_t y, uint8_t *s) {
+void gui_putfs_asc816(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, uint16_t y,
+                      uint8_t *s) {
     extern uint8_t hankaku[4096];
 
     while (*s) {
@@ -83,8 +83,8 @@ void gui_putfs_asc816(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x,
     }
 }
 
-void gui_putfx(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x,
-               uint16_t y, uint8_t n, uint8_t *s) {
+void gui_putfx(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, uint16_t y, uint8_t n,
+               uint8_t *s) {
     extern uint8_t hankaku[4096];
     while (--n) {
         gui_putf_816(vram, scr_x, color, x, y, hankaku + ((*s++) + 48) * 16);
@@ -92,8 +92,8 @@ void gui_putfx(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x,
     }
 }
 
-void gui_putf_x(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x,
-                uint16_t y, uint16_t len, int32_t num, uint8_t mod) {
+void gui_putf_x(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, uint16_t y, uint16_t len,
+                int32_t num, uint8_t mod) {
     uint8_t buf[32] = {0};
     uint8_t i, f, temp;
     int32_t m;
@@ -168,10 +168,10 @@ void init_screen(uint8_t *vram, uint16_t x, uint16_t y) {
 }
 
 void init_mouse_cursor(uint8_t *mouse, uint8_t bc) {
-    static uint8_t cursor[16][8] = {
-        "*.......", "**......", "*O*.....", "*OO*....", "*OOO*...", "*OOOO*..",
-        "*OOOOO*.", "*OOOOOO*", "*OOO****", "*OO*O*..", "*O**O*..", "**..*O*.",
-        "....*O*.", ".....*O*", ".....*O*", "......*."};
+    static uint8_t cursor[16][8] = {"*.......", "**......", "*O*.....", "*OO*....",
+                                    "*OOO*...", "*OOOO*..", "*OOOOO*.", "*OOOOOO*",
+                                    "*OOO****", "*OO*O*..", "*O**O*..", "**..*O*.",
+                                    "....*O*.", ".....*O*", ".....*O*", "......*."};
     uint16_t x, y;
 
     for (y = 0; y < 16; y++) {
@@ -189,8 +189,8 @@ void init_mouse_cursor(uint8_t *mouse, uint8_t bc) {
     }
 }
 
-void putblock(uint8_t *vram, uint16_t vxsize, uint16_t pxsize, uint16_t pysize,
-              uint16_t px0, uint16_t py0, uint8_t *buf, uint16_t bxsize) {
+void putblock(uint8_t *vram, uint16_t vxsize, uint16_t pxsize, uint16_t pysize, uint16_t px0,
+              uint16_t py0, uint8_t *buf, uint16_t bxsize) {
     uint16_t x, y;
     for (y = 0; y < pysize; y++) {
         for (x = 0; x < pxsize; x++) {

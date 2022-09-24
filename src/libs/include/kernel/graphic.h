@@ -22,19 +22,19 @@
 
 void init_palette();
 void set_palette(int32_t start, int32_t end, uint8_t *rgb);
-void gui_boxfill(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x1,
-                 uint16_t y1, uint16_t x2, uint16_t y2);
-void gui_putf_816(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x,
-                  uint16_t y, uint8_t *font);
-void gui_putfs_asc816(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x,
-                      uint16_t y, uint8_t *s);
-void gui_putfx(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x,
-               uint16_t y, uint8_t n, uint8_t *s);
-void gui_putf_x(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x,
-                uint16_t y, uint16_t len, int32_t num, uint8_t mod);
+void gui_boxfill(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x1, uint16_t y1,
+                 uint16_t x2, uint16_t y2);
+void gui_putf_816(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, uint16_t y,
+                  uint8_t *font);
+void gui_putfs_asc816(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, uint16_t y,
+                      uint8_t *s);
+void gui_putfx(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, uint16_t y, uint8_t n,
+               uint8_t *s);
+void gui_putf_x(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, uint16_t y, uint16_t len,
+                int32_t num, uint8_t mod);
 void init_screen(uint8_t *vram, uint16_t x, uint16_t y);
 void init_mouse_cursor(uint8_t *mouse, uint8_t bc);
-void putblock(uint8_t *vram, uint16_t vxsize, uint16_t pxsize, uint16_t pysize,
-              uint16_t px0, uint16_t py0, uint8_t *buf, uint16_t bxsize);
+void putblock(uint8_t *vram, uint16_t vxsize, uint16_t pxsize, uint16_t pysize, uint16_t px0,
+              uint16_t py0, uint8_t *buf, uint16_t bxsize);
 
 #endif

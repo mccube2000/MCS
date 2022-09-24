@@ -1,5 +1,5 @@
-#include "types.h"
 #include "algorithm/queue.h"
+#include "types.h"
 
 // 初始化
 void InitQueue(sq_queue *Q) { Q->rear = Q->front = 0; }

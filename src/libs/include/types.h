@@ -12,4 +12,9 @@ typedef unsigned char bool;
 #define true (bool)1
 #define false (bool)0
 
+typedef char BOOL;
+#define TRUE (BOOL)1
+#define FALSE (BOOL)0
+#define ERROR (BOOL)(-1)
+
 #endif

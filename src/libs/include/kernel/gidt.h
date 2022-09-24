@@ -26,9 +26,7 @@ typedef struct {
 } GATE_DESCRIPTOR;
 
 void init_gdtidt(void);
-void set_segmdesc(SEGMENT_DESCRIPTOR *sd, uint32_t limit, int32_t base,
-                  int32_t ar);
-void set_gatedesc(GATE_DESCRIPTOR *gd, int32_t offset, int32_t selector,
-                  int32_t ar);
+void set_segmdesc(SEGMENT_DESCRIPTOR *sd, uint32_t limit, int32_t base, int32_t ar);
+void set_gatedesc(GATE_DESCRIPTOR *gd, int32_t offset, int32_t selector, int32_t ar);
 
 #endif

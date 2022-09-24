@@ -28,7 +28,6 @@ void MSC_main() {
     sq_queue queue;
     InitQueue(&queue);
     mouse_data md;
-    md.step = 0;
     int32_t mx = scr_x / 2, my = scr_y / 2, new_mx = -1, new_my = -1;
     init_keyboard(&queue, keyboard_info_flag);
     enable_mouse(&queue, mouse_info_flag);
@@ -40,23 +39,24 @@ void MSC_main() {
     i = 0;
     j = 0;
     for (;;) {
+        gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 0, 200, 20);
         i++;
         if (i % 1000 == 0) {
             i = 0;
             j++;
-            gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 200, 200, 220);
-            gui_putf_x(vram, scr_x, 0, 0, 200, 10, j, 10);
+            gui_putf_x(vram, scr_x, 0, 0, 0, 10, j, 10);
         }
         if (DeQueue(&queue, &info)) {
-            gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 300, 200, 320);
-            gui_putf_x(vram, scr_x, 0, 0, 300, 8, info, 16);
+            gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 500, 200, 520);
+            gui_putf_x(vram, scr_x, 0, 0, 500, 8, info, 16);
+            gui_putf_x(vram, scr_x, 0, 100, 500, 8, info, 16);
             if (info & keyboard_info_flag) {
-                gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 400, 200, 420);
-                gui_putf_x(vram, scr_x, 0, 0, 400, 8, info, 16);
+                gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 520, 200, 540);
+                gui_putf_x(vram, scr_x, 0, 0, 520, 8, info ^ keyboard_info_flag, 16);
             } else if (info & mouse_info_flag) {
-                gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 500, 200, 520);
-                gui_putf_x(vram, scr_x, 0, 0, 500, 8, info, 16);
-                // if (mouse_dec(&md, info - 512)) {
+                gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 520, 200, 540);
+                gui_putf_x(vram, scr_x, 0, 100, 520, 8, info ^ mouse_info_flag, 16);
+                mouse_dec(&md, info ^ mouse_info_flag);
                 //     mx += md.x;
                 //     my += md.y;
                 //     if (mx < 0)
@@ -76,11 +76,10 @@ void MSC_main() {
                 //     // gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 500, 200,
                 //     520);
                 //     // gui_putf_x(vram, scr_x, 0, 0, 500, 10, new_my, 10);
-                // }
             }
         } else {
-            gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 100, 200, 120);
-            gui_putf_x(vram, scr_x, 0, 0, 100, 10, i, 10);
+            gui_putf_x(vram, scr_x, 0, 0, 0, 10, j, 10);
+            gui_putf_x(vram, scr_x, 0, 100, 0, 10, i, 10);
             hlt();
         }
     }

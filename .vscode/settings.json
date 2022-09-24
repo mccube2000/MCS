@@ -1,6 +1,6 @@
 {
     "editor.rulers": [
-        36, 48
+        36, 48, 100
     ],
     "files.associations": {
         "*.rmd": "markdown",
@@ -11,7 +11,10 @@
         "types.h": "c",
         "queue.h": "c",
         "key.h": "c",
-        "info.h": "c"
+        "info.h": "c",
+        "iostream": "cpp",
+        "ostream": "cpp",
+        "ctime": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled",
 }

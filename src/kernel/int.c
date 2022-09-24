@@ -29,6 +29,4 @@ void init_pic() {
     sti();
 }
 
-void inthandler27(int32_t *esp) {
-    io_out8(PIC0_OCW2, 0x67);
-}
+void inthandler27(int32_t *esp) { io_out8(PIC0_OCW2, 0x67); }

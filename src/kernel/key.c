@@ -36,31 +36,39 @@ void enable_mouse(sq_queue *q, uint32_t data0) {
     io_out8(PORT_KEYDAT, MOUSECMD_ENABLE);
 }
 
-int8_t mouse_dec(mouse_data *md, uint32_t data) {
-    if (md->step) {
-        md->buf[md->step++] = data;
-        if (md->step == 1 && (data & 0xc8) != 0x08)
-            return -1;
-        if (md->step == 4) {
-            md->btn = md->buf[1] & 0x07;
-            md->x = md->buf[2];
-            md->y = md->buf[3];
-            if ((md->buf[1] & 0x10) != 0)
-                md->x |= 0xffffff00;
-            if ((md->buf[1] & 0x20) != 0)
-                md->y |= 0xffffff00;
-            // if ((md->buf[1] & 0x20) != 0) md->y |= 0x7fffff00;
-            md->y = -md->y;
-            return md->step = 1;
-        }
-    } else if (data == 0xfa)
-        md->step = 1;
-    return 0;
+void mouse_dec(mouse_data *md, uint32_t data) {
+    if (data == 0xfafafa)
+        return;
+    md->y = data & 0xff;
+    data >>= 8;
+    md->x = data & 0xff;
+    data >>= 8;
+    md->left = data & 1;
+    md->right = data & 2;
+    md->mid = data & 4;
+    // if (md->step) {
+    //     md->buf[md->step++] = data;
+    //     if (md->step == 1 && (data & 0xc8) != 0x08)
+    //         return -1;
+    //     if (md->step == 4) {
+    //         md->btn = md->buf[1] & 0x07;
+    //         md->x = md->buf[2];
+    //         md->y = md->buf[3];
+    //         if ((md->buf[1] & 0x10) != 0)
+    //             md->x |= 0xffffff00;
+    //         if ((md->buf[1] & 0x20) != 0)
+    //             md->y |= 0xffffff00;
+    //         // if ((md->buf[1] & 0x20) != 0) md->y |= 0x7fffff00;
+    //         md->y = -md->y;
+    //         return md->step = 1;
+    //     }
+    // } else if (data == 0xfa)
+    //     md->step = 1;
 }
 
 void inthandler2c(int32_t *esp) {
     io_out8(PIC1_OCW2, 0x64);
     io_out8(PIC0_OCW2, 0x62);
-    EnQueue(m_queue, m_base_data | io_in8(PORT_KEYDAT) << 16 |
-                         io_in8(PORT_KEYDAT) << 8 | io_in8(PORT_KEYDAT));
+    EnQueue(m_queue, m_base_data | io_in8(PORT_KEYDAT) << 16 | io_in8(PORT_KEYDAT) << 8 |
+                         io_in8(PORT_KEYDAT));
 }

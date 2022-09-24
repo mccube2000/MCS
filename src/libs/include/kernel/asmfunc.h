@@ -3,12 +3,12 @@
 
 #include "types.h"
 
-#define hlt() __asm__ ("hlt"::)
-#define cli() __asm__ ("cli"::)
-#define sti() __asm__ ("sti"::)
-#define nop() __asm__ ("nop"::)
+#define hlt() __asm__("hlt" ::)
+#define cli() __asm__("cli" ::)
+#define sti() __asm__("sti" ::)
+#define nop() __asm__("nop" ::)
 
-#define iret() __asm__ ("iret"::)
+#define iret() __asm__("iret" ::)
 
 extern void load_gdtr(int32_t limit, int32_t base);
 extern void load_idtr(int32_t limit, int32_t base);
@@ -38,8 +38,7 @@ extern void load_tr(int32_t tr);
 extern void farjmp(int32_t eip, int32_t cs);
 extern void farcall(int32_t eip, int32_t cs);
 extern void asm_hrb_ap(void);
-extern void start_app(int32_t eip, int32_t cs, int32_t esp, int32_t ds,
-                      int32_t *tss_esp0);
+extern void start_app(int32_t eip, int32_t cs, int32_t esp, int32_t ds, int32_t *tss_esp0);
 extern void asm_end_app(int32_t eip);
 
 #endif
