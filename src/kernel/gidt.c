@@ -28,7 +28,6 @@ void init_gdtidt() {
 
     load_idtr(idt_size, idt_addr);
 
-    return;
 }
 
 void set_segmdesc(SEGMENT_DESCRIPTOR *sd, uint32_t limit, int32_t base,
@@ -43,7 +42,6 @@ void set_segmdesc(SEGMENT_DESCRIPTOR *sd, uint32_t limit, int32_t base,
     sd->access_right = ar & 0xff;
     sd->limit_high = ((limit >> 16) & 0x0f) | ((ar >> 8) & 0xf0);
     sd->base_high = (base >> 24) & 0xff;
-    return;
 }
 
 void set_gatedesc(GATE_DESCRIPTOR *gd, int32_t offset, int32_t selector,
@@ -53,5 +51,4 @@ void set_gatedesc(GATE_DESCRIPTOR *gd, int32_t offset, int32_t selector,
     gd->dw_count = (ar >> 8) & 0xff;
     gd->access_right = ar & 0xff;
     gd->offset_high = (offset >> 16) & 0xffff;
-    return;
 }

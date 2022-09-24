@@ -24,9 +24,7 @@ void MSC_main() {
     init_gdtidt();
     init_pic();
 
-    io_out8(PIC0_IMR, 0xf9); // 开放PIC1和键盘中断(11111001)
-    io_out8(PIC1_IMR, 0xef); // 开放鼠标中断(11101111)
-    sti();
+    
 
     int32_t i, j;
     sq_queue queue;

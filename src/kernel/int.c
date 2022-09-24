@@ -21,13 +21,14 @@ void init_pic() {
     io_out8(PIC1_ICW3, 2);    // PIC1由IRQ2连接
     io_out8(PIC1_ICW4, 0x01); // 无缓冲区模式
 
-    io_out8(PIC0_IMR, 0xfb); // 11111011 PIC1以外全部禁止
-    io_out8(PIC1_IMR, 0xff); // 11111111 禁止所有中断
+    // io_out8(PIC0_IMR, 0xfb); // 11111011 PIC1以外全部禁止
+    // io_out8(PIC1_IMR, 0xff); // 11111111 禁止所有中断
+    io_out8(PIC0_IMR, 0xf9); // 开放PIC1和键盘中断(11111001)
+    io_out8(PIC1_IMR, 0xef); // 开放鼠标中断(11101111)
 
-    return;
+    sti();
 }
 
 void inthandler27(int32_t *esp) {
     io_out8(PIC0_OCW2, 0x67);
-    return;
 }

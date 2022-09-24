@@ -11,7 +11,6 @@ void init_palette() {
         0xc6, 0xc6, 0xc6, 0x84, 0x00, 0x00, 0x00, 0x84, 0x00, 0x84, 0x84, 0x00,
         0x00, 0x00, 0x84, 0x84, 0x00, 0x84, 0x00, 0x84, 0x84, 0x84, 0x84, 0x84};
     set_palette(0, 15, table_rgb);
-    return;
 }
 
 void set_palette(int32_t start, int32_t end, uint8_t *rgb) {
@@ -26,7 +25,6 @@ void set_palette(int32_t start, int32_t end, uint8_t *rgb) {
         rgb += 3;
     }
     io_store_eflags(eflags);
-    return;
 }
 
 void gui_boxfill(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x1,
@@ -35,7 +33,6 @@ void gui_boxfill(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x1,
     for (i = x1; i <= x2; i++)
         for (j = y1; j <= y2; j++)
             vram[j * scr_x + i] = color;
-    return;
 }
 
 void gui_putf_816(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x,
@@ -70,7 +67,6 @@ void gui_putf_816(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x,
             p[7] = color;
         }
     }
-    return;
 }
 
 void gui_putfs_asc816(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x,
@@ -85,7 +81,6 @@ void gui_putfs_asc816(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x,
         gui_putf_816(vram, scr_x, color, x, y, hankaku + *s++ * 16);
         x += 8;
     }
-    return;
 }
 
 void gui_putfx(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x,
@@ -95,7 +90,6 @@ void gui_putfx(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x,
         gui_putf_816(vram, scr_x, color, x, y, hankaku + ((*s++) + 48) * 16);
         x += 8;
     }
-    return;
 }
 
 void gui_putf_x(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x,
@@ -126,7 +120,6 @@ void gui_putf_x(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x,
 
     buf[31] = '\0';
     gui_putfs_asc816(vram, scr_x, color, x, y, buf + i + 1);
-    return;
 }
 
 void init_screen(uint8_t *vram, uint16_t x, uint16_t y) {
@@ -172,7 +165,6 @@ void init_screen(uint8_t *vram, uint16_t x, uint16_t y) {
     gui_boxfill(vram, x, COL8_848484, x - 47, y - 23, x - 47, y - 4);
     gui_boxfill(vram, x, COL8_FFFFFF, x - 47, y - 3, x - 4, y - 3);
     gui_boxfill(vram, x, COL8_FFFFFF, x - 3, y - 24, x - 3, y - 3);
-    return;
 }
 
 void init_mouse_cursor(uint8_t *mouse, uint8_t bc) {
@@ -195,7 +187,6 @@ void init_mouse_cursor(uint8_t *mouse, uint8_t bc) {
             }
         }
     }
-    return;
 }
 
 void putblock(uint8_t *vram, uint16_t vxsize, uint16_t pxsize, uint16_t pysize,
@@ -206,5 +197,4 @@ void putblock(uint8_t *vram, uint16_t vxsize, uint16_t pxsize, uint16_t pysize,
             vram[(py0 + y) * vxsize + (px0 + x)] = buf[y * bxsize + x];
         }
     }
-    return;
 }

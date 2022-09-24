@@ -11,7 +11,6 @@ uint32_t k_base_data, m_base_data;
 void wait_KBC_sendready() {
     while ((io_in8(PORT_KEYSTA) & KEYSTA_SEND_NOTREADY) != 0)
         ;
-    return;
 }
 
 void init_keyboard(sq_queue *q, uint32_t data0) {
@@ -21,13 +20,11 @@ void init_keyboard(sq_queue *q, uint32_t data0) {
     io_out8(PORT_KEYCMD, KEYCMD_WRITE_MODE);
     wait_KBC_sendready();
     io_out8(PORT_KEYDAT, KBC_MODE);
-    return;
 }
 
 void inthandler21(int32_t *esp) {
     io_out8(PIC0_OCW2, 0x61);
     EnQueue(k_queue, k_base_data | io_in8(PORT_KEYDAT));
-    return;
 }
 
 void enable_mouse(sq_queue *q, uint32_t data0) {
@@ -37,7 +34,6 @@ void enable_mouse(sq_queue *q, uint32_t data0) {
     io_out8(PORT_KEYCMD, KEYCMD_SENDTO_MOUSE);
     wait_KBC_sendready();
     io_out8(PORT_KEYDAT, MOUSECMD_ENABLE);
-    return;
 }
 
 int8_t mouse_dec(mouse_data *md, uint32_t data) {
@@ -67,5 +63,4 @@ void inthandler2c(int32_t *esp) {
     io_out8(PIC0_OCW2, 0x62);
     EnQueue(m_queue, m_base_data | io_in8(PORT_KEYDAT) << 16 |
                          io_in8(PORT_KEYDAT) << 8 | io_in8(PORT_KEYDAT));
-    return;
 }
