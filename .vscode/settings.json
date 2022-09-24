@@ -14,7 +14,11 @@
         "info.h": "c",
         "iostream": "cpp",
         "ostream": "cpp",
-        "ctime": "cpp"
+        "ctime": "cpp",
+        "algorithm": "c",
+        "iterator": "c",
+        "xmemory": "c",
+        "xutility": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled",
 }

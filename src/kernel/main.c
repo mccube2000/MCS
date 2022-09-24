@@ -24,9 +24,9 @@ void MSC_main() {
 
     sq_queue queue;
     mouse_data md;
-    int32_t i = 0, j = 0,mx = scr_x / 2, my = scr_y / 2, new_mx = -1, new_my = -1;
+    int32_t i = 0, j = 0, mx = scr_x / 2, my = scr_y / 2, new_mx = -1, new_my = -1;
     uint32_t info;
-    uint16_t km_debug_y = 20;
+    uint16_t km_debug_y = 20, k_info_c = 0;
     init_queue(&queue);
     init_keyboard(&queue, keyboard_info_flag);
     enable_mouse(&queue, mouse_info_flag);
@@ -41,19 +41,35 @@ void MSC_main() {
         if (i % 1000 == 0) {
             i = 0;
             j++;
-            gui_putf_x(vram, scr_x, 0, 0, 0, 10, j, 10);
+            gui_putf_x(vram, scr_x, 0, 0, 0, 3, j, 10);
         }
         if (de_queue(&queue, &info)) {
             gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, km_debug_y, 200, km_debug_y + 20);
             gui_putf_x(vram, scr_x, 0, 0, km_debug_y, 8, info, 16);
             gui_putf_x(vram, scr_x, 0, 100, km_debug_y, 8, info, 16);
             if (info & keyboard_info_flag) {
-                gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, km_debug_y + 20, 200, km_debug_y + 40);
+                gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, km_debug_y + 20, 100, km_debug_y + 40);
                 gui_putf_x(vram, scr_x, 0, 0, km_debug_y + 20, 8, info ^ keyboard_info_flag, 16);
+                gui_boxfill(vram, scr_x, COL8_FFFFFF, k_info_c * 20, km_debug_y + 40,
+                            k_info_c * 20 + 20, km_debug_y + 60);
+                gui_putf_x(vram, scr_x, 0, k_info_c++ * 20, km_debug_y + 40, 2,
+                           info ^ keyboard_info_flag, 16);
+                if (k_info_c > 4)
+                    k_info_c = 0;
             } else if (info & mouse_info_flag) {
-                gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, km_debug_y + 20, 200, km_debug_y + 40);
+                gui_boxfill(vram, scr_x, COL8_FFFFFF, 100, km_debug_y + 20, 200, km_debug_y + 40);
                 gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 20, 8, info ^ mouse_info_flag, 16);
-                mouse_dec(&md, info ^ mouse_info_flag);
+
+                de_queue(&queue, &info);
+                gui_boxfill(vram, scr_x, COL8_FFFFFF, 100, km_debug_y + 40, 200, km_debug_y + 60);
+                gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 40, 8, info ^ mouse_info_flag, 16);
+
+
+                // mouse_dec(&md, info ^ mouse_info_flag);
+                // gui_boxfill(vram, scr_x, COL8_FFFFFF, 100, km_debug_y + 40, 200, km_debug_y + 80);
+                // gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 40, 4, md.x, 10);
+                // gui_putf_x(vram, scr_x, 0, 150, km_debug_y + 40, 4, md.y, 10);
+                // gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 60, 10, md.flags, 2);
                 //     mx += md.x;
                 //     my += md.y;
                 //     if (mx < 0)
@@ -75,8 +91,8 @@ void MSC_main() {
                 //     // gui_putf_x(vram, scr_x, 0, 0, 500, 10, new_my, 10);
             }
         } else {
-            gui_putf_x(vram, scr_x, 0, 0, 0, 10, j, 10);
-            gui_putf_x(vram, scr_x, 0, 100, 0, 10, i, 10);
+            gui_putf_x(vram, scr_x, 0, 0, 0, 3, j, 10);
+            gui_putf_x(vram, scr_x, 0, 100, 0, 3, i, 10);
             hlt();
         }
     }

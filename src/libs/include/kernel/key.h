@@ -16,7 +16,7 @@
 #define MOUSECMD_ENABLE 0xf4
 
 typedef struct {
-    int8_t x, y;
+    int8_t x, y, flags;
     bool left, mid, right;
 } mouse_data;
 

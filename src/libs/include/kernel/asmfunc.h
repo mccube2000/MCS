@@ -7,6 +7,7 @@
 #define cli() __asm__("cli" ::)
 #define sti() __asm__("sti" ::)
 #define nop() __asm__("nop" ::)
+#define pause() __asm__("pause" ::)
 
 #define iret() __asm__("iret" ::)
 
