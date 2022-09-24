@@ -4,19 +4,19 @@
 #include "types.h"
 
 void init_gdtidt() {
-    SEGMENT_DESCRIPTOR *gdt = (SEGMENT_DESCRIPTOR *)GDT_adr;
-    GATE_DESCRIPTOR *idt = (GATE_DESCRIPTOR *)IDT_adr;
+    SEGMENT_DESCRIPTOR *gdt = (SEGMENT_DESCRIPTOR *)gdt_addr;
+    GATE_DESCRIPTOR *idt = (GATE_DESCRIPTOR *)idt_addr;
     uint16_t i;
 
     for (i = 0; i < 8192; i++) {
     	set_segmdesc(gdt + i, 0, 0, 0);
     }
 
-    // set_segmdesc(gdt + 1, BOOTdata_size, BOOT_adr, AR_CODE32_ER);
+    // set_segmdesc(gdt + 1, kernel_size, kernel_adr, AR_CODE32_ER);
     set_segmdesc(gdt + 1, 0xffffffff, 0x00000000, AR_CODE32_ER);
     set_segmdesc(gdt + 2, 0xffffffff, 0x00000000, AR_DATA32_RW);
 
-    load_gdtr(GDT_size, GDT_adr);
+    load_gdtr(gdt_size, gdt_addr);
 
     for (i = 0; i < 256; i++) {
         set_gatedesc(idt + i, 0, 0, 0);
@@ -26,7 +26,7 @@ void init_gdtidt() {
     set_gatedesc(idt + 0x27, (int32_t)asm_inthandler27, 8, AR_INTGATE32);
     set_gatedesc(idt + 0x2c, (int32_t)asm_inthandler2c, 8, AR_INTGATE32);
 
-    load_idtr(IDT_size, IDT_adr);
+    load_idtr(idt_size, idt_addr);
 
     return;
 }

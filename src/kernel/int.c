@@ -3,7 +3,7 @@
 #include "kernel/graphic.h"
 #include "types.h"
 
-extern struct BOOT_INFO *bootinfo;
+extern struct bios_info *bootinfo;
 extern uint8_t *vram;
 extern uint16_t scr_x, scr_y;
 

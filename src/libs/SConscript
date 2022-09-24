@@ -17,5 +17,4 @@ for source in sources:
     o_list.append(f'{build}\\{name}')
     env.Object(f'{build}\\{name}', source)
 
-print(o_list)
 env.Ld(f'{build}\\libs.obj', o_list)

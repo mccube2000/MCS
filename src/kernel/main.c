@@ -7,12 +7,12 @@
 #include "kernel/mbr.h"
 #include "types.h"
 
-struct BOOT_INFO *bootinfo;
+struct bios_info *bootinfo;
 uint8_t *vram;
 uint16_t scr_x, scr_y;
 
 void MSC_main() {
-    bootinfo = (struct BOOT_INFO *)BIOS_info_addr;
+    bootinfo = (struct bios_info *)bios_info_addr;
     vram = bootinfo->vram;
     scr_x = bootinfo->scrnX;
     scr_y = bootinfo->scrnY;
@@ -29,10 +29,10 @@ void MSC_main() {
 
     int32_t i, j;
     sq_queue queue;
+    InitQueue(&queue);
     mouse_data md;
     md.step = 0;
     int32_t mx = scr_x / 2, my = scr_y / 2, new_mx = -1, new_my = -1;
-    InitQueue(&queue);
     init_keyboard(&queue, 256);
     enable_mouse(&queue, 512);
     uint8_t s[20] = "MCS OS\0";
@@ -44,14 +44,13 @@ void MSC_main() {
     j = 0;
     for (;;) {
         i++;
-        if (i % 1000000 == 0) {
+        if (i % 1000 == 0) {
             i = 0;
             j++;
             gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 200, 200, 220);
             gui_putf_x(vram, scr_x, 0, 0, 200, 10, j, 10);
         }
-        if (!isEmpty(&queue)) {
-            DeQueue(&queue, &info);
+        if (DeQueue(&queue, &info)) {
             if (info >= 256 && info < 512) {
                 gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 300, 200, 320);
                 gui_putf_x(vram, scr_x, 0, 0, 300, 10, info - 256, 10);
@@ -74,9 +73,10 @@ void MSC_main() {
                 gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 500, 200, 520);
                 gui_putf_x(vram, scr_x, 0, 0, 500, 10, new_my, 10);
             }
+        } else {
+            gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 100, 200, 120);
+            gui_putf_x(vram, scr_x, 0, 0, 100, 10, i, 10);
+            hlt();
         }
-        // gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 100, 200, 120);
-        // gui_putf_x(vram, scr_x, 0, 0, 100, 10, i, 10);
-        // hlt();
     }
 }
