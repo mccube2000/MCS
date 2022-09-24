@@ -2,10 +2,10 @@
 #define _QUEUE_H_
 #include "types.h"
 
-#define MaxSize 10
+#define MaxSize 128
 
 // 定义元素类型 elem_type
-typedef int32_t elem_type;
+typedef uint32_t elem_type;
 
 // CircQueue1
 typedef struct {

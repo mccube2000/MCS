@@ -24,8 +24,6 @@ void MSC_main() {
     init_gdtidt();
     init_pic();
 
-    
-
     int32_t i, j;
     sq_queue queue;
     InitQueue(&queue);
@@ -38,7 +36,7 @@ void MSC_main() {
     gui_putfs_asc816(vram, scr_x, 0, scr_x / 2, scr_y / 2, s);
     gui_putfs_asc816(vram, scr_x, 15, scr_x / 2 + 1, scr_y / 2 + 1, s);
 
-    int info;
+    uint32_t info;
     i = 0;
     j = 0;
     for (;;) {
