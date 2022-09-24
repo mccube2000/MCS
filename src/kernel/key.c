@@ -24,7 +24,7 @@ void init_keyboard(sq_queue *q, uint32_t data0) {
 
 void inthandler21(int32_t *esp) {
     io_out8(PIC0_OCW2, 0x61);
-    EnQueue(k_queue, k_base_data | io_in8(PORT_KEYDAT));
+    en_queue(k_queue, k_base_data | io_in8(PORT_KEYDAT));
 }
 
 void enable_mouse(sq_queue *q, uint32_t data0) {
@@ -69,6 +69,6 @@ void mouse_dec(mouse_data *md, uint32_t data) {
 void inthandler2c(int32_t *esp) {
     io_out8(PIC1_OCW2, 0x64);
     io_out8(PIC0_OCW2, 0x62);
-    EnQueue(m_queue, m_base_data | io_in8(PORT_KEYDAT) << 16 | io_in8(PORT_KEYDAT) << 8 |
+    en_queue(m_queue, m_base_data | io_in8(PORT_KEYDAT) << 16 | io_in8(PORT_KEYDAT) << 8 |
                          io_in8(PORT_KEYDAT));
 }
