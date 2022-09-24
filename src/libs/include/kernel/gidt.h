@@ -1,3 +1,6 @@
+#ifndef _GIDT_H_
+#define _GIDT_H_
+
 #include "types.h"
 
 #define idt_addr 0x0026f800
@@ -27,3 +30,5 @@ void set_segmdesc(SEGMENT_DESCRIPTOR *sd, uint32_t limit, int32_t base,
                   int32_t ar);
 void set_gatedesc(GATE_DESCRIPTOR *gd, int32_t offset, int32_t selector,
                   int32_t ar);
+
+#endif

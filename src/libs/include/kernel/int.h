@@ -1,3 +1,6 @@
+#ifndef _INT_H_
+#define _INT_H_
+
 #include "types.h"
 
 #define PIC0_ICW1 0x0020
@@ -17,3 +20,5 @@ void init_pic(void);
 void inthandler21(int32_t *esp);
 void inthandler2c(int32_t *esp);
 void inthandler27(int32_t *esp);
+
+#endif

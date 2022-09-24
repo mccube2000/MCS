@@ -1,7 +1,7 @@
-#include "types.h"
+#ifndef _ASMFUNC_H_
+#define _ASMFUNC_H_
 
-#ifndef ASMFUNC_H
-#define ASMFUNC_H
+#include "types.h"
 
 #define hlt() __asm__ ("hlt"::)
 #define cli() __asm__ ("cli"::)

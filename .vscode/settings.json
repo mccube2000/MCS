@@ -10,7 +10,8 @@
         "gidt.h": "c",
         "types.h": "c",
         "queue.h": "c",
-        "key.h": "c"
+        "key.h": "c",
+        "info.h": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled",
 }

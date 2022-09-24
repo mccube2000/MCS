@@ -1,11 +1,12 @@
 #include "kernel/key.h"
 #include "algorithm/queue.h"
 #include "kernel/asmfunc.h"
+#include "kernel/info.h"
 #include "kernel/int.h"
 #include "types.h"
 
 sq_queue *k_queue, *m_queue;
-int32_t k_base_data, m_base_data;
+uint32_t k_base_data, m_base_data;
 
 void wait_KBC_sendready() {
     while ((io_in8(PORT_KEYSTA) & KEYSTA_SEND_NOTREADY) != 0)
@@ -13,7 +14,7 @@ void wait_KBC_sendready() {
     return;
 }
 
-void init_keyboard(sq_queue *q, int32_t data0) {
+void init_keyboard(sq_queue *q, uint32_t data0) {
     k_queue = q;
     k_base_data = data0;
     wait_KBC_sendready();
@@ -24,14 +25,12 @@ void init_keyboard(sq_queue *q, int32_t data0) {
 }
 
 void inthandler21(int32_t *esp) {
-    int32_t data;
     io_out8(PIC0_OCW2, 0x61);
-    data = io_in8(PORT_KEYDAT);
-    EnQueue(k_queue, k_base_data + data);
+    EnQueue(k_queue, k_base_data | io_in8(PORT_KEYDAT));
     return;
 }
 
-void enable_mouse(sq_queue *q, int32_t data0) {
+void enable_mouse(sq_queue *q, uint32_t data0) {
     m_queue = q;
     m_base_data = data0;
     wait_KBC_sendready();
@@ -64,10 +63,9 @@ int8_t mouse_dec(mouse_data *md, uint32_t data) {
 }
 
 void inthandler2c(int32_t *esp) {
-    int32_t data;
     io_out8(PIC1_OCW2, 0x64);
     io_out8(PIC0_OCW2, 0x62);
-    data = io_in8(PORT_KEYDAT);
-    EnQueue(m_queue, m_base_data + data);
+    EnQueue(m_queue, m_base_data | io_in8(PORT_KEYDAT) << 16 |
+                         io_in8(PORT_KEYDAT) << 8 | io_in8(PORT_KEYDAT));
     return;
 }
