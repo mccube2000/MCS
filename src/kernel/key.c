@@ -106,28 +106,10 @@ void mouse_dec(mouse_data *md, uint32_t data) {
     md->mid = (data & 4) != false;
 
     if ((md->flags & 0x10) != 0)
-        md->x |= 0xffffff00;
+        md->x |= 0xff00;
     if ((md->flags & 0x20) != 0)
-        md->y |= 0xffffff00;
+        md->y |= 0xff00;
     md->y = -md->y;
-    // if (md->step) {
-    //     md->buf[md->step++] = data;
-    //     if (md->step == 1 && (data & 0xc8) != 0x08)
-    //         return -1;
-    //     if (md->step == 4) {
-    //         md->btn = md->buf[1] & 0x07;
-    //         md->x = md->buf[2];
-    //         md->y = md->buf[3];
-    //         if ((md->buf[1] & 0x10) != 0)
-    //             md->x |= 0xffffff00;
-    //         if ((md->buf[1] & 0x20) != 0)
-    //             md->y |= 0xffffff00;
-    //         // if ((md->buf[1] & 0x20) != 0) md->y |= 0x7fffff00;
-    //         md->y = -md->y;
-    //         return md->step = 1;
-    //     }
-    // } else if (data == 0xfa)
-    //     md->step = 1;
 }
 
 void inthandler2c(int32_t *esp) {
