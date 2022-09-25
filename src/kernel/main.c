@@ -77,8 +77,8 @@ void MSC_main() {
                 }
 
                 gui_boxfill(vram, scr_x, COL8_FFFFFF, 100, km_debug_y + 40, 200, km_debug_y + 80);
-                gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 40, 4, (int8_t)md.x, -10);
-                gui_putf_x(vram, scr_x, 0, 140, km_debug_y + 40, 4, (int8_t)md.y, -10);
+                gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 40, 4, md.x, -10);
+                gui_putf_x(vram, scr_x, 0, 140, km_debug_y + 40, 4, md.y, -10);
                 gui_putf_x(vram, scr_x, (md.z & MOUSE_5) == MOUSE_5 ? 1 : 4, 180, km_debug_y + 40,
                            1, md.z >> 4, 16);
                 gui_putf_x(vram, scr_x, 0, 192, km_debug_y + 40, 1, md.z & 0xf, 16);
@@ -92,8 +92,8 @@ void MSC_main() {
                 gui_putf_x(vram, scr_x, 0, 192, km_debug_y + 60, 1, (md.flags & 0x20) != false, 2);
                 
                 gui_boxfill(vram, scr_x, COL8_008484, mx, my, mx + 8, my + 16);
-                mx += (int8_t)md.x;
-                my -= (int8_t)md.y;
+                mx += md.x;
+                my += md.y;
                 if (mx < 0)
                     mx = 0, md.x = 0;
                 if (my < 0)

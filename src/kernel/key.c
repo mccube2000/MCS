@@ -105,8 +105,11 @@ void mouse_dec(mouse_data *md, uint32_t data) {
     md->right = (data & 2) != false;
     md->mid = (data & 4) != false;
 
-    md->x = md->x - ((md->flags << 4) & 0x100);
-    md->y = md->y - ((md->flags << 3) & 0x100);
+    if ((md->flags & 0x10) != 0)
+        md->x |= 0xffffff00;
+    if ((md->flags & 0x20) != 0)
+        md->y |= 0xffffff00;
+    md->y = -md->y;
     // if (md->step) {
     //     md->buf[md->step++] = data;
     //     if (md->step == 1 && (data & 0xc8) != 0x08)
