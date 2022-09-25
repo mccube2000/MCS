@@ -194,12 +194,12 @@ void init_mouse_cursor(uint8_t *mouse, uint8_t bc) {
     }
 }
 
-void putblock(uint8_t *vram, uint16_t vxsize, uint16_t pxsize, uint16_t pysize, uint16_t px0,
+void putblock(uint8_t *vram, uint16_t scr_x, uint16_t pxsize, uint16_t pysize, uint16_t px0,
               uint16_t py0, uint8_t *buf, uint16_t bxsize) {
     uint16_t x, y;
     for (y = 0; y < pysize; y++) {
         for (x = 0; x < pxsize; x++) {
-            vram[(py0 + y) * vxsize + (px0 + x)] = buf[y * bxsize + x];
+            vram[(py0 + y) * scr_x + (px0 + x)] = buf[y * bxsize + x];
         }
     }
 }
