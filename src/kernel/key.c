@@ -57,9 +57,10 @@ void set_mouse_rate(uint8_t rate) {
 void init_mouse(mouse_data *data) {
     md = data;
     md->id = get_mouse_id();
-    md->id = 4; // 5键
-    md->z = 0;  // 中断时入队1个数据
+    md->id = 3; // 滚轮 3键
+    // md->id = 4; // 滚轮 5键
 
+    md->z = 0;  // 中断时入队1个数据
     md->left = false;
     md->right = false;
     md->mid = false;
@@ -90,8 +91,8 @@ void mouse_dec(mouse_data *md, uint32_t data) {
     }
     md->z &= 0xf0;
     if ((md->z & MOUSE_5) == MOUSE_5) {
-        md->btm = temp_z & 0x10;
-        md->top = temp_z & 0x20;
+        md->btm = (temp_z & 0x10) != false;
+        md->top = (temp_z & 0x20) != false;
         md->z |= (temp_z & 0xf);
     } else if ((md->z & MOUSE_Z))
         md->z |= (temp_z & 0xf);
@@ -100,9 +101,9 @@ void mouse_dec(mouse_data *md, uint32_t data) {
     md->x = data & 0xff;
     data >>= 8;
     md->flags = data;
-    md->left = data & 1;
-    md->right = data & 2;
-    md->mid = data & 4;
+    md->left = (data & 1) != false;
+    md->right = (data & 2) != false;
+    md->mid = (data & 4) != false;
     // if ((md->flags & 0x10) != 0)
     //     md->x |= 0xffffff00;
     // if ((md->flags & 0x20) != 0)

@@ -60,8 +60,8 @@ void MSC_main() {
                     k_info_c = 0;
             } else if (info & mouse_info_flag) {
                 info <<= 8;
-                // 如果mouse id为0，则info左移后的ao位恰好为mouse_info_flag
                 gui_boxfill(vram, scr_x, COL8_FFFFFF, 100, km_debug_y + 20, 200, km_debug_y + 40);
+                // 如果mouse id为0，则info左移后的ao位恰好为mouse_info_flag
                 if (info & mouse_info_flag) {
                     mouse_dec(&md, info);
                     gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 20, 8, info ^ mouse_info_flag, 16);
@@ -73,42 +73,39 @@ void MSC_main() {
                                km_debug_y + 20, 8, info, 16);
                 }
 
-                // gui_boxfill(vram, scr_x, COL8_FFFFFF, 100, km_debug_y + 40, 200, km_debug_y +
-                // 60); gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 40, 8, info ^ mouse_info_flag,
-                // 16);
-
-                // mouse_dec(&md, info ^ mouse_info_flag);
                 gui_boxfill(vram, scr_x, COL8_FFFFFF, 100, km_debug_y + 40, 200, km_debug_y + 80);
-                gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 40, 4, md.x, 10);
-                gui_putf_x(vram, scr_x, 0, 140, km_debug_y + 40, 4, md.y, 10);
-                gui_putf_x(vram, scr_x, 0, 180, km_debug_y + 40, 2, md.z, 16);
-                gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 60, 10, md.flags, 2);
-                // gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 60, 1, md.left, 2);
-                // gui_putf_x(vram, scr_x, 0, 116, km_debug_y + 60, 1, md.right, 2);
-                // gui_putf_x(vram, scr_x, 0, 132, km_debug_y + 60, 1, md.mid, 2);
-                // gui_putf_x(vram, scr_x, 0, 148, km_debug_y + 60, 1, md.btm, 2);
-                // gui_putf_x(vram, scr_x, 0, 164, km_debug_y + 60, 1, md.top, 2);
-                // gui_putf_x(vram, scr_x, 0, 188, km_debug_y + 60, 1, md.flags & 0x10, 2);
-                // gui_putf_x(vram, scr_x, 0, 196, km_debug_y + 60, 1, md.flags & 0x20, 2);
-                //     mx += md.x;
-                //     my += md.y;
-                //     if (mx < 0)
-                //         mx = 0, md.x = 0;
-                //     if (my < 0)
-                //         my = 0, md.y = 0;
-                //     if (mx > scr_x - 1)
-                //         mx = scr_x - 1, md.x = 0;
-                //     if (my > scr_y - 1)
-                //         my = scr_y - 1, md.y = 0;
-                //     new_mx = mx;
-                //     new_my = my;
-                //     // gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 400, 200,
-                //     420);
-                //     // gui_putf_x(vram, scr_x, 0, 0, 400, 10, new_mx, 10);
+                gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 40, 4, md.x, -10);
+                gui_putf_x(vram, scr_x, 0, 140, km_debug_y + 40, 4, md.y, -10);
+                gui_putf_x(vram, scr_x, (md.z & MOUSE_5) == MOUSE_5 ? 1 : 4, 180, km_debug_y + 40,
+                           1, md.z >> 4, 16);
+                gui_putf_x(vram, scr_x, 0, 192, km_debug_y + 40, 1, md.z & 0xf, 16);
+                // gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 60, 10, md.flags, 2);
+                gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 60, 1, md.left, 2);
+                gui_putf_x(vram, scr_x, 0, 116, km_debug_y + 60, 1, md.right, 2);
+                gui_putf_x(vram, scr_x, 0, 132, km_debug_y + 60, 1, md.mid, 2);
+                gui_putf_x(vram, scr_x, 0, 148, km_debug_y + 60, 1, md.btm, 2);
+                gui_putf_x(vram, scr_x, 0, 164, km_debug_y + 60, 1, md.top, 2);
+                gui_putf_x(vram, scr_x, 0, 180, km_debug_y + 60, 1,
+                           (md.flags & 0x10) != false, 2);
+                gui_putf_x(vram, scr_x, 0, 192, km_debug_y + 60, 1,
+                           (md.flags & 0x20) != false, 2);
+                mx += md.x;
+                my += md.y;
+                if (mx < 0)
+                    mx = 0, md.x = 0;
+                if (my < 0)
+                    my = 0, md.y = 0;
+                if (mx > scr_x - 1)
+                    mx = scr_x - 1, md.x = 0;
+                if (my > scr_y - 1)
+                    my = scr_y - 1, md.y = 0;
+                new_mx = mx;
+                new_my = my;
+                gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 400, 200, 420);
+                gui_putf_x(vram, scr_x, 0, 0, 400, 10, new_mx, 10);
 
-                //     // gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 500, 200,
-                //     520);
-                //     // gui_putf_x(vram, scr_x, 0, 0, 500, 10, new_my, 10);
+                gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 500, 200, 520);
+                gui_putf_x(vram, scr_x, 0, 0, 500, 10, new_my, 10);
             }
         } else {
             gui_putf_x(vram, scr_x, 0, 0, 0, 3, j, 10);
