@@ -22,18 +22,20 @@ void MSC_main() {
     init_gdtidt();
     init_pic();
 
-    sq_queue queue;
-    mouse_data md;
     int32_t i = 0, j = 0, mx = scr_x / 2, my = scr_y / 2, new_mx = -1, new_my = -1;
-    uint32_t info;
     uint16_t km_debug_y = 20, k_info_c = 0;
-    init_queue(&queue);
-    init_keyboard(&queue, keyboard_info_flag);
-    enable_mouse(&queue, mouse_info_flag);
+    uint32_t info, dinfo;
 
-    uint8_t s[20] = "MCS OS\0";
-    gui_putfs_asc816(vram, scr_x, 0, scr_x / 2, scr_y / 2, s);
-    gui_putfs_asc816(vram, scr_x, 15, scr_x / 2 + 1, scr_y / 2 + 1, s);
+    sq_queue queue;
+    keyboard_data kd;
+    mouse_data md;
+    kd.queue = &queue;
+    kd.info_flag = keyboard_info_flag;
+    md.queue = &queue;
+    md.info_flag = mouse_info_flag;
+    init_queue(&queue);
+    init_keyboard(&kd);
+    init_mouse(&md);
 
     for (;;) {
         gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 0, 200, 20);
@@ -57,19 +59,37 @@ void MSC_main() {
                 if (k_info_c > 4)
                     k_info_c = 0;
             } else if (info & mouse_info_flag) {
+                info <<= 8;
+                // 如果mouse id为0，则info左移后的ao位恰好为mouse_info_flag
                 gui_boxfill(vram, scr_x, COL8_FFFFFF, 100, km_debug_y + 20, 200, km_debug_y + 40);
-                gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 20, 8, info ^ mouse_info_flag, 16);
+                if (info & mouse_info_flag) {
+                    mouse_dec(&md, info);
+                    gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 20, 8, info ^ mouse_info_flag, 16);
+                } else {
+                    de_queue(&queue, &dinfo);
+                    info = (info << 16) | (dinfo ^ mouse_info_flag);
+                    mouse_dec(&md, info);
+                    gui_putf_x(vram, scr_x, (md.z & MOUSE_5) == MOUSE_5 ? 1 : 4, 100,
+                               km_debug_y + 20, 8, info, 16);
+                }
 
-                de_queue(&queue, &info);
-                gui_boxfill(vram, scr_x, COL8_FFFFFF, 100, km_debug_y + 40, 200, km_debug_y + 60);
-                gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 40, 8, info ^ mouse_info_flag, 16);
-
+                // gui_boxfill(vram, scr_x, COL8_FFFFFF, 100, km_debug_y + 40, 200, km_debug_y +
+                // 60); gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 40, 8, info ^ mouse_info_flag,
+                // 16);
 
                 // mouse_dec(&md, info ^ mouse_info_flag);
-                // gui_boxfill(vram, scr_x, COL8_FFFFFF, 100, km_debug_y + 40, 200, km_debug_y + 80);
-                // gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 40, 4, md.x, 10);
-                // gui_putf_x(vram, scr_x, 0, 150, km_debug_y + 40, 4, md.y, 10);
-                // gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 60, 10, md.flags, 2);
+                gui_boxfill(vram, scr_x, COL8_FFFFFF, 100, km_debug_y + 40, 200, km_debug_y + 80);
+                gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 40, 4, md.x, 10);
+                gui_putf_x(vram, scr_x, 0, 140, km_debug_y + 40, 4, md.y, 10);
+                gui_putf_x(vram, scr_x, 0, 180, km_debug_y + 40, 2, md.z, 16);
+                gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 60, 10, md.flags, 2);
+                // gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 60, 1, md.left, 2);
+                // gui_putf_x(vram, scr_x, 0, 116, km_debug_y + 60, 1, md.right, 2);
+                // gui_putf_x(vram, scr_x, 0, 132, km_debug_y + 60, 1, md.mid, 2);
+                // gui_putf_x(vram, scr_x, 0, 148, km_debug_y + 60, 1, md.btm, 2);
+                // gui_putf_x(vram, scr_x, 0, 164, km_debug_y + 60, 1, md.top, 2);
+                // gui_putf_x(vram, scr_x, 0, 188, km_debug_y + 60, 1, md.flags & 0x10, 2);
+                // gui_putf_x(vram, scr_x, 0, 196, km_debug_y + 60, 1, md.flags & 0x20, 2);
                 //     mx += md.x;
                 //     my += md.y;
                 //     if (mx < 0)

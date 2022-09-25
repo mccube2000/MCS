@@ -93,17 +93,21 @@ void gui_putfx(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, uint16_
 }
 
 void gui_putf_x(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, uint16_t y, uint16_t len,
-                int32_t num, uint8_t mod) {
+                int32_t num, int8_t mod) {
     uint8_t buf[32] = {0};
-    uint8_t i, f, temp;
+    uint8_t i, f, temp, pp = '0';
     int32_t m;
     f = 0;
     i = 30;
     m = num;
     if (len > 32)
         len = 32;
-    if (num < 0)
-        m = -m, f = 1;
+    if (mod < 0) {
+        mod = -mod;
+        pp = ' ';
+        if (num < 0)
+            m = -m, f = 1;
+    }
     len++;
     for (; len-- && m; i--) {
         temp = m % mod;
@@ -114,10 +118,11 @@ void gui_putf_x(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, uint16
         m /= mod;
     }
     if (f)
-        buf[i] = '-', i--;
+        buf[i] = '-', i--, len--;
     for (; len-- && len >= 0; i--)
-        buf[i] = '0';
-
+        buf[i] = pp;
+    if (num == 0 && pp == ' ')
+        buf[30] = '0';
     buf[31] = '\0';
     gui_putfs_asc816(vram, scr_x, color, x, y, buf + i + 1);
 }

@@ -9,7 +9,7 @@
 typedef uint32_t elem_type;
 
 // CircQueue1
-typedef struct {
+typedef struct sq_queue {
     elem_type data[MaxSize];
     int front, rear;
 } sq_queue;

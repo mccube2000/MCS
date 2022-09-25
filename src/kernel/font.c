@@ -1,12 +1,12 @@
 #include "types.h"
-typedef struct {
+typedef struct TableEntry {
     int8_t tag[4];
     int32_t checkSum;
     int32_t offset;
     int32_t length;
 } TableEntry;
 
-typedef struct {
+typedef struct TableDirectory {
     int32_t sfntversion; // 0x10000   for   version   1.0
     uint16_t numTables;
     uint16_t searchRange;

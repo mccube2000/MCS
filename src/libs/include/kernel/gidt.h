@@ -13,13 +13,13 @@
 #define AR_CODE32_ER 0x409a
 #define AR_INTGATE32 0x008e
 
-typedef struct {
+typedef struct SEGMENT_DESCRIPTOR {
     int16_t limit_low, base_low;
     int8_t base_mid, access_right;
     int8_t limit_high, base_high;
 } SEGMENT_DESCRIPTOR;
 
-typedef struct {
+typedef struct GATE_DESCRIPTOR {
     int16_t offset_low, selector;
     int8_t dw_count, access_right;
     int16_t offset_high;

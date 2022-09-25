@@ -18,7 +18,10 @@
         "algorithm": "c",
         "iterator": "c",
         "xmemory": "c",
-        "xutility": "c"
+        "xutility": "c",
+        "xstring": "c",
+        "xiosbase": "c",
+        "ios": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled",
 }

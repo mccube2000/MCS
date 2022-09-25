@@ -3,10 +3,6 @@
 #include "kernel/graphic.h"
 #include "types.h"
 
-extern struct bios_info *bootinfo;
-extern uint8_t *vram;
-extern uint16_t scr_x, scr_y;
-
 void init_pic() {
     io_out8(PIC0_IMR, 0xff); // 禁止所有中断
     io_out8(PIC1_IMR, 0xff); // 禁止所有中断
