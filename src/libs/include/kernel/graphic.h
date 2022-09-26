@@ -31,7 +31,7 @@ void gui_putfs_asc816(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, 
 void gui_putfx(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, uint16_t y, uint8_t n,
                uint8_t *s);
 void gui_putf_x(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, uint16_t y, uint16_t len,
-                int32_t num, int8_t mod);
+                uint32_t num, int8_t mod);
 void init_screen(uint8_t *vram, uint16_t x, uint16_t y);
 void init_mouse_cursor(uint8_t *mouse, uint8_t bc);
 void putblock(uint8_t *vram, uint16_t vxsize, uint16_t pxsize, uint16_t pysize, uint16_t px0,

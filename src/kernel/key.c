@@ -105,9 +105,9 @@ void mouse_dec(mouse_data *md, uint32_t data) {
     md->right = (data & 2) != false;
     md->mid = (data & 4) != false;
 
-    if ((md->flags & 0x10) != 0)
+    if (md->x && (md->flags & 0x10))
         md->x |= 0xff00;
-    if ((md->flags & 0x20) != 0)
+    if (md->y && (md->flags & 0x20))
         md->y |= 0xff00;
     md->y = -md->y;
 }
