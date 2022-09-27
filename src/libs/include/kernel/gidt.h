@@ -3,11 +3,11 @@
 
 #include "types.h"
 
-#define idt_addr 0x0026f800
+#define idt_addr 0x8002f800
 #define idt_size 0x000007ff
-#define gdt_addr 0x00270000
+#define gdt_addr 0x80030000
 #define gdt_size 0x0000ffff
-#define kernel_addr 0x00280000
+#define kernel_addr 0x80040000
 #define kernel_size 0x0007ffff
 #define AR_DATA32_RW 0x4092
 #define AR_CODE32_ER 0x409a

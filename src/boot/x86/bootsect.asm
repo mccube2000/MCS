@@ -1,5 +1,6 @@
-core_base_address   equ 0x00280000  ; 内核加载的起始内存地址 
-core_start_sector   equ 0x00000001  ; 内核的起始逻辑扇区号 
+core_base_address   equ 0x00040000  ; 内核加载的起始内存地址
+core_start_sector   equ 0x00000001  ; 内核的起始逻辑扇区号
+sector_count        equ 100         ; 加载扇区数量
 cyls                equ 0x0ff0      ; 引导扇区设置
 leds                equ 0x0ff1      ; led灯
 vmode               equ 0x0ff2      ; 关于颜色的信息
@@ -33,8 +34,8 @@ section mbr vstart=0x7c00
     mov ax, 0x4f00
     int 0x10
     cmp ax, 0x004f
-    jne scrn320
-    ; je scrn320
+    ; jne scrn320
+    je scrn320
     
     ; 检查VBE的版本
     mov ax, [es: di + 4]
@@ -76,7 +77,7 @@ scrn320:
     mov byte [vmode], 8
     mov word [scrnX], 320
     mov word [scrnY], 200
-    mov dword [vram], 0xa_0000
+    mov dword [vram], 0xa0000
 
     ; 转化图像模式
     mov al, 0x13
@@ -86,7 +87,7 @@ scrn320:
 start:
 
 ; GDT
-    lgdt [pgdt]
+    lgdt [gdt]
 
 ; A20
     in al, 0x92                     ; 南桥芯片内的端口
@@ -126,7 +127,54 @@ flush:
         inc eax
         loop @2                     ; 循环读
 
-    jmp core_base_address
+    ; jmp core_base_address
+
+         ;创建系统内核的页目录表PDT
+         mov ebx,0x00020000                 ;页目录表PDT的物理地址
+         
+         ;在页目录内创建指向页目录表自己的目录项
+         mov dword [ebx+4092],0x00020003 
+
+         mov edx,0x00021003                 ;MBR空间有限，后面尽量不使用立即数
+         ;在页目录内创建与线性地址0x00000000对应的目录项
+         mov [ebx+0x000],edx                ;写入目录项（页表的物理地址和属性）      
+                                            ;此目录项仅用于过渡。
+         ;在页目录内创建与线性地址0x80000000对应的目录项
+         mov [ebx+0x800],edx                ;写入目录项（页表的物理地址和属性）
+
+         ;创建与上面那个目录项相对应的页表，初始化页表项 
+         mov ebx,0x00021000                 ;页表的物理地址
+         xor eax,eax                        ;起始页的物理地址 
+         xor esi,esi
+  .b1:       
+         mov edx,eax
+         or edx,0x00000003                                                      
+         mov [ebx+esi*4],edx                ;登记页的物理地址
+         add eax,0x1000                     ;下一个相邻页的物理地址 
+         inc esi
+         cmp esi,1024                        ;仅低端1MB内存对应的页才是有效的 
+         jl .b1
+         
+         ;令CR3寄存器指向页目录，并正式开启页功能 
+         mov eax,0x00020000                 ;PCD=PWT=0
+         mov cr3,eax
+
+         ;将GDT的线性地址映射到从0x80000000开始的相同位置 
+         sgdt [gdt]
+         mov ebx,[gdt+2]
+         add dword [gdt+2],0x80000000      ;GDTR也用的是线性地址
+         lgdt [gdt]
+
+         mov eax,cr0
+         or eax,0x80000000
+         mov cr0,eax                        ;开启分页机制
+   
+         ;将堆栈映射到高端，这是非常容易被忽略的一件事。应当把内核的所有东西
+         ;都移到高端，否则，一定会和正在加载的用户任务局部空间里的内容冲突，
+         ;而且很难想到问题会出在这里。 
+         add esp,0x80000000
+                                             
+         jmp 0x80040000
 
 read_hard_disk_0:
     ; EAX=逻辑扇区号
@@ -185,11 +233,11 @@ read_hard_disk_0:
 
     ret
 
-pgdt:
-    dw     3 * 8 - 1
-    dd     gdt                      ; GDT的物理/线性地址
-
 gdt:
+    dw     3 * 8 - 1
+    dd     gdt0                     ; GDT的物理/线性地址
+
+gdt0:
     dd      0, 0
     dd      0x0000ffff, 0x00cf9a00  ; 代码段
     dd      0x0000ffff, 0x00cf9200  ; 数据段
