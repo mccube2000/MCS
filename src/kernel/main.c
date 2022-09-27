@@ -1,5 +1,6 @@
 #include "algorithm/queue.h"
 #include "kernel/asmfunc.h"
+#include "kernel/debug.h"
 #include "kernel/gidt.h"
 #include "kernel/graphic.h"
 #include "kernel/info.h"
@@ -23,8 +24,7 @@ void MSC_main() {
     init_pic();
 
     uint8_t mcursor[256];
-    uint16_t km_debug_y = 20, k_info_c = 0;
-    int32_t i = 0, j = 0, mx = scr_x / 2, my = scr_y / 2, new_mx = -1, new_my = -1;
+    int32_t mx = scr_x / 2, my = scr_y / 2, new_mx = -1, new_my = -1;
     uint32_t info, dinfo;
 
     sq_queue queue;
@@ -41,56 +41,22 @@ void MSC_main() {
     putblock(vram, scr_x, 8, 16, mx, my, mcursor, 8);
 
     for (;;) {
-        gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 0, 200, 20);
-        i++;
-        if (i % 1000 == 0) {
-            i = 0;
-            j++;
-            gui_putf_x(vram, scr_x, 0, 0, 0, 3, j, 10);
-        }
+        loop_dbg();
         if (de_queue(&queue, &info)) {
-            gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, km_debug_y, 200, km_debug_y + 20);
-            gui_putf_x(vram, scr_x, 0, 0, km_debug_y, 8, info, 16);
-            gui_putf_x(vram, scr_x, 0, 100, km_debug_y, 8, info, 16);
+            info_dbg(info);
             if (info & keyboard_info_flag) {
-                gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, km_debug_y + 20, 100, km_debug_y + 40);
-                gui_putf_x(vram, scr_x, 0, 0, km_debug_y + 20, 8, info ^ keyboard_info_flag, 16);
-                gui_boxfill(vram, scr_x, COL8_FFFFFF, k_info_c * 20, km_debug_y + 40,
-                            k_info_c * 20 + 20, km_debug_y + 60);
-                gui_putf_x(vram, scr_x, 0, k_info_c++ * 20, km_debug_y + 40, 2,
-                           info ^ keyboard_info_flag, 16);
-                if (k_info_c > 4)
-                    k_info_c = 0;
+
+                key_dbg(info);
             } else if (info & mouse_info_flag) {
                 info <<= 8;
-                gui_boxfill(vram, scr_x, COL8_FFFFFF, 100, km_debug_y + 20, 200, km_debug_y + 40);
                 // 如果mouse id为0，则info左移后的ao位恰好为mouse_info_flag
                 if (info & mouse_info_flag) {
                     mouse_dec(&md, info);
-                    gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 20, 8, info, 16);
                 } else {
                     de_queue(&queue, &dinfo);
                     info = (info << 16) | (dinfo ^ mouse_info_flag);
                     mouse_dec(&md, info);
-                    gui_putf_x(vram, scr_x, (md.z & MOUSE_5) == MOUSE_5 ? 1 : 4, 100,
-                               km_debug_y + 20, 8, info, 16);
                 }
-
-                gui_boxfill(vram, scr_x, COL8_FFFFFF, 100, km_debug_y + 40, 200, km_debug_y + 80);
-                gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 40, 4, md.x, -16);
-                gui_putf_x(vram, scr_x, 0, 140, km_debug_y + 40, 4, md.y, -16);
-                gui_putf_x(vram, scr_x, (md.z & MOUSE_5) == MOUSE_5 ? 1 : 4, 180, km_debug_y + 40,
-                           1, md.z >> 4, 16);
-                gui_putf_x(vram, scr_x, 0, 192, km_debug_y + 40, 1, md.z & 0xf, 16);
-                // gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 60, 10, md.flags, 2);
-                gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 60, 1, md.left, 2);
-                gui_putf_x(vram, scr_x, 0, 116, km_debug_y + 60, 1, md.right, 2);
-                gui_putf_x(vram, scr_x, 0, 132, km_debug_y + 60, 1, md.mid, 2);
-                gui_putf_x(vram, scr_x, 0, 148, km_debug_y + 60, 1, md.btm, 2);
-                gui_putf_x(vram, scr_x, 0, 164, km_debug_y + 60, 1, md.top, 2);
-                gui_putf_x(vram, scr_x, 0, 180, km_debug_y + 60, 1, (md.flags & 0x10) != false, 2);
-                gui_putf_x(vram, scr_x, 0, 192, km_debug_y + 60, 1, (md.flags & 0x20) != false, 2);
-
                 gui_boxfill(vram, scr_x, COL8_008484, mx, my, mx + 8, my + 16);
                 mx += md.x;
                 my += md.y;
@@ -110,10 +76,10 @@ void MSC_main() {
                 gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 500, 200, 520);
                 gui_putf_x(vram, scr_x, 0, 0, 500, 10, new_my, 10);
                 putblock(vram, scr_x, 8, 16, new_mx, new_my, mcursor, 8);
+
+                mouse_dbg(&md, info);
             }
         } else {
-            gui_putf_x(vram, scr_x, 0, 0, 0, 3, j, 10);
-            gui_putf_x(vram, scr_x, 0, 100, 0, 3, i, 10);
             hlt();
         }
     }

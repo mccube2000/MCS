@@ -119,7 +119,7 @@ void gui_putf_x(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, uint16
     }
     if (f)
         buf[i] = '-', i--, len--;
-    for (; len-- && len >= 0 && i>=0; i--)
+    for (; len-- && len >= 0 && i >= 0; i--)
         buf[i] = pp;
     if (num == 0 && pp == ' ')
         buf[30] = '0';
