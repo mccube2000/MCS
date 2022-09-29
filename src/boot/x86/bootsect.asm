@@ -17,6 +17,12 @@ vram                equ 0x0ff8      ; 图像缓冲区的起始地址
 vbe_mode            equ 0x105       ; 1024 x  768 x 8bit 彩色
 
 section mbr vstart=0x7c00
+    jmp start
+
+    ; 为文件系统预留
+    times 72 db 0
+
+start:
 ; 初始化寄存器
     mov ax, cs
     mov sp, 0x7c00
@@ -69,7 +75,7 @@ section mbr vstart=0x7c00
     mov [scrnY], ax
     mov eax, [es: di + 0x28]
     mov [vram], eax
-    jmp start
+    jmp to32
 
 ; VGA显卡，320 x 200 x 8bit
 scrn320:
@@ -84,8 +90,7 @@ scrn320:
     mov ah, 0x00
     int 0x10
 
-start:
-
+to32:
 ; GDT
     lgdt [gdt]
 
@@ -117,15 +122,14 @@ flush:
     mov ss, eax                     ; 加载堆栈段(4GB)选择子
     mov esp, 0x7c00                 ; 堆栈指针
 
-
 ; 加载内核至内存
     mov ecx, 100                     ; 32位模式下的LOOP使用ECX，读取扇区数量
     mov eax, core_start_sector
     mov ebx, core_base_address      ; 起始地址
-    @2:
+    @1:
         call read_hard_disk_0
         inc eax
-        loop @2                     ; 循环读
+        loop @1                     ; 循环读
 
 ; 准备页表，一级页表
     mov ebx, 0x00010000             ; 页目录表PDT的物理地址
@@ -141,44 +145,42 @@ flush:
         sub eax, 0x1000
         loop cpd
 
+; 准备页表，二级页表
     mov ebx, 0x00011000             ; 初始化第一个目录项，对应0-0x3ff_fff物理内存
     mov ecx, 0x00000003
-    .b0
+    pte:
         xor eax, eax
         xor esi, esi
-        .b1:
+        lp:
             mov edx, eax
             or edx, ecx
-            mov [ebx + esi * 4], edx;登记页的物理地址
+            mov [ebx + esi * 4], edx; 登记页的物理地址
             add eax, 0x1000         ; 下一个相邻页的物理地址
             inc esi
             cmp esi, 0x400          ; 仅低端1MB内存对应的页才是有效的
-            jl .b1
+            jl lp
+
     cmp ecx, 0x00000003             ; 显存页初始化完成后，跳转至pgo
     jne pgo
-    mov ebx, 0x00391000             ; 显存对应页
-    mov ecx, 0xe0000003             ; 显存物理地址0xe0000_000
-    jmp .b0
+
+    mov eax, [vram]
+    or eax, 0x00000003
+    mov ecx, eax                    ; 显存物理地址 + 低12位
+    shr eax, 10
+    add ebx, eax                    ; 显存对应页
+    jmp pte
 
 pgo:
     ; 令CR3寄存器指向页目录，并正式开启页功能 
     mov eax, 0x00010000             ; PCD = PWT = 0
     mov cr3, eax
 
-         ;将GDT的线性地址映射到从0x80000000开始的相同位置 
-        ;  sgdt [gdt]
-        ;  mov ebx,[gdt+2]
-        ;  add dword [gdt+2],0x80000000      ;GDTR也用的是线性地址
-        ;  lgdt [gdt]
-
-    mov eax,cr0
-    or eax,0x80000000
-    mov cr0,eax                        ;开启分页机制
+    mov eax, cr0
+    or eax, 0x80000000
+    mov cr0, eax                    ; 开启分页机制
 
     jmp core_base_address
-    hh:
-        hlt
-        jmp hh
+
 read_hard_disk_0:
     ; EAX=逻辑扇区号
     ; DS:EBX=目标缓冲区地址
@@ -244,7 +246,6 @@ gdt0:
     dd      0, 0
     dd      0x0000ffff, 0x00cf9a00  ; 代码段
     dd      0x0000ffff, 0x00cf9200  ; 数据段
-    dd      0, 0
 
 times 510-($-$$) db 0
 db 0x55, 0xaa
