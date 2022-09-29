@@ -10,4 +10,5 @@ build = str(env['BUILD'] / root.relative_to(env['SRC']))
 env.Object(
     f'{build}\\boot.bin',
     ['bootsect.asm'],
+    # ASFLAGS='-l bootsect.list -f bin',
 )

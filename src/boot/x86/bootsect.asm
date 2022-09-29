@@ -20,7 +20,7 @@ section mbr vstart=0x7c00
     jmp start
 
     ; 为文件系统预留
-    times 72 db 0
+    times 79 db 0
 
 start:
 ; 初始化寄存器
@@ -131,43 +131,52 @@ flush:
         inc eax
         loop @1                     ; 循环读
 
-; 准备页表，一级页表
-    mov ebx, 0x00010000             ; 页目录表PDT的物理地址
+; 准备临时页表，一级页表
+    mov ebx, 0x00010000             ; 临时页目录表PDT的物理地址
     mov edx, ebx
     or edx, 0x00000003
     mov [ebx + 0xffc], edx          ; 对应页目录表自己的目录项
 
     mov ecx, 0x3ff
-    mov eax, 0x40f003
-    sub ebx, 4                      ; 页目录表PDT的物理地址 - 4
+    mov eax, 0x40f003               ; 时页目录表中最后一个目录项的物理地址
+    sub ebx, 4                      ; 页目录表的物理地址 - 4
     cpd:
-        mov [ebx + ecx * 4], eax    ; 从第0项到第0x3fe项
+        mov [ebx + ecx * 4], eax    ; 从第0项到第0x3fe项目录项的物理地址
         sub eax, 0x1000
         loop cpd
 
 ; 准备页表，二级页表
-    mov ebx, 0x00011000             ; 初始化第一个目录项，对应0-0x3ff_fff物理内存
-    mov ecx, 0x00000003
-    pte:
-        xor eax, eax
-        xor esi, esi
-        lp:
-            mov edx, eax
-            or edx, ecx
-            mov [ebx + esi * 4], edx; 登记页的物理地址
-            add eax, 0x1000         ; 下一个相邻页的物理地址
-            inc esi
-            cmp esi, 0x400          ; 仅低端1MB内存对应的页才是有效的
-            jl lp
+    ; mov ebx, 0x00011000             ; 初始化第一个目录项，对应0-0x3ff_fff物理内存
+    ; mov ecx, 0x00000003
+    ; pte:
+    ;     xor eax, eax
+    ;     xor esi, esi
+    ;     lp:
+    ;         mov edx, eax
+    ;         or edx, ecx
+    ;         mov [ebx + esi * 4], edx; 登记页的物理地址
+    ;         add eax, 0x1000         ; 下一个相邻页的物理地址
+    ;         inc esi
+    ;         cmp esi, 0x400          ; 仅低端1MB内存对应的页才是有效的
+    ;         jl lp
 
-    cmp ecx, 0x00000003             ; 显存页初始化完成后，跳转至pgo
+    mov ebx, 0x00010ffc             ; 第一个目录项的物理地址 - 4，对应0-0x3ff_fff物理内存
+    mov eax, 0x00400003             ; 第一个目录项的最后一个页表项 + 0x1000后的值
+    pte:
+        mov ecx, 0x400
+        cpt:
+            sub eax, 0x1000
+            mov [ebx + ecx * 4], eax; 从第0项到第0x3ff项
+            loop cpt
+
+    cmp eax, 0x00000003             ; 显存页初始化完成后，跳转至pgo
     jne pgo
 
     mov eax, [vram]
-    or eax, 0x00000003
-    mov ecx, eax                    ; 显存物理地址 + 低12位
-    shr eax, 10
-    add ebx, eax                    ; 显存对应页
+    shr eax, 10                     ; 计算显存对应的页目录项偏移
+    add ebx, eax                    ; 显存对应的目录项基地址 - 4
+    shl eax, 10                     ; 复原显存
+    add eax, 0x00400003             ; 计算目录项的最后一个页表项 + 0x1000后的值
     jmp pte
 
 pgo:
