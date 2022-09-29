@@ -28,7 +28,7 @@ void key_dbg(uint32_t info) {
         k_info_c = 0;
 }
 
-void mouse_dbg(mouse_data *md, uint32_t info) {
+void mouse_dbg(mouse_data *md, uint32_t info, int32_t mx, int32_t my) {
     gui_boxfill(vram, scr_x, COL8_FFFFFF, 100, km_debug_y + 20, 200, km_debug_y + 40);
     gui_putf_x(vram, scr_x, (md->z & MOUSE_5) == MOUSE_5 ? 1 : 4, 100, km_debug_y + 20, 8, info,
                16);
@@ -46,12 +46,18 @@ void mouse_dbg(mouse_data *md, uint32_t info) {
     gui_putf_x(vram, scr_x, 0, 164, km_debug_y + 60, 1, md->top, 2);
     gui_putf_x(vram, scr_x, 0, 180, km_debug_y + 60, 1, (md->flags & 0x10) != false, 2);
     gui_putf_x(vram, scr_x, 0, 192, km_debug_y + 60, 1, (md->flags & 0x20) != false, 2);
+
+    gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 400, 200, 420);
+    gui_putf_x(vram, scr_x, 0, 0, 400, 10, mx, 10);
+
+    gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 500, 200, 520);
+    gui_putf_x(vram, scr_x, 0, 0, 500, 10, my, 10);
 }
 #endif
 #ifndef KM_DBG
 void info_dbg(uint32_t info) {}
 void key_dbg(uint32_t info) {}
-void mouse_dbg(mouse_data *md, uint32_t info) {}
+void mouse_dbg(mouse_data *md, uint32_t info, int32_t mx, int32_t my) {}
 #endif
 
 #ifdef LOOP_DBG

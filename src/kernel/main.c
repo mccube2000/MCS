@@ -24,7 +24,7 @@ void MSC_main() {
     init_pic();
 
     uint8_t mcursor[256];
-    int32_t mx = scr_x / 2, my = scr_y / 2, new_mx = -1, new_my = -1;
+    int32_t mx = scr_x / 2, my = scr_y / 2, old_mx = -1, old_my = -1;
     uint32_t info, dinfo;
 
     sq_queue queue;
@@ -39,6 +39,10 @@ void MSC_main() {
     init_mouse(&md);
     init_mouse_cursor(mcursor, COL8_008484);
     putblock(vram, scr_x, 8, 16, mx, my, mcursor, 8);
+
+    uint8_t s[20] = "MCS OS\0";
+    gui_putfs_asc816(vram, scr_x, 0, scr_x / 2, scr_y / 2, s);
+    gui_putfs_asc816(vram, scr_x, 15, scr_x / 2 + 1, scr_y / 2 + 1, s);
 
     for (;;) {
         loop_dbg();
@@ -68,16 +72,10 @@ void MSC_main() {
                     mx = scr_x - 1, md.x = 0;
                 if (my > scr_y - 1)
                     my = scr_y - 1, md.y = 0;
-                new_mx = mx;
-                new_my = my;
-                gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 400, 200, 420);
-                gui_putf_x(vram, scr_x, 0, 0, 400, 10, new_mx, 10);
-
-                gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 500, 200, 520);
-                gui_putf_x(vram, scr_x, 0, 0, 500, 10, new_my, 10);
-                putblock(vram, scr_x, 8, 16, new_mx, new_my, mcursor, 8);
-
-                mouse_dbg(&md, info);
+                old_mx = mx;
+                old_my = my;
+                putblock(vram, scr_x, 8, 16, mx, my, mcursor, 8);
+                mouse_dbg(&md, info, mx, my);
             }
         } else {
             hlt();

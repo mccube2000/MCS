@@ -5,10 +5,6 @@
 #include "kernel/int.h"
 #include "types.h"
 
-extern struct bios_info *bootinfo;
-extern uint8_t *vram;
-extern uint16_t scr_x, scr_y;
-
 keyboard_data *kd;
 mouse_data *md;
 
@@ -32,9 +28,9 @@ void inthandler21(int32_t *esp) {
 
 void set_to_mouse(uint8_t data) {
     wait_KBC_sendready();
-    io_out8(PORT_KEYCMD, KEYCMD_SENDTO_MOUSE); // tell the controller to address the mouse
+    io_out8(PORT_KEYCMD, KEYCMD_SENDTO_MOUSE);
     wait_KBC_sendready();
-    io_out8(PORT_KEYDAT, data); // write the parameter to the controller's data port
+    io_out8(PORT_KEYDAT, data);
 }
 
 uint8_t get_mouse_id() {
@@ -83,12 +79,8 @@ void init_mouse(mouse_data *data) {
 
 void mouse_dec(mouse_data *md, uint32_t data) {
     uint8_t temp_z = data & 0xff;
-    if ((data >>= 8) == 0xfafafa) {
-        uint8_t s[20] = "MCS OS\0";
-        gui_putfs_asc816(vram, scr_x, 0, scr_x / 2, scr_y / 2, s);
-        gui_putfs_asc816(vram, scr_x, 15, scr_x / 2 + 1, scr_y / 2 + 1, s);
+    if ((data >>= 8) == 0xfafafa)
         return;
-    }
     md->z &= 0xf0;
     if ((md->z & MOUSE_5) == MOUSE_5) {
         md->btm = (temp_z & 0x10) != false;
@@ -120,12 +112,3 @@ void inthandler2c(int32_t *esp) {
     en_queue(md->queue, md->info_flag | io_in8(PORT_KEYDAT) << 16 | io_in8(PORT_KEYDAT) << 8 |
                             io_in8(PORT_KEYDAT));
 }
-
-// void set_to_mouse1(uint8_t data) {
-//     io_out8(PORT_KEYCMD, KEYCMD_SENDTO_MOUSE); // tell the controller to address the mouse
-//     io_out8(PORT_KEYDAT, data);                // write the parameter to the controller's data
-//     port while (!(io_in8(PORT_KEYSTA) & 1))         // wait until we can read
-//         pause();
-//     if (io_in8(PORT_KEYDAT) != 0xfa) // read back acknowledge. This should be 0xFA
-//         return false;
-// }
