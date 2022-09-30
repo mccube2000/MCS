@@ -22,7 +22,8 @@ void MSC_main() {
     init_screen(vram, scr_x, scr_y);
     init_gdtidt();
     init_pic();
-
+    init_memory();
+    
     uint8_t mcursor[256];
     int32_t mx = scr_x / 2, my = scr_y / 2, old_mx = -1, old_my = -1;
     uint32_t info, dinfo;

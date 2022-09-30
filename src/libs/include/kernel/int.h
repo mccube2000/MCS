@@ -17,8 +17,6 @@
 #define PIC1_ICW4 0x00a1
 
 void init_pic(void);
-void inthandler21(int32_t *esp);
 void inthandler2c(int32_t *esp);
-void inthandler27(int32_t *esp);
 
 #endif
