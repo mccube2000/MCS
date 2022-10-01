@@ -295,7 +295,7 @@ times 510-($-$$) db 0
 db 0x55, 0xaa
 
 ; 准备页表，一级页表
-    mov ebx, 0x00011000             ; 页目录表PDT的物理地址
+    mov ebx, 0x00001000             ; 页目录表PDT的物理地址
     mov edx, ebx
     or edx, 0x00000003
     mov [ebx + 0xffc], edx          ; 对应页目录表自己的目录项
@@ -327,7 +327,7 @@ db 0x55, 0xaa
 
 pgo:
     ; 令CR3寄存器指向页目录，并正式开启页功能 
-    mov eax, 0x00011000             ; PCD = PWT = 0
+    mov eax, 0x00001000             ; PCD = PWT = 0
     mov cr3, eax
 
     mov eax, cr0

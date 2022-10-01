@@ -8,7 +8,7 @@ void init_gdtidt() {
     GATE_DESCRIPTOR *idt = (GATE_DESCRIPTOR *)idt_addr;
     uint16_t i;
 
-    for (i = 0; i < 8192; i++) {
+    for (i = 0; i < 64; i++) {
         set_segmdesc(gdt + i, 0, 0, 0);
     }
 
