@@ -1,12 +1,12 @@
-core_base_address   equ 0x00040000  ; 内核加载的起始内存地址
+asn_core_base_addr  equ 0x004ffe00  ; 内核汇编代码加载的起始内存地址
 core_start_sector   equ 0x00000001  ; 内核的起始逻辑扇区号
 sector_count        equ 100         ; 加载扇区数量
-cyls                equ 0x0ff0      ; 引导扇区设置
-leds                equ 0x0ff1      ; led灯
-vmode               equ 0x0ff2      ; 关于颜色的信息
-scrnX               equ 0x0ff4      ; 屏幕X分辨率
-scrnY               equ 0x0ff6      ; 屏幕Y分辨率
-vram                equ 0x0ff8      ; 图像缓冲区的起始地址
+cyls                equ 0x500       ; 保存加载扇区数量
+leds                equ 0x502       ; 保存led灯
+vmode               equ 0x503       ; 保存关于颜色的信息
+scrnX               equ 0x504       ; 保存屏幕X分辨率
+scrnY               equ 0x506       ; 保存屏幕Y分辨率
+vram                equ 0x508       ; 保存图像缓冲区的起始地址
 
 ; 显示模式
 ; 0x100       ;  640 x  400 x 8bit 彩色
@@ -20,7 +20,7 @@ section mbr vstart=0x7c00
     jmp start
 
     ; 为文件系统预留
-    times 79 db 0
+    times 0x60 db 0
 
 start:
 ; 初始化寄存器
@@ -31,6 +31,97 @@ start:
     mov ah, 0x02
     int 0x16                        ; keyboard BIOS
     mov [leds], al
+
+; 保存内存e820信息
+; ==============================================
+; do_e820:
+;     mov di, 0x8004                  ; Set di to 0x8004. Otherwise this code will get stuck in `int 0x15` after some entries are fetched 
+;     xor ebx, ebx                    ; ebx must be 0 to start
+;     xor bp, bp                      ; keep an entry count in bp
+;     mov edx, 0x0534D4150            ; Place "SMAP" into edx
+;     mov eax, 0xe820
+;     mov [es:di + 20], dword 1       ; force a valid ACPI 3.X entry
+;     mov ecx, 24                     ; ask for 24 bytes
+;     int 0x15
+;     jc .failed                      ; carry set on first call means "unsupported function"
+;     mov edx, 0x0534D4150            ; Some BIOSes apparently trash this register?
+;     cmp eax, edx                    ; on success, eax must have been reset to "SMAP"
+;     jne .failed
+;     test ebx, ebx                   ; ebx = 0 implies list is only 1 entry long (worthless)
+;     je .failed
+;     jmp .jmpin
+; .e820lp:
+;     mov eax, 0xe820                 ; eax, ecx get trashed on every int 0x15 call
+;     mov [es:di + 20], dword 1       ; force a valid ACPI 3.X entry
+;     mov ecx, 24                     ; ask for 24 bytes again
+;     int 0x15
+;     jc .e820f                       ; carry set means "end of list already reached"
+;     mov edx, 0x0534D4150            ; repair potentially trashed register
+; .jmpin:
+;     jcxz .skipent                   ; skip any 0 length entries
+;     cmp cl, 20                      ; got a 24 byte ACPI 3.X response?
+;     jbe .notext
+;     test byte [es:di + 20], 1       ; if so: is the "ignore this data" bit clear?
+;     je .skipent
+; .notext:
+;     mov ecx, [es:di + 8]            ; get lower uint32_t of memory region length
+;     or ecx, [es:di + 12]            ; "or" it with upper uint32_t to test for zero
+;     jz .skipent                     ; if length uint64_t is 0, skip entry
+;     inc bp                          ; got a good entry: ++count, move to next storage spot
+;     add di, 24
+; .skipent:
+;     test ebx, ebx                   ; if ebx resets to 0, list is complete
+;     jne .e820lp
+; .e820f:
+;     mov [mmap_ent], bp              ; store the entry count
+; .failed:
+; ==============================================
+    mov di, 0x8004
+    xor ebx, ebx
+    xor bp, bp
+    mov edx, 0x534d4150
+  .e820lp:
+    mov eax, 0xe820
+    mov [es:di + 20], dword 1
+    mov ecx, 24
+    int 0x15
+    jc .e820f
+    mov edx, 0x0534D4150
+    jcxz .skipent                   ; skip any 0 length entries
+    cmp cl, 20                      ; got a 24 byte ACPI 3.X response?
+    jbe .notext
+    test byte [es:di + 20], 1       ; if so: is the "ignore this data" bit clear?
+    je .skipent
+.notext:
+    mov ecx, [es:di + 8]            ; get lower uint32_t of memory region length
+    or ecx, [es:di + 12]            ; "or" it with upper uint32_t to test for zero
+    jz .skipent                     ; if length uint64_t is 0, skip entry
+    inc bp                          ; got a good entry: ++count, move to next storage spot
+    add di, 24
+.skipent:
+    test ebx, ebx                   ; if ebx resets to 0, list is complete
+    jne .e820lp
+.e820f:
+    mov [0x8000], bp              ; store the entry count
+
+;     ;在所有ards结构中找出（base_addr_low + length_low)的最大值，即为内存的容量
+;     mov cx, [ards_nr]
+;     mov ebx, ards_buf
+;     xor edx, edx
+;   .find_max_mem_area:
+;     mov eax, [ebx]  ;base_addr_low
+;     add eax, [ebx + 8] ;length_low
+;     add ebx, 20
+;     cmp edx, eax
+;     jge .next_ards
+;     mov edx, eax
+;   .next_ards:
+;     loop .find_max_mem_area
+;     jmp .mem_get_ok
+
+;   .mem_get_ok:
+;     mov [0x7ff0], edx
+; ==============================================
 
 ; 设置VBE显示模式
     ; 检查VBE
@@ -120,75 +211,19 @@ flush:
     mov fs, eax
     mov gs, eax
     mov ss, eax                     ; 加载堆栈段(4GB)选择子
-    mov esp, 0x7c00                 ; 堆栈指针
+    mov esp, 0x9f000                ; 堆栈指针
 
 ; 加载内核至内存
-    mov ecx, 100                     ; 32位模式下的LOOP使用ECX，读取扇区数量
+    mov ecx, sector_count           ; 32位模式下的LOOP使用ECX，读取扇区数量
+    mov [cyls], cx
     mov eax, core_start_sector
-    mov ebx, core_base_address      ; 起始地址
+    mov ebx, asn_core_base_addr     ; 起始地址
     @1:
         call read_hard_disk_0
         inc eax
         loop @1                     ; 循环读
 
-; 准备临时页表，一级页表
-    mov ebx, 0x00010000             ; 临时页目录表PDT的物理地址
-    mov edx, ebx
-    or edx, 0x00000003
-    mov [ebx + 0xffc], edx          ; 对应页目录表自己的目录项
-
-    mov ecx, 0x3ff
-    mov eax, 0x40f003               ; 时页目录表中最后一个目录项的物理地址
-    sub ebx, 4                      ; 页目录表的物理地址 - 4
-    cpd:
-        mov [ebx + ecx * 4], eax    ; 从第0项到第0x3fe项目录项的物理地址
-        sub eax, 0x1000
-        loop cpd
-
-; 准备页表，二级页表
-    ; mov ebx, 0x00011000             ; 初始化第一个目录项，对应0-0x3ff_fff物理内存
-    ; mov ecx, 0x00000003
-    ; pte:
-    ;     xor eax, eax
-    ;     xor esi, esi
-    ;     lp:
-    ;         mov edx, eax
-    ;         or edx, ecx
-    ;         mov [ebx + esi * 4], edx; 登记页的物理地址
-    ;         add eax, 0x1000         ; 下一个相邻页的物理地址
-    ;         inc esi
-    ;         cmp esi, 0x400          ; 仅低端1MB内存对应的页才是有效的
-    ;         jl lp
-
-    mov ebx, 0x00010ffc             ; 第一个目录项的物理地址 - 4，对应0-0x3ff_fff物理内存
-    mov eax, 0x00400003             ; 第一个目录项的最后一个页表项 + 0x1000后的值
-    pte:
-        mov ecx, 0x400
-        cpt:
-            sub eax, 0x1000
-            mov [ebx + ecx * 4], eax; 从第0项到第0x3ff项
-            loop cpt
-
-    cmp eax, 0x00000003             ; 显存页初始化完成后，跳转至pgo
-    jne pgo
-
-    mov eax, [vram]
-    shr eax, 10                     ; 计算显存对应的页目录项偏移
-    add ebx, eax                    ; 显存对应的目录项基地址 - 4
-    shl eax, 10                     ; 复原显存
-    add eax, 0x00400003             ; 计算目录项的最后一个页表项 + 0x1000后的值
-    jmp pte
-
-pgo:
-    ; 令CR3寄存器指向页目录，并正式开启页功能 
-    mov eax, 0x00010000             ; PCD = PWT = 0
-    mov cr3, eax
-
-    mov eax, cr0
-    or eax, 0x80000000
-    mov cr0, eax                    ; 开启分页机制
-
-    jmp core_base_address
+    jmp asn_core_base_addr
 
 read_hard_disk_0:
     ; EAX=逻辑扇区号
@@ -258,3 +293,56 @@ gdt0:
 
 times 510-($-$$) db 0
 db 0x55, 0xaa
+
+; 准备页表，一级页表
+    mov ebx, 0x00011000             ; 页目录表PDT的物理地址
+    mov edx, ebx
+    or edx, 0x00000003
+    mov [ebx + 0xffc], edx          ; 对应页目录表自己的目录项
+
+    mov ecx, 0x3ff
+    mov eax, 0x4fe003               ; 页目录表中最后一个目录项的物理地址
+    sub ebx, 4                      ; 页目录表的物理地址 - 4
+    cpd:
+        mov [ebx + ecx * 4], eax    ; 从第0项到第0x3fe项目录项的物理地址
+        sub eax, 0x1000
+        loop cpd
+
+; 准备页表，二级页表
+    mov ebx, 0x000ffffc             ; 第一个目录项的物理地址 - 4，对应0-4M物理内存
+    mov eax, 0x00400003             ; 第一个目录项的最后一个页表项 + 0x1000后的值
+    call pte
+
+    mov ebx, 0x00100ffc             ; 第二个目录项基地址 - 4，对应4-8M物理内存
+    mov eax, 0x00800003             ; 计算目录项的最后一个页表项 + 0x1000后的值
+    call pte
+
+    mov ebx, 0x000ffffc             ; 第一个目录项的物理地址 - 4
+    mov eax, [vram]
+    shr eax, 10                     ; 计算显存对应的页目录项偏移
+    add ebx, eax                    ; 显存对应的目录项基地址 - 4，对应显存
+    shl eax, 10                     ; 复原显存
+    add eax, 0x00400003             ; 计算目录项的最后一个页表项 + 0x1000后的值
+    call pte
+
+pgo:
+    ; 令CR3寄存器指向页目录，并正式开启页功能 
+    mov eax, 0x00011000             ; PCD = PWT = 0
+    mov cr3, eax
+
+    mov eax, cr0
+    or eax, 0x80000000
+    mov cr0, eax                    ; 开启分页机制
+
+    jmp c_core
+
+pte:
+    mov ecx, 0x400
+    cpt:
+        sub eax, 0x1000
+        mov [ebx + ecx * 4], eax; 从第0项到第0x3ff项
+        loop cpt
+    ret
+
+times 1024-($-$$) db 0
+c_core:

@@ -39,10 +39,10 @@ env = env.Clone(run=GetOption('run'))
 cmd = ''
 print(env['run'])
 if env['run'] != None:
-    bcmd = f'dd if={build}\\boot\\x86\\boot.bin of={vhd} bs=512 count=1'
+    bcmd = f'dd if={build}\\boot\\x86\\boot.bin of={vhd} bs=512 count=2'
     print(bcmd)
     os.system(bcmd)
-    bcmd = f'dd if={build}\\kernel\\kernel.bin of={vhd} bs=512 count=100 seek=1'
+    bcmd = f'dd if={build}\\kernel\\kernel.bin of={vhd} bs=512 count=100 seek=2'
     print(bcmd)
     os.system(bcmd)
     if env['run'] == 'vhd':

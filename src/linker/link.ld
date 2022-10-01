@@ -1,7 +1,7 @@
 ENTRY(_MSC_main)
 SECTIONS
 {
-	. = 0x00040000;
+	. = 0x00500000;
 	.text :
 	{
 		*(.text)
