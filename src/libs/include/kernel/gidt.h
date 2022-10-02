@@ -3,12 +3,6 @@
 
 #include "types.h"
 
-#define kernel_addr 0x00500000
-#define kernel_size 0x002fffff
-#define gdt_addr 0x00000600
-#define gdt_size 0x000001ff
-#define idt_addr 0x00000800
-#define idt_size 0x000007ff
 #define AR_DATA32_RW 0x4092
 #define AR_CODE32_ER 0x409a
 #define AR_INTGATE32 0x008e

@@ -1,6 +1,5 @@
 #include "kernel/graphic.h"
 #include "kernel/asmfunc.h"
-#include "kernel/mbr.h"
 #include "types.h"
 
 // GUI
