@@ -6,7 +6,7 @@
 #include "kernel/info.h"
 #include "kernel/int.h"
 #include "kernel/key.h"
-#include "kernel/mbr.h"
+#include "kernel/memory.h"
 #include "types.h"
 
 struct bios_info *bootinfo;
@@ -23,7 +23,7 @@ void MSC_main() {
     init_gdtidt();
     init_pic();
     init_memory();
-    
+
     uint8_t mcursor[256];
     int32_t mx = scr_x / 2, my = scr_y / 2, old_mx = -1, old_my = -1;
     uint32_t info, dinfo;

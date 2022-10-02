@@ -76,7 +76,7 @@ start:
 ;     mov [mmap_ent], bp              ; store the entry count
 ; .failed:
 ; ==============================================
-    mov di, 0x8004
+    mov di, 0x2004
     xor ebx, ebx
     xor bp, bp
     mov edx, 0x534d4150
@@ -102,7 +102,7 @@ start:
     test ebx, ebx                   ; if ebx resets to 0, list is complete
     jne .e820lp
 .e820f:
-    mov [0x8000], bp              ; store the entry count
+    mov [0x2000], bp              ; store the entry count
 
 ;     ;在所有ards结构中找出（base_addr_low + length_low)的最大值，即为内存的容量
 ;     mov cx, [ards_nr]
