@@ -22,6 +22,7 @@ struct bios_info {
     uint8_t *vram;
 };
 
+// e820
 typedef struct SMAP_entry {
     uint32_t BaseL; // base address uint64_t
     uint32_t BaseH;
@@ -31,13 +32,38 @@ typedef struct SMAP_entry {
     uint32_t ACPI; // extended
 } __attribute__((packed)) SMAP_entry_t;
 
-// entry Type
+// SMAP_entry Type
 #define MEMORY_AVAILABLE 1
 #define MEMORY_RESERVED 2
 #define MEMORY_ACPI_RECLAIMABLE 3
 #define MEMORY_NVS 4
 #define MEMORY_BADRAM 5
 
+// Page Table Entity
+typedef union PTE{
+    uint32_t addr;
+    uint16_t flags;
+} PTE;
+
+#define PTE_P 0x01
+#define PTE_RW 0x02
+#define PTE_US 0x04
+#define PTE_PWT 0x08
+#define PTE_PCD 0x10
+#define PTE_A 0x20
+#define PTE_D 0x40
+#define PTE_PS 0x80
+
+#define PTE_G 0x0100
+#define PTE_F2 0x0200
+#define PTE_F3 0x0400
+#define PTE_F4 0x0800
+
+#define PTE_ADDR 0xfffff000
+
 void init_memory();
+
+PTE* get_PTE(void *v_addr);
+void set_PTE(PTE *pte, void *p_addr, uint16_t flags);
 
 #endif
