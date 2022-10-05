@@ -19,9 +19,9 @@ void MSC_main() {
     scr_x = bootinfo->scrnX;
     scr_y = bootinfo->scrnY;
     init_palette();
-    init_screen(vram, scr_x, scr_y);
     init_gdtidt();
     init_pic();
+    init_screen(vram, scr_x, scr_y);
     init_memory();
 
     uint8_t mcursor[256];

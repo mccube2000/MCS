@@ -317,13 +317,13 @@ db 0x55, 0xaa
     mov eax, 0x00800003             ; 计算目录项的最后一个页表项 + 0x1000后的值
     call pte
 
-    mov ebx, 0x000ffffc             ; 第一个目录项的物理地址 - 4
-    mov eax, [vram]
-    shr eax, 10                     ; 计算显存对应的页目录项偏移
-    add ebx, eax                    ; 显存对应的目录项基地址 - 4，对应显存
-    shl eax, 10                     ; 复原显存
-    add eax, 0x00400003             ; 计算目录项的最后一个页表项 + 0x1000后的值
-    call pte
+    ; mov ebx, 0x000ffffc             ; 第一个目录项的物理地址 - 4
+    ; mov eax, [vram]
+    ; shr eax, 10                     ; 计算显存对应的页目录项偏移
+    ; add ebx, eax                    ; 显存对应的目录项基地址 - 4，对应显存
+    ; shl eax, 10                     ; 复原显存
+    ; add eax, 0x00400003             ; 计算目录项的最后一个页表项 + 0x1000后的值
+    ; call pte
 
 pgo:
     ; 令CR3寄存器指向页目录，并正式开启页功能 
@@ -331,7 +331,7 @@ pgo:
     mov cr3, eax
 
     mov eax, cr0
-    or eax, 0x80000000
+    or eax, 0x8001_0000
     mov cr0, eax                    ; 开启分页机制
 
     jmp c_core

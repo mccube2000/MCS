@@ -41,7 +41,7 @@ typedef struct SMAP_entry {
 
 // Page Table Entity
 typedef union PTE{
-    uint32_t addr;
+    void * addr;
     uint16_t flags;
 } PTE;
 
@@ -66,4 +66,5 @@ void init_memory();
 PTE* get_PTE(void *v_addr);
 void set_PTE(PTE *pte, void *p_addr, uint16_t flags);
 
+void page_fault(int32_t *esp);
 #endif
