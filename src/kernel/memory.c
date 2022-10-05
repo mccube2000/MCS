@@ -13,20 +13,16 @@ static PTE *page_table = (PTE *)pt_addr;
 static SMAP_entry_t *e820_map = (SMAP_entry_t *)e820_map_addr;
 
 void init_memory() {
-    // void *addr;
-    // for (addr = vram; addr < 0xe0010000; addr+=0x1000) {
-    //     set_PTE(get_PTE((void *)addr), addr, PTE_P | PTE_RW);
-    // }
-
     int i;
     uint32_t e820_size = *((uint32_t *)e820_size_addr);
     PTE *pte = get_PTE((void *)0xd0001000);
     gui_boxfill(vram, scr_x, COL8_FFFFFF, 200, 0, 800, 200);
     for (i = 0; i < e820_size; i++) {
+
         gui_putf_x(vram, scr_x, 0, 200, 20 * i, 8, e820_map[i].BaseH, 16);
         gui_putf_x(vram, scr_x, 0, 300, 20 * i, 8, e820_map[i].BaseL, 16);
-        gui_putf_x(vram, scr_x, 0, 400, 20 * i, 8, e820_map[i].BaseH + e820_map[i].LengthH, 16);
-        gui_putf_x(vram, scr_x, 0, 500, 20 * i, 8, e820_map[i].BaseL + e820_map[i].LengthL, 16);
+        gui_putf_x(vram, scr_x, 0, 400, 20 * i, 8, e820_map[i].LengthH, 16);
+        gui_putf_x(vram, scr_x, 0, 500, 20 * i, 8, e820_map[i].LengthL, 16);
         gui_putfs_asc816(vram, scr_x, 0, 600, 20 * i, type_map[e820_map[i].Type]);
     }
     set_PTE(pte, (void *)0xd0001000, PTE_G | PTE_F2 | PTE_P | PTE_RW | PTE_PWT);

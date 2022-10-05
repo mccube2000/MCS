@@ -26,4 +26,3 @@ o_list.append(f'{build}\\kernel\\hankaku.obj')
 
 env.Ld(f'{build}\\kernel\\kernel', o_list)
 env.Objcopy(f'{build}\\kernel\\kernel')
-env.Copy(f'{build}\\MSC', [f'{build}\\kernel\\kernel.bin'])

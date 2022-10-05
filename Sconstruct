@@ -60,20 +60,20 @@ objcopy_builder = Builder(
 )
 
 
-def action_copy(target, source, env):
-    source_str = ''
-    for src in source:
-        source_str += '+' + str(src)
-    source_str = source_str[1:]
-    cmd = f'copy /B {source_str} {target[0]}'
-    print(cmd)
-    os.system(cmd)
+# def action_copy(target, source, env):
+#     source_str = ''
+#     for src in source:
+#         source_str += '+' + str(src)
+#     source_str = source_str[1:]
+#     cmd = f'copy /B {source_str} {target[0]}'
+#     print(cmd)
+#     os.system(cmd)
 
 
-copy_builder = Builder(
-    action=action_copy,
-    suffix='.sys',
-)
+# copy_builder = Builder(
+#     action=action_copy,
+#     suffix='.sys',
+# )
 
 # global env
 nasm_env = Environment(ENV=environ,
@@ -87,7 +87,7 @@ gcc_env = Environment(
     BUILDERS={
         'Ld': ld_builder,
         'Objcopy': objcopy_builder,
-        'Copy': copy_builder,
+        # 'Copy': copy_builder,
     },
     CFLAGS=f'-Wall -m32 -I {src}libs\\include -g -nostdlib -nostdinc -std=c99 -D {upper_config_plt}',
     LDFLAGS='-m i386pe -nostdlib',
