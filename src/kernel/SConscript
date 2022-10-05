@@ -12,7 +12,7 @@ build = str(env['BUILD'] / root.relative_to(env['SRC']))
 sources = Glob("*.c")
 nasm_sources = 'asmfunc.asm'
 
-nasm.Object(f'{build}\\asmfunc', [nasm_sources], ASFLAGS='-f elf')
+nasm.Object(f'{build}\\asmfunc.obj', [nasm_sources], ASFLAGS='-f elf')
 
 for source in sources:
     env.Object(f'{build}\\{source.name.split(".")[0]}', source)
