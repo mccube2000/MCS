@@ -30,7 +30,7 @@ void key_dbg(uint32_t info) {
 
 void mouse_dbg(mouse_data *md, uint32_t info, int32_t mx, int32_t my) {
     gui_boxfill(vram, scr_x, COL8_FFFFFF, 100, km_debug_y + 20, 200, km_debug_y + 40);
-    
+
     gui_putf_x(vram, scr_x, (md->z & MOUSE_5) == MOUSE_5 ? 1 : 4, 100, km_debug_y + 20, 8, info,
                16);
     gui_boxfill(vram, scr_x, COL8_FFFFFF, 100, km_debug_y + 40, 200, km_debug_y + 100);
@@ -51,7 +51,6 @@ void mouse_dbg(mouse_data *md, uint32_t info, int32_t mx, int32_t my) {
 
     gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 80, 4, mx, 10);
     gui_putf_x(vram, scr_x, 0, 148, km_debug_y + 80, 4, my, 10);
-
 }
 #endif
 #ifndef KM_DBG

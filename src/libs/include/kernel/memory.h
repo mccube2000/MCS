@@ -15,6 +15,11 @@
 #define kernel_addr 0x00500000
 #define kernel_size 0x002fffff
 
+#define l1m_reserved_addr 0x000a0000
+#define l1m_reserved_size 0x0004ffff
+#define h_reserved_addr 0xe0000000
+#define h_reserved_size 0x1fffffff
+
 struct bios_info {
     uint16_t cyls;
     uint8_t leds, vmode;
@@ -40,8 +45,8 @@ typedef struct SMAP_entry {
 #define MEMORY_BADRAM 5
 
 // Page Table Entity
-typedef union PTE{
-    void * addr;
+typedef union PTE {
+    void *addr;
     uint16_t flags;
 } PTE;
 
@@ -63,8 +68,13 @@ typedef union PTE{
 
 void init_memory();
 
-PTE* get_PTE(void *v_addr);
+PTE *get_PTE(void *v_addr);
 void set_PTE(PTE *pte, void *p_addr, uint16_t flags);
+
+void e820_count(bool show_e820_map);
+void page_count();
+void page_add_used();
+void page_init();
 
 void page_fault(int32_t *esp);
 #endif
