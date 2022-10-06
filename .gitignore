@@ -16,6 +16,8 @@
 *.sys
 *.elf
 
+build/
+
 # Linker output
 *.ilk
 *.map
