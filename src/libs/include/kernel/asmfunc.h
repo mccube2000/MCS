@@ -22,8 +22,6 @@ extern void io_out8(uint32_t port, uint32_t data);
 extern void io_out16(uint32_t port, uint32_t data);
 extern void io_out32(uint32_t port, uint32_t data);
 
-extern int32_t io_in(uint32_t);
-
 extern void asm_inthandler0c(void);
 extern void asm_inthandler0d(void);
 extern void asm_page_fault(void);
@@ -31,6 +29,7 @@ extern void asm_inthandler20(void);
 extern void asm_inthandler21(void);
 extern void asm_inthandler27(void);
 extern void asm_inthandler2c(void);
+extern void asm_inthandler70(void);
 
 extern int32_t io_load_eflags(void);
 extern void io_store_eflags(int32_t eflags);
