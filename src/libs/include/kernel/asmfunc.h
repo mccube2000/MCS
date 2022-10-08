@@ -29,7 +29,6 @@ extern void asm_inthandler20(void);
 extern void asm_inthandler21(void);
 extern void asm_inthandler27(void);
 extern void asm_inthandler2c(void);
-extern void asm_inthandler70(void);
 
 extern int32_t io_load_eflags(void);
 extern void io_store_eflags(int32_t eflags);

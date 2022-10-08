@@ -7,8 +7,8 @@
 		GLOBAL	_load_gdtr, _load_idtr
 		GLOBAL	_load_cr0, _store_cr0, _load_cr2
 		GLOBAL	_load_tr
-		GLOBAL	_asm_page_fault, _asm_inthandler21, _asm_inthandler27, _asm_inthandler2c, _asm_inthandler70
-		EXTERN	_page_fault, _inthandler21, _inthandler27, _inthandler2c, _inthandler70
+		GLOBAL	_asm_page_fault, _asm_inthandler20, _asm_inthandler21, _asm_inthandler27, _asm_inthandler2c
+		EXTERN	_page_fault, _inthandler20, _inthandler21, _inthandler27, _inthandler2c
 
 SECTION .text
 
@@ -109,6 +109,22 @@ _asm_page_fault:
 		add esp, 4
 		IRETD
 
+_asm_inthandler20:
+		PUSH	ES
+		PUSH	DS
+		PUSHAD
+		MOV		EAX,ESP
+		PUSH	EAX
+		MOV		AX,SS
+		MOV		DS,AX
+		MOV		ES,AX
+		CALL	_inthandler20
+		POP		EAX
+		POPAD
+		POP		DS
+		POP		ES
+		IRETD
+
 _asm_inthandler21:
 		PUSH		ES
 		PUSH		DS
@@ -151,22 +167,6 @@ _asm_inthandler2c:
 		MOV		DS,AX
 		MOV		ES,AX
 		CALL	_inthandler2c
-		POP		EAX
-		POPAD
-		POP		DS
-		POP		ES
-		IRETD
-
-_asm_inthandler70:
-		PUSH	ES
-		PUSH	DS
-		PUSHAD
-		MOV		EAX,ESP
-		PUSH	EAX
-		MOV		AX,SS
-		MOV		DS,AX
-		MOV		ES,AX
-		CALL	_inthandler70
 		POP		EAX
 		POPAD
 		POP		DS
