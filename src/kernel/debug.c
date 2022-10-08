@@ -8,6 +8,13 @@ extern struct bios_info *bootinfo;
 extern uint8_t *vram;
 extern uint16_t scr_x, scr_y;
 
+extern uint8_t second;
+extern uint8_t minute;
+extern uint8_t hour;
+extern uint8_t day;
+extern uint8_t month;
+extern uint32_t year;
+
 uint16_t km_debug_y = 20, k_info_c = 0;
 int32_t i = 0, j = 0;
 
@@ -65,6 +72,20 @@ void loop_dbg() {
     if (i % 1000 == 0) {
         i = 0;
         j++;
+        second++;
+        if (second > 59) {
+            second = 0;
+            minute++;
+            if (minute > 59) {
+                minute = 0;
+                hour++;
+                if (hour > 23) {
+                    hour = 0;
+                    day++;
+                    // todo
+                }
+            }
+        }
     }
     gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 0, 200, 20);
     gui_putf_x(vram, scr_x, 0, 0, 0, 3, j, 10);

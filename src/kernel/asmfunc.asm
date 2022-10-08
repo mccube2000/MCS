@@ -158,9 +158,6 @@ _asm_inthandler2c:
 		IRETD
 
 _asm_inthandler70:
-		cli
-		hh:
-		jmp hh
 		PUSH	ES
 		PUSH	DS
 		PUSHAD

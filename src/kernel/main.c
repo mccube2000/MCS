@@ -18,7 +18,7 @@ uint8_t minute;
 uint8_t hour;
 uint8_t day;
 uint8_t month;
-unsigned int year;
+uint32_t year;
 
 int get_update_in_progress_flag();
 uint8_t get_RTC_register(int reg);
@@ -57,17 +57,15 @@ void MSC_main() {
     gui_putfs_asc816(vram, scr_x, 0, scr_x / 2, scr_y / 2, s);
     gui_putfs_asc816(vram, scr_x, 15, scr_x / 2 + 1, scr_y / 2 + 1, s);
 
-    gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 500, 150, 520);
-    gui_putf_x(vram, scr_x, 0, 0, 500, 4, year, -10);
-    gui_putf_x(vram, scr_x, 0, 40, 500, 2, month, -10);
-    gui_putf_x(vram, scr_x, 0, 60, 500, 2, day, -10);
-    gui_putf_x(vram, scr_x, 0, 80, 500, 2, hour, -10);
-    gui_putf_x(vram, scr_x, 0, 100, 500, 2, minute, -10);
-    gui_putf_x(vram, scr_x, 0, 120, 500, 2, second, -10);
-
-
     for (;;) {
         loop_dbg();
+        gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 500, 150, 520);
+        gui_putf_x(vram, scr_x, 0, 0, 500, 4, year, -10);
+        gui_putf_x(vram, scr_x, 0, 40, 500, 2, month, -10);
+        gui_putf_x(vram, scr_x, 0, 60, 500, 2, day, -10);
+        gui_putf_x(vram, scr_x, 0, 80, 500, 2, hour, -10);
+        gui_putf_x(vram, scr_x, 0, 100, 500, 2, minute, 10);
+        gui_putf_x(vram, scr_x, 0, 120, 500, 2, second, 10);
         if (de_queue(&queue, &info)) {
             info_dbg(info);
             if (info & keyboard_info_flag) {
