@@ -18,6 +18,5 @@
 
 void init_pic(void);
 void inthandler2c(int32_t *esp);
-void inthandler20(int32_t *esp);
 
 #endif
