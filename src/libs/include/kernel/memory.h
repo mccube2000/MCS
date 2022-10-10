@@ -20,12 +20,12 @@
 #define h_reserved_addr 0xe0000000
 #define h_reserved_size 0x1fffffff
 
-struct bios_info {
+typedef struct BIOS_info {
     uint16_t cyls;
     uint8_t leds, vmode;
     uint16_t scrnX, scrnY;
     uint8_t *vram;
-};
+} BIOS_info_t;
 
 // e820
 typedef struct SMAP_entry {
@@ -48,7 +48,7 @@ typedef struct SMAP_entry {
 typedef union PTE {
     void *addr;
     uint16_t flags;
-} PTE;
+} PTE_t;
 
 #define PTE_P 0x01
 #define PTE_RW 0x02
@@ -68,8 +68,8 @@ typedef union PTE {
 
 void init_memory();
 
-PTE *get_PTE(void *v_addr);
-void set_PTE(PTE *pte, void *p_addr, uint16_t flags);
+PTE_t *get_PTE(void *v_addr);
+void set_PTE(PTE_t *pte, void *p_addr, uint16_t flags);
 
 void e820_count(bool show_e820_map);
 void page_count();

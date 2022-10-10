@@ -17,6 +17,10 @@ uint8_t day;
 uint8_t month;
 uint32_t year;
 
+uint32_t volatile time_diff = 0;
+uint32_t volatile jiffies = 0;
+
+#define TIME_ADD_COUNT 9320
 void init_rtc_pit() {
     // 初始化RTC
     io_out8(RTC_CHR, 0x8b); // 选择RTC寄存器B并阻断NMI
@@ -34,11 +38,18 @@ void init_rtc_pit() {
     // a = 1193 * base = 9.998927189706385232766308392729e-4s
     // b = a - 0.001 = -1.0728102936147672336916072709718e-7s
     // 0.001 / (-b) = 9321.31249999次
-    // 每过9320次中断(a时长中断一次)+1次 平均每ms计时误差为 a * 9321 / 9320 = 0.001
-    // + 3.5971375188263386322814056759657e-12 即平均每10000年慢1.1343932879370741510762640939725秒
+    // 每过9320次中断(a时长中断一次)+1次
+    // 平均每ms计时误差为 a * 9321 / 9320 = 0.001 + 3.5971375188263386322814056759657e-12
+    // 即平均每10000年慢1.1343932879370741510762640939725秒
 }
 
-void inthandler20(int32_t *esp) { io_out8(PIC0_OCW2, 0x60); }
+void inthandler20(int32_t *esp) {
+    io_out8(PIC0_OCW2, 0x60);
+    jiffies++;
+    if (jiffies % TIME_ADD_COUNT == 0)
+        time_diff++;
+    // switch_to();
+}
 
 int32_t get_update_in_progress_flag() {
     io_out8(0x70, 0x0a);
@@ -65,23 +76,12 @@ void get_RTC_data() {
 #define century 20
 void read_rtc() {
     uint8_t last_second;
-    uint8_t last_minute;
-    uint8_t last_hour;
-    uint8_t last_day;
-    uint8_t last_month;
-    uint8_t last_year;
 
     get_RTC_data();
     do {
         last_second = second;
-        last_minute = minute;
-        last_hour = hour;
-        last_day = day;
-        last_month = month;
-        last_year = year;
         get_RTC_data();
-    } while ((last_second != second) || (last_minute != minute) || (last_hour != hour) ||
-             (last_day != day) || (last_month != month) || (last_year != year));
+    } while ((last_second != second));
 
     BCD_TO_BIN(second);
     BCD_TO_BIN(minute);
@@ -96,6 +96,22 @@ void read_rtc() {
 }
 
 void show_time() {
+    if ((jiffies + time_diff) % 1000 == 0) {
+        second++;
+        if (second > 59) {
+            second = 0;
+            minute++;
+            if (minute > 59) {
+                minute = 0;
+                hour++;
+                if (hour > 23) {
+                    hour = 0;
+                    day++;
+                    // todo
+                }
+            }
+        }
+    }
     if (show_second != second) {
         show_second = second;
         gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 500, 150, 520);

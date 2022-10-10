@@ -4,8 +4,8 @@
 #include "types.h"
 
 void init_gdtidt() {
-    SEGMENT_DESCRIPTOR *gdt = (SEGMENT_DESCRIPTOR *)gdt_addr;
-    GATE_DESCRIPTOR *idt = (GATE_DESCRIPTOR *)idt_addr;
+    segment_desc_t *gdt = (segment_desc_t *)gdt_addr;
+    gate_desc_t *idt = (gate_desc_t *)idt_addr;
     uint16_t i;
 
     for (i = 0; i < 64; i++) {
@@ -31,7 +31,7 @@ void init_gdtidt() {
     load_idtr(idt_size, idt_addr);
 }
 
-void set_segmdesc(SEGMENT_DESCRIPTOR *sd, uint32_t limit, int32_t base, int32_t ar) {
+void set_segmdesc(segment_desc_t *sd, uint32_t limit, int32_t base, int32_t ar) {
     if (limit > 0xfffff) {
         ar |= 0x8000;
         limit /= 0x1000;
@@ -44,7 +44,7 @@ void set_segmdesc(SEGMENT_DESCRIPTOR *sd, uint32_t limit, int32_t base, int32_t 
     sd->base_high = (base >> 24) & 0xff;
 }
 
-void set_gatedesc(GATE_DESCRIPTOR *gd, int32_t offset, int32_t selector, int32_t ar) {
+void set_gatedesc(gate_desc_t *gd, int32_t offset, int32_t selector, int32_t ar) {
     gd->offset_low = offset & 0xffff;
     gd->selector = selector;
     gd->dw_count = (ar >> 8) & 0xff;

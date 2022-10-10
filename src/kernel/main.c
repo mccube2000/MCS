@@ -10,12 +10,12 @@
 #include "kernel/time.h"
 #include "types.h"
 
-struct bios_info *bootinfo;
+BIOS_info_t *bootinfo;
 uint8_t *vram;
 uint16_t scr_x, scr_y;
 
 void MSC_main() {
-    bootinfo = (struct bios_info *)bios_info_addr;
+    bootinfo = (BIOS_info_t *)bios_info_addr;
     vram = bootinfo->vram;
     scr_x = bootinfo->scrnX;
     scr_y = bootinfo->scrnY;
@@ -48,7 +48,6 @@ void MSC_main() {
     gui_putfs_asc816(vram, scr_x, 15, scr_x / 2 + 1, scr_y / 2 + 1, s);
 
     for (;;) {
-        loop_dbg();
         show_time();
         if (de_queue(&queue, &info)) {
             info_dbg(info);

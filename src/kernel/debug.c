@@ -2,9 +2,10 @@
 #include "kernel/graphic.h"
 #include "kernel/info.h"
 #include "kernel/key.h"
+#include "kernel/memory.h"
 #include "types.h"
 
-extern struct bios_info *bootinfo;
+extern BIOS_info_t *bootinfo;
 extern uint8_t *vram;
 extern uint16_t scr_x, scr_y;
 
@@ -64,34 +65,4 @@ void mouse_dbg(mouse_data *md, uint32_t info, int32_t mx, int32_t my) {
 void info_dbg(uint32_t info) {}
 void key_dbg(uint32_t info) {}
 void mouse_dbg(mouse_data *md, uint32_t info, int32_t mx, int32_t my) {}
-#endif
-
-#ifdef LOOP_DBG
-void loop_dbg() {
-    i++;
-    if (i % 1000 == 0) {
-        i = 0;
-        j++;
-        second++;
-        if (second > 59) {
-            second = 0;
-            minute++;
-            if (minute > 59) {
-                minute = 0;
-                hour++;
-                if (hour > 23) {
-                    hour = 0;
-                    day++;
-                    // todo
-                }
-            }
-        }
-    }
-    gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 0, 200, 20);
-    gui_putf_x(vram, scr_x, 0, 0, 0, 3, j, 10);
-    gui_putf_x(vram, scr_x, 0, 100, 0, 3, i, 10);
-}
-#endif
-#ifndef LOOP_DBG
-void loop_dbg() {}
 #endif

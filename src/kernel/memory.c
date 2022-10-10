@@ -10,7 +10,7 @@ int8_t type_map[6][20] = {"\0",    "Available\0", "Reserved\0", "ACPI Reclaimabl
                           "NVS\0", "BadRAM\0"};
 uint32_t protected_page_map[][2] = {
     // 地址      页数
-    {0x00000000, 1},     // bios_info, gdt, idt
+    {0x00000000, 1},     // BIOS_info, gdt, idt
     {0x00001000, 1},     // pdt一级页表
     {0x00002000, 1},     // e820和内核栈保护区
     {0x0009f000, 1},     // 内核栈保护区和扩展BIOS数据区
@@ -20,7 +20,7 @@ uint32_t protected_page_map[][2] = {
     {0x0, 0},            // 最后一项
 };
 static uint32_t *page_directory = (uint32_t *)pdt_addr;
-static PTE *page_table = (PTE *)pt_addr;
+static PTE_t *page_table = (PTE_t *)pt_addr;
 static SMAP_entry_t *e820_map = (SMAP_entry_t *)e820_map_addr;
 
 // 内存统计，在初始化内存前会触发缺页，page_unused设为0xffffffff防止下溢
@@ -31,25 +31,25 @@ void init_memory() {
     e820_count(false);
     page_count();
     page_init();
-    gui_boxfill(vram, scr_x, COL8_FFFFFF, 200, 0, 1000, 20);
-    gui_putfs_asc816(vram, scr_x, 0, 200, 0, "total page:");
-    gui_putf_x(vram, scr_x, 0, 300, 0, 8, page_total, -10);
-    gui_putfs_asc816(vram, scr_x, 0, 400, 0, "unused page:");
-    gui_putf_x(vram, scr_x, 0, 500, 0, 8, page_unused, -10);
-    gui_putfs_asc816(vram, scr_x, 0, 600, 0, "used page:");
-    gui_putf_x(vram, scr_x, 0, 700, 0, 8, page_used, -10);
-    gui_putfs_asc816(vram, scr_x, 0, 800, 0, "protected page:");
-    gui_putf_x(vram, scr_x, 0, 900, 0, 8, page_protected, -10);
+    gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 0, scr_x, 20);
+    gui_putfs_asc816(vram, scr_x, 0, 100, 0, "total page:");
+    gui_putf_x(vram, scr_x, 0, 200, 0, 8, page_total, -10);
+    gui_putfs_asc816(vram, scr_x, 0, 300, 0, "unused page:");
+    gui_putf_x(vram, scr_x, 0, 400, 0, 8, page_unused, -10);
+    gui_putfs_asc816(vram, scr_x, 0, 500, 0, "used page:");
+    gui_putf_x(vram, scr_x, 0, 600, 0, 8, page_used, -10);
+    gui_putfs_asc816(vram, scr_x, 0, 700, 0, "protected page:");
+    gui_putf_x(vram, scr_x, 0, 800, 0, 8, page_protected, -10);
 }
 
-PTE *get_PTE(void *v_addr) {
+PTE_t *get_PTE(void *v_addr) {
     uint32_t pd_i = (uint32_t)v_addr >> 22;
     uint32_t pt_i = (uint32_t)v_addr >> 12 & 0x03ff;
-    PTE *pt = page_table + (0x400 * pd_i) + pt_i;
+    PTE_t *pt = page_table + (0x400 * pd_i) + pt_i;
     return pt;
 }
 
-void set_PTE(PTE *pte, void *p_addr, uint16_t flags) {
+void set_PTE(PTE_t *pte, void *p_addr, uint16_t flags) {
     pte->addr = p_addr;   // 设置地址
     pte->flags &= 0xf000; // 清空地址的低12位
     pte->flags |= flags;  // 设置flags
@@ -114,7 +114,7 @@ void page_init() {
         base = protected_page_map[i][0];
         count = protected_page_map[i][1];
         for (j = 0; j < count; j++) {
-            PTE *pte = get_PTE((void *)base);
+            PTE_t *pte = get_PTE((void *)base);
             set_PTE(pte, base, (uint32_t)pte->flags & 0xffd);
             page_protected++;
             base += 0x1000;
@@ -125,7 +125,7 @@ void page_init() {
 void page_fault(int32_t *esp) {
     uint32_t error_code = esp[10];
     void *error_addr = load_cr2();
-    PTE *pte = get_PTE((void *)error_addr);
+    PTE_t *pte = get_PTE((void *)error_addr);
     if (error_code & PTE_P) {
         if (error_code & PTE_RW) {
             return;
