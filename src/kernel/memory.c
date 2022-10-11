@@ -115,7 +115,7 @@ void page_init() {
         count = protected_page_map[i][1];
         for (j = 0; j < count; j++) {
             PTE_t *pte = get_PTE((void *)base);
-            set_PTE(pte, base, (uint32_t)pte->flags & 0xffd);
+            set_PTE(pte, base, (uint16_t)pte->flags & 0x0ffd);
             page_protected++;
             base += 0x1000;
         }

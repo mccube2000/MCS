@@ -8,19 +8,17 @@
 extern uint8_t *vram;
 extern uint16_t scr_x, scr_y;
 
-uint8_t show_second;
-
-uint8_t second;
-uint8_t minute;
-uint8_t hour;
-uint8_t day;
-uint8_t month;
-uint32_t year;
+tm_t tm;
+tm_t show_tm;
+uint32_t last_sec = 0;
 
 ulong32_t time_diff = 0;
 long32_t volatile jiffies = 0;
 
-#define TIME_ADD_COUNT 9320
+int8_t week[7][5] = {"Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat"};
+int8_t month[12][5] = {"Jan", "Feb", "Mar",  "Apr", "May",  "Jun",
+                       "Jul", "Aug", "Sept", "Oct", "Nov ", "Dec"};
+
 void init_rtc_pit() {
     // 初始化RTC
     io_out8(RTC_CHR, 0x8b); // 选择RTC寄存器B并阻断NMI
@@ -69,12 +67,12 @@ uint8_t get_RTC_register(int32_t reg) {
 void get_RTC_data() {
     while (get_update_in_progress_flag())
         ; // Make sure an update isn't in progress
-    second = get_RTC_register(0x00);
-    minute = get_RTC_register(0x02);
-    hour = get_RTC_register(0x04);
-    day = get_RTC_register(0x07);
-    month = get_RTC_register(0x08);
-    year = get_RTC_register(0x09);
+    tm.tm_sec = get_RTC_register(0x00);
+    tm.tm_min = get_RTC_register(0x02);
+    tm.tm_hour = get_RTC_register(0x04);
+    tm.tm_mday = get_RTC_register(0x07);
+    tm.tm_mon = get_RTC_register(0x08);
+    tm.tm_year = get_RTC_register(0x09);
 }
 
 #define BCD_TO_BIN(val) ((val) = ((val)&0x0f) + ((val) >> 4) * 10)
@@ -84,47 +82,56 @@ void read_rtc() {
 
     get_RTC_data();
     do {
-        last_second = second;
+        last_second = tm.tm_sec;
         get_RTC_data();
-    } while ((last_second != second));
+    } while ((last_second != tm.tm_sec));
 
-    BCD_TO_BIN(second);
-    BCD_TO_BIN(minute);
-    BCD_TO_BIN(hour);
+    BCD_TO_BIN(tm.tm_sec);
+    BCD_TO_BIN(tm.tm_min);
+    BCD_TO_BIN(tm.tm_hour);
     // hour = ((hour & 0x0f) + (((hour & 0x70) >> 4) * 10)) | (hour & 0x80);
-    BCD_TO_BIN(day);
-    BCD_TO_BIN(month);
-    BCD_TO_BIN(year);
+    BCD_TO_BIN(tm.tm_mday);
+    BCD_TO_BIN(tm.tm_mon);
+    BCD_TO_BIN(tm.tm_year);
 
-    year += century * 100;
-    show_second = second;
+    tm.tm_mon--;
+    tm.tm_year += century * 100;
+    tm.tm_wday = 0;
+    tm.tm_yday = 0;
+    tm.tm_isdst = false;
+    show_tm = tm;
 }
 
 void show_time() {
-    if ((jiffies + time_diff) % 1000 == 0) {
-        second++;
-        if (second > 59) {
-            second = 0;
-            minute++;
-            if (minute > 59) {
-                minute = 0;
-                hour++;
-                if (hour > 23) {
-                    hour = 0;
-                    day++;
+    uint32_t now_sec = (jiffies + time_diff) / 1000;
+    if (now_sec != last_sec) {
+        last_sec = now_sec;
+        show_tm.tm_sec++;
+        if (show_tm.tm_sec > 59) {
+            show_tm.tm_sec = 0;
+            show_tm.tm_min++;
+            if (show_tm.tm_min > 59) {
+                show_tm.tm_min = 0;
+                show_tm.tm_hour++;
+                if (show_tm.tm_hour > 23) {
+                    show_tm.tm_hour = 0;
+                    show_tm.tm_mday++;
                     // todo
                 }
             }
         }
-    }
-    if (show_second != second) {
-        show_second = second;
-        gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 500, 150, 520);
-        gui_putf_x(vram, scr_x, 0, 0, 500, 4, year, -10);
-        gui_putf_x(vram, scr_x, 0, 40, 500, 2, month, -10);
-        gui_putf_x(vram, scr_x, 0, 60, 500, 2, day, -10);
-        gui_putf_x(vram, scr_x, 0, 80, 500, 2, hour, -10);
-        gui_putf_x(vram, scr_x, 0, 100, 500, 2, minute, 10);
-        gui_putf_x(vram, scr_x, 0, 120, 500, 2, second, 10);
+        gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 500, 250, 520);
+        gui_putf_x(vram, scr_x, 0, 0, 500, 4, show_tm.tm_year, -10);
+        // gui_putf_x(vram, scr_x, 0, 40, 500, 2, show_tm.tm_mon, -10);
+        gui_putfs_asc816(vram, scr_x, 0, 40, 500, month[show_tm.tm_mon]);
+        gui_putf_x(vram, scr_x, 0, 80, 500, 2, show_tm.tm_mday, -10);
+        // gui_putf_x(vram, scr_x, 0, 100, 500, 2, show_tm.tm_wday, 10);
+        gui_putfs_asc816(vram, scr_x, 0, 100, 500, week[show_tm.tm_wday]);
+
+        gui_putf_x(vram, scr_x, 0, 140, 500, 2, show_tm.tm_hour, -10);
+        gui_putfs_asc816(vram, scr_x, 0, 160, 500, ":");
+        gui_putf_x(vram, scr_x, 0, 172, 500, 2, show_tm.tm_min, 10);
+        gui_putfs_asc816(vram, scr_x, 0, 192, 500, ":");
+        gui_putf_x(vram, scr_x, 0, 204, 500, 2, show_tm.tm_sec, 10);
     }
 }
