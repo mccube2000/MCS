@@ -19,7 +19,7 @@ uint32_t protected_page_map[][2] = {
     {0x004ff000, 1},     // 引导区拓展
     {0x0, 0},            // 最后一项
 };
-static uint32_t *page_directory = (uint32_t *)pdt_addr;
+// static uint32_t *page_directory = (uint32_t *)pdt_addr;
 static PTE_t *page_table = (PTE_t *)pt_addr;
 static SMAP_entry_t *e820_map = (SMAP_entry_t *)e820_map_addr;
 

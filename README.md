@@ -3,14 +3,22 @@ A Modular Customized System(Operating System).
 
 ## Todo List
 
-### 内核
-* [ ] 进程管理
+### kernel
+* [ ] hash map
+* [ ] TSS处理
+* [ ] 任务结构
+* [ ] 资源结构
+* [ ] 进程结构
+* [ ] GDT重新规划
 * [ ] 时钟中断处理
+* [ ] 进程调度
+
+### boot
+* [ ] [暂无]
 
 ## Done List
 
-### 内核
-
+### kernel
 * [x]  设置PIT时钟
 * [x]  获取RTC时间
 * [x]  初始化内存
@@ -20,7 +28,7 @@ A Modular Customized System(Operating System).
 * [x]  初始化调色板
 * [x]  获取BIOS信息
 
-### 引导区
+### boot
 * [x]  BIOS中断e820内存地图获取
 * [x]  拓展引导区
 * [x]  内存规划

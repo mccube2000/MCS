@@ -25,7 +25,7 @@
 typedef struct keyboard_data {
     // int8_t x, y, z, id;
     // bool left, right, mid, top, btm;
-    sq_queue *queue;
+    circ_queue *queue;
     uint32_t info_flag;
 } keyboard_data;
 
@@ -33,7 +33,7 @@ typedef struct mouse_data {
     uint8_t flags, z, id;
     bool left, right, mid, btm, top;
     int16_t x, y;
-    sq_queue *queue;
+    circ_queue *queue;
     uint32_t info_flag;
 } mouse_data;
 

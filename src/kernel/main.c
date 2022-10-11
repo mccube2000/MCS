@@ -30,7 +30,7 @@ void MSC_main() {
     int32_t mx = scr_x / 2, my = scr_y / 2, old_mx = -1, old_my = -1;
     uint32_t info, dinfo;
 
-    sq_queue queue;
+    circ_queue queue;
     keyboard_data kd;
     mouse_data md;
     kd.queue = &queue;

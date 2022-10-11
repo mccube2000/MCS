@@ -1,3 +1,6 @@
+#ifndef _TIME_H_
+#define _TIME_H_
+
 #include "types.h"
 
 #define RTC_CHR 0x70
@@ -27,3 +30,5 @@ void inthandler20(int32_t *esp);
 int32_t get_update_in_progress_flag();
 uint8_t get_RTC_register(int32_t reg);
 void read_rtc();
+
+#endif

@@ -1,4 +1,12 @@
+#ifndef _TASK_H_
+#define _TASK_H_
+
 #include "types.h"
+
+typedef struct PCB
+{
+    /* data */
+} PCB_t;
 
 typedef struct tss32 {
     int32_t link;   // 低16位
@@ -29,3 +37,5 @@ typedef struct tss32 {
     int32_t iomap;  // 高16位
     int32_t ssp;    // 32位
 } tss32_t;
+
+#endif

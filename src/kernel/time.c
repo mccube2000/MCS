@@ -17,8 +17,8 @@ uint8_t day;
 uint8_t month;
 uint32_t year;
 
-uint32_t volatile time_diff = 0;
-uint32_t volatile jiffies = 0;
+ulong32_t time_diff = 0;
+long32_t volatile jiffies = 0;
 
 #define TIME_ADD_COUNT 9320
 void init_rtc_pit() {
@@ -49,6 +49,11 @@ void inthandler20(int32_t *esp) {
     if (jiffies % TIME_ADD_COUNT == 0)
         time_diff++;
     // switch_to();
+    /*
+    每个进程包含时间片c和优先级p等
+    初始化进程，c=p
+    在此处c--
+    */
 }
 
 int32_t get_update_in_progress_flag() {
