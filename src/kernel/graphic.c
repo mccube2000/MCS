@@ -124,6 +124,7 @@ void gui_putf_x(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, uint16
 }
 
 void init_screen(uint8_t *vram, uint16_t x, uint16_t y) {
+    init_palette();
     /*
     uint8_t h=20;
     gui_boxfill(vram, x, 11,	0,		0,			x - 1, y

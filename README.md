@@ -7,11 +7,11 @@ A Modular Customized System(Operating System).
 * [ ] hash map
 * [ ] TSS处理
 * [ ] 任务结构
-* [ ] 资源结构
-* [ ] 进程结构
 * [ ] GDT重新规划
 * [ ] 时钟中断处理
 * [ ] 进程调度
+* [ ] 进程结构
+* [ ] 资源结构
 
 ### boot
 * [ ] [暂无]
@@ -19,6 +19,7 @@ A Modular Customized System(Operating System).
 ## Done List
 
 ### kernel
+* [x]  日期时间处理
 * [x]  设置PIT时钟
 * [x]  获取RTC时间
 * [x]  初始化内存

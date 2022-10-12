@@ -13,19 +13,21 @@
 BIOS_info_t *bootinfo;
 uint8_t *vram;
 uint16_t scr_x, scr_y;
+extern tm_t tm;
+extern tm_t base_tm_2000;
 
 void MSC_main() {
     bootinfo = (BIOS_info_t *)bios_info_addr;
     vram = bootinfo->vram;
     scr_x = bootinfo->scrnX;
     scr_y = bootinfo->scrnY;
-    init_palette();
     init_gdtidt();
     init_pic();
     init_screen(vram, scr_x, scr_y);
     init_memory();
-    read_rtc();
+    init_time(&tm, &base_tm_2000);
 
+    tm_t show_tm = tm;
     uint8_t mcursor[256];
     int32_t mx = scr_x / 2, my = scr_y / 2, old_mx = -1, old_my = -1;
     uint32_t info, dinfo;
@@ -48,7 +50,7 @@ void MSC_main() {
     gui_putfs_asc816(vram, scr_x, 15, scr_x / 2 + 1, scr_y / 2 + 1, s);
 
     for (;;) {
-        show_time();
+        show_time(&show_tm);
         if (de_queue(&queue, &info)) {
             info_dbg(info);
             if (info & keyboard_info_flag) {

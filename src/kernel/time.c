@@ -8,16 +8,25 @@
 extern uint8_t *vram;
 extern uint16_t scr_x, scr_y;
 
+tm_t const base_tm_1900 = {0, 0, 0, 1, 0, 0, 1, 0, false}; // 1900.1.1 周一 0:00:00
+tm_t const base_tm_2000 = {0, 0, 0, 1, 0, 0, 6, 0, false}; // 2000.1.1 周六 0:00:00
 tm_t tm;
-tm_t show_tm;
-uint32_t last_sec = 0;
 
+ulong32_t start_time = 0;
 ulong32_t time_diff = 0;
 long32_t volatile jiffies = 0;
 
-int8_t week[7][5] = {"Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat"};
-int8_t month[12][5] = {"Jan", "Feb", "Mar",  "Apr", "May",  "Jun",
-                       "Jul", "Aug", "Sept", "Oct", "Nov ", "Dec"};
+uint32_t last_sec = 0;
+
+static int8_t week[7][5] = {"Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat"};
+static int8_t month[12][5] = {"Jan", "Feb", "Mar",  "Apr", "May",  "Jun",
+                              "Jul", "Aug", "Sept", "Oct", "Nov ", "Dec"};
+
+// #define month_s_(X) m##X##_st
+// #define month_s(X) month_s_(X)
+
+static uint16_t month_d[12] = {m0_st, m1_st, m2_st, m3_st, m4_st,  m5_st,
+                               m6_st, m7_st, m8_st, m9_st, m10_st, m11_st};
 
 void init_rtc_pit() {
     // 初始化RTC
@@ -54,6 +63,13 @@ void inthandler20(int32_t *esp) {
     */
 }
 
+void init_time(tm_t *t, tm_t *base) {
+    read_rtc(t);
+    tm_t_get_wday(t, base);
+    start_time = tm_t2s(t, 1900);
+    gui_putf_x(vram, scr_x, 0, 300, 500, 10, start_time, 10);
+}
+
 int32_t get_update_in_progress_flag() {
     io_out8(0x70, 0x0a);
     return io_in8(0x71) & 0x80;
@@ -64,74 +80,101 @@ uint8_t get_RTC_register(int32_t reg) {
     return io_in8(0x71);
 }
 
-void get_RTC_data() {
+void get_RTC_data(tm_t *t) {
     while (get_update_in_progress_flag())
-        ; // Make sure an update isn't in progress
-    tm.tm_sec = get_RTC_register(0x00);
-    tm.tm_min = get_RTC_register(0x02);
-    tm.tm_hour = get_RTC_register(0x04);
-    tm.tm_mday = get_RTC_register(0x07);
-    tm.tm_mon = get_RTC_register(0x08);
-    tm.tm_year = get_RTC_register(0x09);
+        ;
+    t->tm_sec = get_RTC_register(0x00);
+    t->tm_min = get_RTC_register(0x02);
+    t->tm_hour = get_RTC_register(0x04);
+    t->tm_mday = get_RTC_register(0x07);
+    t->tm_mon = get_RTC_register(0x08);
+    t->tm_year = get_RTC_register(0x09);
 }
 
-#define BCD_TO_BIN(val) ((val) = ((val)&0x0f) + ((val) >> 4) * 10)
-#define century 20
-void read_rtc() {
+void read_rtc(tm_t *t) {
     uint8_t last_second;
+    uint8_t century;
 
-    get_RTC_data();
+    get_RTC_data(t);
     do {
-        last_second = tm.tm_sec;
-        get_RTC_data();
-    } while ((last_second != tm.tm_sec));
+        last_second = t->tm_sec;
+        get_RTC_data(t);
+    } while ((last_second != t->tm_sec));
 
-    BCD_TO_BIN(tm.tm_sec);
-    BCD_TO_BIN(tm.tm_min);
-    BCD_TO_BIN(tm.tm_hour);
-    // hour = ((hour & 0x0f) + (((hour & 0x70) >> 4) * 10)) | (hour & 0x80);
-    BCD_TO_BIN(tm.tm_mday);
-    BCD_TO_BIN(tm.tm_mon);
-    BCD_TO_BIN(tm.tm_year);
+    century = get_RTC_register(0x32);
+    BCD_TO_BIN(century);
+    BCD_TO_BIN(t->tm_sec);
+    BCD_TO_BIN(t->tm_min);
+    BCD_TO_BIN(t->tm_hour);
+    BCD_TO_BIN(t->tm_mday);
+    BCD_TO_BIN(t->tm_mon);
+    BCD_TO_BIN(t->tm_year);
 
-    tm.tm_mon--;
-    tm.tm_year += century * 100;
-    tm.tm_wday = 0;
-    tm.tm_yday = 0;
-    tm.tm_isdst = false;
-    show_tm = tm;
+    t->tm_mon--;
+    t->tm_year += century * 100;
+    t->tm_wday = 0; // 未知
+    t->tm_yday = 0;
+    t->tm_isdst = false;
 }
 
-void show_time() {
-    uint32_t now_sec = (jiffies + time_diff) / 1000;
+// tm_t 转换为相对于base_year.1.1天数
+ulong32_t tm_t2d(tm_t *t, ulong32_t base_year) {
+    base_year--, t->tm_year--; // 对应下面leap_range [x, y)
+    ulong32_t leap = leap_range(base_year, t->tm_year);
+    // 年 月 日 同时复原tm_year
+    return 365 * (t->tm_year++ - base_year) + month_d[t->tm_mon] + (t->tm_mday - 1 + leap);
+}
+
+// tm_t 转换为相对于base_year.1.1的秒数
+ulong32_t tm_t2s(tm_t *t, ulong32_t base_year) {
+    return DAY_S * tm_t2d(t, base_year) + HOUR_S * t->tm_hour + MIN_S * t->tm_min + t->tm_sec;
+}
+// ulong32_t tm_t2s(tm_t *t, ulong32_t base_year) {
+//     base_year--, t->tm_year--; // 对应下面leap_range [x, y)
+//     ulong32_t s = 0, leap = leap_range(base_year, t->tm_year);
+//     // 年 月日
+//     s += YEAR_S * (t->tm_year - base_year) + DAY_S * (month_d[t->tm_mon] + t->tm_mday - 1 +
+//     leap);
+//     // 时 分 秒
+//     s += HOUR_S * t->tm_hour + MIN_S * t->tm_min + t->tm_sec;
+//     t->tm_year++;
+//     return s;
+// }
+
+void tm_t_get_wday(tm_t *t, tm_t *base) {
+    t->tm_wday = (base->tm_wday + tm_t2d(t, base->tm_year)) % 7;
+}
+
+void show_time(tm_t *t) {
+    uint32_t now_sec = (jiffies + time_diff) / Hz;
     if (now_sec != last_sec) {
         last_sec = now_sec;
-        show_tm.tm_sec++;
-        if (show_tm.tm_sec > 59) {
-            show_tm.tm_sec = 0;
-            show_tm.tm_min++;
-            if (show_tm.tm_min > 59) {
-                show_tm.tm_min = 0;
-                show_tm.tm_hour++;
-                if (show_tm.tm_hour > 23) {
-                    show_tm.tm_hour = 0;
-                    show_tm.tm_mday++;
+        t->tm_sec++;
+        if (t->tm_sec > 59) {
+            t->tm_sec = 0;
+            t->tm_min++;
+            if (t->tm_min > 59) {
+                t->tm_min = 0;
+                t->tm_hour++;
+                if (t->tm_hour > 23) {
+                    t->tm_hour = 0;
+                    t->tm_mday++;
                     // todo
                 }
             }
         }
         gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 500, 250, 520);
-        gui_putf_x(vram, scr_x, 0, 0, 500, 4, show_tm.tm_year, -10);
-        // gui_putf_x(vram, scr_x, 0, 40, 500, 2, show_tm.tm_mon, -10);
-        gui_putfs_asc816(vram, scr_x, 0, 40, 500, month[show_tm.tm_mon]);
-        gui_putf_x(vram, scr_x, 0, 80, 500, 2, show_tm.tm_mday, -10);
-        // gui_putf_x(vram, scr_x, 0, 100, 500, 2, show_tm.tm_wday, 10);
-        gui_putfs_asc816(vram, scr_x, 0, 100, 500, week[show_tm.tm_wday]);
+        gui_putf_x(vram, scr_x, 0, 0, 500, 4, t->tm_year, -10);
+        // gui_putf_x(vram, scr_x, 0, 40, 500, 2, t->tm_mon, -10);
+        gui_putfs_asc816(vram, scr_x, 0, 40, 500, month[t->tm_mon]);
+        gui_putf_x(vram, scr_x, 0, 80, 500, 2, t->tm_mday, -10);
+        // gui_putf_x(vram, scr_x, 0, 100, 500, 2, t->tm_wday, 10);
+        gui_putfs_asc816(vram, scr_x, 0, 100, 500, week[t->tm_wday]);
 
-        gui_putf_x(vram, scr_x, 0, 140, 500, 2, show_tm.tm_hour, -10);
+        gui_putf_x(vram, scr_x, 0, 140, 500, 2, t->tm_hour, -10);
         gui_putfs_asc816(vram, scr_x, 0, 160, 500, ":");
-        gui_putf_x(vram, scr_x, 0, 172, 500, 2, show_tm.tm_min, 10);
+        gui_putf_x(vram, scr_x, 0, 172, 500, 2, t->tm_min, 10);
         gui_putfs_asc816(vram, scr_x, 0, 192, 500, ":");
-        gui_putf_x(vram, scr_x, 0, 204, 500, 2, show_tm.tm_sec, 10);
+        gui_putf_x(vram, scr_x, 0, 204, 500, 2, t->tm_sec, 10);
     }
 }
