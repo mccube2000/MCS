@@ -16,21 +16,21 @@ void wait_KBC_sendready() {
 void init_keyboard(keyboard_data_s *data) {
     kd = data;
     wait_KBC_sendready();
-    io_out8(PORT_KEYCMD, KEYCMD_WRITE_MODE);
+    io_out(PORT_KEYCMD, KEYCMD_WRITE_MODE);
     wait_KBC_sendready();
-    io_out8(PORT_KEYDAT, KBC_MODE);
+    io_out(PORT_KEYDAT, KBC_MODE);
 }
 
 void inthandler21(int32_t *esp) {
-    io_out8(PIC0_OCW2, 0x61);
+    io_out(PIC0_OCW2, 0x61);
     en_queue(kd->queue, kd->info_flag | io_in8(PORT_KEYDAT));
 }
 
 void set_to_mouse(uint8_t data) {
     wait_KBC_sendready();
-    io_out8(PORT_KEYCMD, KEYCMD_SENDTO_MOUSE);
+    io_out(PORT_KEYCMD, KEYCMD_SENDTO_MOUSE);
     wait_KBC_sendready();
-    io_out8(PORT_KEYDAT, data);
+    io_out(PORT_KEYDAT, data);
 }
 
 uint8_t get_mouse_id() {
@@ -105,8 +105,8 @@ void mouse_dec(mouse_data_s *md, uint32_t data) {
 }
 
 void inthandler2c(int32_t *esp) {
-    io_out8(PIC1_OCW2, 0x64);
-    io_out8(PIC0_OCW2, 0x62);
+    io_out(PIC1_OCW2, 0x64);
+    io_out(PIC0_OCW2, 0x62);
     if (md->z & MOUSE_Z) // 如果启用滚轮。则入队两次数据，有效数据量为4字节
         en_queue(md->queue, md->info_flag | io_in8(PORT_KEYDAT));
     en_queue(md->queue, md->info_flag | io_in8(PORT_KEYDAT) << 16 | io_in8(PORT_KEYDAT) << 8 |

@@ -32,4 +32,6 @@ typedef char BOOL;
 #define FALSE (BOOL)0
 #define ERROR (BOOL)(-1)
 
+#define NULL 0
+
 #endif

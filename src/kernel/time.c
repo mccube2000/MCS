@@ -3,6 +3,7 @@
 #include "kernel/graphic.h"
 #include "kernel/int.h"
 #include "kernel/memory.h"
+#include "kernel/process.h"
 #include "types.h"
 
 extern uint8_t *vram;
@@ -28,19 +29,21 @@ static int8_t month[12][5] = {"Jan", "Feb", "Mar",  "Apr", "May",  "Jun",
 static uint16_t month_d[12] = {m0_st, m1_st, m2_st, m3_st, m4_st,  m5_st,
                                m6_st, m7_st, m8_st, m9_st, m10_st, m11_st};
 
+extern p_reg32_s *dst;
+
 void init_rtc_pit() {
     // 初始化RTC
-    io_out8(RTC_CHR, 0x8b); // 选择RTC寄存器B并阻断NMI
-    io_out8(RTC_DATA, 0x02); // 设置寄存器B，禁止周期性中断，开放更新结束后中断，BCD码，24小时制
+    io_out(RTC_CHR, 0x8b); // 选择RTC寄存器B并阻断NMI
+    io_out(RTC_DATA, 0x02); // 设置寄存器B，禁止周期性中断，开放更新结束后中断，BCD码，24小时制
 
-    io_out8(RTC_CHR, 0x8c); // 选择RTC寄存器C并阻断NMI
-    io_in8(RTC_DATA);       // 读RTC寄存器C，复位未决的中断状态
+    io_out(RTC_CHR, 0x8c); // 选择RTC寄存器C并阻断NMI
+    io_in8(RTC_DATA);      // 读RTC寄存器C，复位未决的中断状态
 
     // 初始化PIT
-    io_out8(PIT_CTRL, 0x34);
+    io_out(PIT_CTRL, 0x34);
     // 1193
-    io_out8(PIT_CNT0, 0xa9);
-    io_out8(PIT_CNT0, 0x04);
+    io_out(PIT_CNT0, 0xa9);
+    io_out(PIT_CNT0, 0x04);
     // base = 1 / 1193128Hz = 8.3813304188653690132156818044669e-7s
     // a = 1193 * base = 9.998927189706385232766308392729e-4s
     // b = a - 0.001 = -1.0728102936147672336916072709718e-7s
@@ -51,16 +54,11 @@ void init_rtc_pit() {
 }
 
 void inthandler20(int32_t *esp) {
-    io_out8(PIC0_OCW2, 0x60);
+    io_out(PIC0_OCW2, 0x60);
     jiffies++;
     if (jiffies % TIME_ADD_COUNT == 0)
         time_diff++;
-    // switch_to();
-    /*
-    每个进程包含时间片c和优先级p等
-    初始化进程，c=p
-    在此处c--
-    */
+    schedule();
 }
 
 void init_time(time_s *t, time_s *base) {
@@ -71,12 +69,12 @@ void init_time(time_s *t, time_s *base) {
 }
 
 int32_t get_update_in_progress_flag() {
-    io_out8(0x70, 0x0a);
+    io_out(0x70, 0x0a);
     return io_in8(0x71) & 0x80;
 }
 
 uint8_t get_RTC_register(int32_t reg) {
-    io_out8(0x70, reg);
+    io_out(0x70, reg);
     return io_in8(0x71);
 }
 
@@ -141,9 +139,7 @@ time_t tm_s2s(time_s *t, time_t base_year) {
 //     return s;
 // }
 
-void tm_t_get_wday(time_s *t, time_s *base) {
-    t->wday = (base->wday + tm_s2d(t, base->year)) % 7;
-}
+void tm_t_get_wday(time_s *t, time_s *base) { t->wday = (base->wday + tm_s2d(t, base->year)) % 7; }
 
 void show_time(time_s *t) {
     time_t now_sec = (jiffies + time_diff) / Hz;
@@ -176,5 +172,23 @@ void show_time(time_s *t) {
         gui_putf_x(vram, scr_x, 0, 172, 500, 2, t->min, 10);
         gui_putfs_asc816(vram, scr_x, 0, 192, 500, ":");
         gui_putf_x(vram, scr_x, 0, 204, 500, 2, t->sec, 10);
+
+        gui_putf_x(vram, scr_x, 0, 250, 210, 8, dst->reg.cr3, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 230, 8, dst->reg.eflags, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 250, 8, dst->reg.eax, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 270, 8, dst->reg.ecx, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 290, 8, dst->reg.edx, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 310, 8, dst->reg.ebx, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 330, 8, dst->reg.esp, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 350, 8, dst->reg.ebp, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 370, 8, dst->reg.esi, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 390, 8, dst->reg.edi, 16);
+
+        gui_putf_x(vram, scr_x, 0, 250, 410, 8, dst->sreg.es, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 430, 8, dst->sreg.cs, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 450, 8, dst->sreg.ss, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 470, 8, dst->sreg.ds, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 490, 8, dst->sreg.fs, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 510, 8, dst->sreg.gs, 16);
     }
 }

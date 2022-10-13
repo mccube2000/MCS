@@ -2,11 +2,11 @@
 
 		GLOBAL	_io_stihlt
 		GLOBAL	_io_in8,  _io_in16,  _io_in32
-		GLOBAL	_io_out8, _io_out16, _io_out32
+		GLOBAL	_io_out
 		GLOBAL	_io_load_eflags, _io_store_eflags
 		GLOBAL	_load_gdtr, _load_idtr
 		GLOBAL	_load_cr0, _store_cr0, _load_cr2
-		GLOBAL	_load_tr
+		GLOBAL	_load_tr, _save_context
 		GLOBAL	_asm_page_fault, _asm_inthandler20, _asm_inthandler21, _asm_inthandler27, _asm_inthandler2c
 		EXTERN	_page_fault, _inthandler20, _inthandler21, _inthandler27, _inthandler2c
 
@@ -34,22 +34,10 @@ _io_in32:	; int io_in32(int port);
 		IN		EAX,DX
 		RET
 
-_io_out8:	; void io_out8(int port, int data);
+_io_out:	; void io_out8(int port, int data);
 		MOV		EDX,[ESP+4]		; port
 		MOV		AL,[ESP+8]		; data
 		OUT		DX,AL
-		RET
-
-_io_out16:	; void io_out16(int port, int data);
-		MOV		EDX,[ESP+4]		; port
-		MOV		EAX,[ESP+8]		; data
-		OUT		DX,AX
-		RET
-
-_io_out32:	; void io_out32(int port, int data);
-		MOV		EDX,[ESP+4]		; port
-		MOV		EAX,[ESP+8]		; data
-		OUT		DX,EAX
 		RET
 
 _io_load_eflags:	; int io_load_eflags(void);
@@ -172,3 +160,18 @@ _asm_inthandler2c:
 		POP		DS
 		POP		ES
 		IRETD
+
+_save_context:
+	push es
+    push cs
+    push ss
+    push ds
+    push fs
+    push gs
+    pushad
+	mov eax, cr3
+    push eax
+	pushfd
+	mov eax, esp
+	add esp, 4 * 16
+	ret
