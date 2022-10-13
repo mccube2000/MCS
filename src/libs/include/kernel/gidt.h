@@ -11,16 +11,16 @@ typedef struct segment_desc {
     int16_t limit_low, base_low;
     int8_t base_mid, access_right;
     int8_t limit_high, base_high;
-} segment_desc_t;
+} segment_desc_s;
 
 typedef struct gate_desc {
     int16_t offset_low, selector;
     int8_t dw_count, access_right;
     int16_t offset_high;
-} gate_desc_t;
+} gate_desc_s;
 
 void init_gdtidt(void);
-void set_segmdesc(segment_desc_t *sd, uint32_t limit, int32_t base, int32_t ar);
-void set_gatedesc(gate_desc_t *gd, int32_t offset, int32_t selector, int32_t ar);
+void set_segmdesc(segment_desc_s *sd, uint32_t limit, int32_t base, int32_t ar);
+void set_gatedesc(gate_desc_s *gd, int32_t offset, int32_t selector, int32_t ar);
 
 #endif

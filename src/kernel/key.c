@@ -5,15 +5,15 @@
 #include "kernel/int.h"
 #include "types.h"
 
-keyboard_data *kd;
-mouse_data *md;
+keyboard_data_s *kd;
+mouse_data_s *md;
 
 void wait_KBC_sendready() {
     while ((io_in8(PORT_KEYSTA) & KEYSTA_SEND_NOTREADY) != 0)
         pause();
 }
 
-void init_keyboard(keyboard_data *data) {
+void init_keyboard(keyboard_data_s *data) {
     kd = data;
     wait_KBC_sendready();
     io_out8(PORT_KEYCMD, KEYCMD_WRITE_MODE);
@@ -50,7 +50,7 @@ void set_mouse_rate(uint8_t rate) {
     set_to_mouse(rate);
 }
 
-void init_mouse(mouse_data *data) {
+void init_mouse(mouse_data_s *data) {
     md = data;
     md->id = get_mouse_id();
     // md->id = 3; // 滚轮 3键
@@ -77,7 +77,7 @@ void init_mouse(mouse_data *data) {
     set_to_mouse(MOUSECMD_ENABLE);
 }
 
-void mouse_dec(mouse_data *md, uint32_t data) {
+void mouse_dec(mouse_data_s *md, uint32_t data) {
     uint8_t temp_z = data & 0xff;
     if ((data >>= 8) == 0xfafafa)
         return;

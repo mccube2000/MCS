@@ -31,17 +31,27 @@
 #define m10_st (m9_st + 31)
 #define m11_st (m10_st + 30)
 
+// 时间类数值
+typedef ulong32_t time_t;
+
+// 秒、毫秒时间戳
 typedef struct tm {
-    uint8_t tm_sec;   // [0, 60] 包括闰秒
-    uint8_t tm_min;   // [0, 59]
-    uint8_t tm_hour;  // [0, 23]
-    uint8_t tm_mday;  // [1, 31]
-    uint8_t tm_mon;   // [0, 11]
-    uint32_t tm_year; // [1900, )
-    uint8_t tm_wday;  // [0, 6] Sun - Sat
-    int16_t tm_yday;  // [0, 365] 1.1 - 12.31 包括闰年
-    bool tm_isdst;    // {true, false} 夏时令标记
-} tm_t;
+    time_t s;
+    uint16_t m;
+} tm_s;
+
+// 完整时间结构
+typedef struct time {
+    uint8_t sec;   // [0, 60] 包括闰秒
+    uint8_t min;   // [0, 59]
+    uint8_t hour;  // [0, 23]
+    uint8_t mday;  // [1, 31]
+    uint8_t mon;   // [0, 11]
+    uint32_t year; // [1900, )
+    uint8_t wday;  // [0, 6] Sun - Sat
+    int16_t yday;  // [0, 365] 1.1 - 12.31 包括闰年
+    bool isdst;    // {true, false} 夏时令标记
+} time_s;
 
 void init_rtc_pit();
 
@@ -56,7 +66,7 @@ void init_rtc_pit();
 
 void inthandler20(int32_t *esp);
 
-void init_time(tm_t *t, tm_t *base);
+void init_time(time_s *t, time_s *base);
 
 #define BCD_TO_BIN(val) ((val) = ((val)&0x0f) + ((val) >> 4) * 10)
 #define is_leap_year(y) (!(y & 3) && (y % 100)) || !(y % 400)
@@ -67,11 +77,11 @@ void init_time(tm_t *t, tm_t *base);
 
 int32_t get_update_in_progress_flag();
 uint8_t get_RTC_register(int32_t reg);
-void read_rtc(tm_t *t);
-ulong32_t tm_t2d(tm_t *t, ulong32_t base_year);
-ulong32_t tm_t2s(tm_t *t, ulong32_t base_year);
-void tm_t_get_wday(tm_t *t, tm_t *base);
+void read_rtc(time_s *t);
+time_t tm_s2d(time_s *t, time_t base_year);
+time_t tm_s2s(time_s *t, time_t base_year);
+void tm_t_get_wday(time_s *t, time_s *base);
 
-void show_time(tm_t *t);
+void show_time(time_s *t);
 
 #endif

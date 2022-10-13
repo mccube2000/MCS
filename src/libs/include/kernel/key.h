@@ -23,11 +23,9 @@
 #define MOUSE_5 0x60
 
 typedef struct keyboard_data {
-    // int8_t x, y, z, id;
-    // bool left, right, mid, top, btm;
     circ_queue *queue;
     uint32_t info_flag;
-} keyboard_data;
+} keyboard_data_s;
 
 typedef struct mouse_data {
     uint8_t flags, z, id;
@@ -35,15 +33,15 @@ typedef struct mouse_data {
     int16_t x, y;
     circ_queue *queue;
     uint32_t info_flag;
-} mouse_data;
+} mouse_data_s;
 
 void wait_KBC_sendready();
-void init_keyboard(keyboard_data *kd);
+void init_keyboard(keyboard_data_s *kd);
 
 void inthandler21(int32_t *esp);
 
-void init_mouse(mouse_data *md);
-void mouse_dec(mouse_data *md, uint32_t data);
+void init_mouse(mouse_data_s *md);
+void mouse_dec(mouse_data_s *md, uint32_t data);
 
 void inthandler2c(int32_t *esp);
 #endif

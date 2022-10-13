@@ -5,7 +5,7 @@
 #include "kernel/memory.h"
 #include "types.h"
 
-extern BIOS_info_t *bootinfo;
+extern BIOS_info_s *bootinfo;
 extern uint8_t *vram;
 extern uint16_t scr_x, scr_y;
 
@@ -36,7 +36,7 @@ void key_dbg(uint32_t info) {
         k_info_c = 0;
 }
 
-void mouse_dbg(mouse_data *md, uint32_t info, int32_t mx, int32_t my) {
+void mouse_dbg(mouse_data_s *md, uint32_t info, int32_t mx, int32_t my) {
     gui_boxfill(vram, scr_x, COL8_FFFFFF, 100, km_debug_y + 20, 200, km_debug_y + 40);
 
     gui_putf_x(vram, scr_x, (md->z & MOUSE_5) == MOUSE_5 ? 1 : 4, 100, km_debug_y + 20, 8, info,
@@ -64,5 +64,5 @@ void mouse_dbg(mouse_data *md, uint32_t info, int32_t mx, int32_t my) {
 #ifndef KM_DBG
 void info_dbg(uint32_t info) {}
 void key_dbg(uint32_t info) {}
-void mouse_dbg(mouse_data *md, uint32_t info, int32_t mx, int32_t my) {}
+void mouse_dbg(mouse_data_s *md, uint32_t info, int32_t mx, int32_t my) {}
 #endif

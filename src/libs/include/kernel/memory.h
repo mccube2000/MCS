@@ -25,7 +25,7 @@ typedef struct BIOS_info {
     uint8_t leds, vmode;
     uint16_t scrnX, scrnY;
     uint8_t *vram;
-} BIOS_info_t;
+} BIOS_info_s;
 
 // e820
 typedef struct SMAP_entry {
@@ -35,7 +35,7 @@ typedef struct SMAP_entry {
     uint32_t LengthH;
     uint32_t Type; // entry Type
     uint32_t ACPI; // extended
-} __attribute__((packed)) SMAP_entry_t;
+} __attribute__((packed)) SMAP_entry_s;
 
 // SMAP_entry Type
 #define MEMORY_AVAILABLE 1
@@ -48,7 +48,7 @@ typedef struct SMAP_entry {
 typedef union PTE {
     void *addr;
     uint16_t flags;
-} PTE_t;
+} PTE_s;
 
 #define PTE_P 0x01
 #define PTE_RW 0x02
@@ -68,8 +68,8 @@ typedef union PTE {
 
 void init_memory();
 
-PTE_t *get_PTE(void *v_addr);
-void set_PTE(PTE_t *pte, void *p_addr, uint16_t flags);
+PTE_s *get_PTE(void *v_addr);
+void set_PTE(PTE_s *pte, void *p_addr, uint16_t flags);
 
 void e820_count(bool show_e820_map);
 void page_count();

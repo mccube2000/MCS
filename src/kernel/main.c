@@ -10,14 +10,14 @@
 #include "kernel/time.h"
 #include "types.h"
 
-BIOS_info_t *bootinfo;
+BIOS_info_s *bootinfo;
 uint8_t *vram;
 uint16_t scr_x, scr_y;
-extern tm_t tm;
-extern tm_t base_tm_2000;
+extern time_s tm;
+extern time_s base_tm_2000;
 
 void MSC_main() {
-    bootinfo = (BIOS_info_t *)bios_info_addr;
+    bootinfo = (BIOS_info_s *)bios_info_addr;
     vram = bootinfo->vram;
     scr_x = bootinfo->scrnX;
     scr_y = bootinfo->scrnY;
@@ -27,14 +27,14 @@ void MSC_main() {
     init_memory();
     init_time(&tm, &base_tm_2000);
 
-    tm_t show_tm = tm;
+    time_s show_tm = tm;
     uint8_t mcursor[256];
     int32_t mx = scr_x / 2, my = scr_y / 2, old_mx = -1, old_my = -1;
     uint32_t info, dinfo;
 
     circ_queue queue;
-    keyboard_data kd;
-    mouse_data md;
+    keyboard_data_s kd;
+    mouse_data_s md;
     kd.queue = &queue;
     kd.info_flag = keyboard_info_flag;
     md.queue = &queue;
