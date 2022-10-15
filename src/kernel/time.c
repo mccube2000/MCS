@@ -29,8 +29,6 @@ static int8_t month[12][5] = {"Jan", "Feb", "Mar",  "Apr", "May",  "Jun",
 static uint16_t month_d[12] = {m0_st, m1_st, m2_st, m3_st, m4_st,  m5_st,
                                m6_st, m7_st, m8_st, m9_st, m10_st, m11_st};
 
-extern p_reg32_s *dst;
-
 void init_rtc_pit() {
     // 初始化RTC
     io_out(RTC_CHR, 0x8b); // 选择RTC寄存器B并阻断NMI
@@ -58,7 +56,7 @@ void inthandler20(int32_t *esp) {
     jiffies++;
     if (jiffies % TIME_ADD_COUNT == 0)
         time_diff++;
-    schedule();
+    schedule(esp);
 }
 
 void init_time(time_s *t, time_s *base) {
@@ -173,22 +171,22 @@ void show_time(time_s *t) {
         gui_putfs_asc816(vram, scr_x, 0, 192, 500, ":");
         gui_putf_x(vram, scr_x, 0, 204, 500, 2, t->sec, 10);
 
-        gui_putf_x(vram, scr_x, 0, 250, 210, 8, dst->reg.cr3, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 230, 8, dst->reg.eflags, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 250, 8, dst->reg.eax, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 270, 8, dst->reg.ecx, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 290, 8, dst->reg.edx, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 310, 8, dst->reg.ebx, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 330, 8, dst->reg.esp, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 350, 8, dst->reg.ebp, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 370, 8, dst->reg.esi, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 390, 8, dst->reg.edi, 16);
-
-        gui_putf_x(vram, scr_x, 0, 250, 410, 8, dst->sreg.es, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 430, 8, dst->sreg.cs, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 450, 8, dst->sreg.ss, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 470, 8, dst->sreg.ds, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 490, 8, dst->sreg.fs, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 510, 8, dst->sreg.gs, 16);
+        gui_boxfill(vram, scr_x, COL8_FFFFFF, 250, 200, 350, 520);
+        gui_putf_x(vram, scr_x, 0, 250, 200, 8, current_process->id, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 220, 8, current_process->count, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 240, 8, current_process->jiffies, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 260, 8, current_process->priority, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 280, 8, current_process->reg.eflags, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 300, 8, current_process->reg.eip, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 320, 8, current_process->reg.cs, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 340, 8, current_process->reg.r32.esp, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 360, 8, current_process->reg.r32.ebp, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 380, 8, current_process->reg.r32.esi, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 400, 8, current_process->reg.r32.edi, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 420, 8, current_process->start_time, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 440, 8, current_process->reg.r16.ss, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 460, 8, current_process->reg.r16.ds, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 480, 8, current_process->reg.r16.fs, 16);
+        gui_putf_x(vram, scr_x, 0, 250, 500, 8, current_process->reg.r16.gs, 16);
     }
 }

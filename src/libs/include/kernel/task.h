@@ -41,4 +41,6 @@ typedef struct tss32 {
     int32_t ssp;          // 32 bit
 } tss32_s;
 
+void init_task();
+
 #endif

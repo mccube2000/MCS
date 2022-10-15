@@ -331,7 +331,7 @@ pgo:
     mov cr3, eax
 
     mov eax, cr0
-    or eax, 0x8001_0000
+    or eax, 0x8000_0000
     mov cr0, eax                    ; 开启分页机制
 
     jmp c_core

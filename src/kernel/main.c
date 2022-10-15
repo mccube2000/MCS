@@ -7,14 +7,15 @@
 #include "kernel/int.h"
 #include "kernel/key.h"
 #include "kernel/memory.h"
+#include "kernel/task.h"
 #include "kernel/time.h"
 #include "types.h"
 
 BIOS_info_s *bootinfo;
 uint8_t *vram;
 uint16_t scr_x, scr_y;
-extern time_s tm;
 extern time_s base_tm_2000;
+time_s show_tm;
 
 void MSC_main() {
     bootinfo = (BIOS_info_s *)bios_info_addr;
@@ -22,12 +23,13 @@ void MSC_main() {
     scr_x = bootinfo->scrnX;
     scr_y = bootinfo->scrnY;
     init_gdtidt();
+    init_task();
     init_pic();
     init_screen(vram, scr_x, scr_y);
     init_memory();
     init_time(&tm, &base_tm_2000);
 
-    time_s show_tm = tm;
+    show_tm = tm;
     uint8_t mcursor[256];
     int32_t mx = scr_x / 2, my = scr_y / 2, old_mx = -1, old_my = -1;
     uint32_t info, dinfo;

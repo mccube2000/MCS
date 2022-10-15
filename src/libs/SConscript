@@ -9,7 +9,7 @@ nasm = nasm_env
 
 build = str(env['BUILD'] / root.relative_to(env['SRC']))
 
-sources = Glob("*\\*.c")
+sources = Glob("*\\*\\*.c")
 
 o_list = []
 for source in sources:

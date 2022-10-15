@@ -33,5 +33,7 @@ typedef char BOOL;
 #define ERROR (BOOL)(-1)
 
 #define NULL 0
+#define NULL_PTR (void *)NULL
+#define nullptr NULL_PTR
 
 #endif

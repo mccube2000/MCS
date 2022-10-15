@@ -1,7 +1,7 @@
 #ifndef _ASMFUNC_H_
 #define _ASMFUNC_H_
 
-#include "kernel/task.h"
+#include "kernel/process.h"
 #include "types.h"
 
 #define hlt() __asm__("hlt" ::)
@@ -36,7 +36,8 @@ extern void *load_cr2(void);
 extern void store_cr0(uint32_t cr0);
 extern void load_tr(int32_t tr);
 
-extern void *save_context();
+extern p_reg32_s *save_context(p_reg32_s *);
+extern void load_context(p_reg32_s);
 
 // extern void farjmp(int32_t eip, int32_t cs);
 // extern void farcall(int32_t eip, int32_t cs);
