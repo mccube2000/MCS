@@ -114,12 +114,18 @@ _asm_page_fault:
 ;     IRETD
 
 _asm_inthandler20:
-    pushad
+    ; pushad
+    push eax
+    push ecx
+    push edx
+    push ebx
+    push ebp
+    push esi
+    push edi
     push ds
     push es
     push fs
     push gs
-    push ss
     mov eax, esp
     push eax
 
@@ -130,12 +136,18 @@ _asm_inthandler20:
     call _inthandler20
 
     pop eax
-    pop ss
     pop gs
     pop fs
     pop es
     pop ds
-    popad
+    pop edi
+    pop esi
+    pop ebp
+    pop ebx
+    pop edx
+    pop ecx
+    pop eax
+    ; popad
     iretd
 
 _asm_inthandler21:

@@ -6,7 +6,6 @@
 #include "types.h"
 
 typedef struct p_sreg16 {
-    int32_t ss; // low 16 bit
     int32_t gs; // low 16 bit
     int32_t fs; // low 16 bit
     int32_t es; // low 16 bit
@@ -17,7 +16,6 @@ typedef struct p_reg32 {
     int32_t edi; // 32 bit
     int32_t esi; // 32 bit
     int32_t ebp; // 32 bit
-    int32_t esp; // 32 bit
     int32_t ebx; // 32 bit
     int32_t edx; // 32 bit
     int32_t ecx; // 32 bit
@@ -27,10 +25,12 @@ typedef struct p_reg32 {
 typedef struct p_reg {
     p_sreg16_s r16; // process 16 bit segment registers
     p_reg32_s r32;  // process 32 bit registers
-    // 以下寄存器由中断保护现场压入
+    // 以下寄存器在中断保护现场时压入
     int32_t eip;    // 32 bit
     int32_t cs;     // low 16 bit
     int32_t eflags; // 32 bit
+    int32_t esp;    // 32 bit
+    int32_t xss;    // 32 bit
 } p_reg_s;
 
 typedef struct PCB {
@@ -47,6 +47,7 @@ typedef struct PCB {
 } __attribute__((packed)) PCB_s;
 
 extern PCB_s *current_process;
+extern PCB_s *process_link;
 
 void init_process();
 void schedule(int32_t *esp);
