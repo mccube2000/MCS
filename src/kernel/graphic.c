@@ -196,7 +196,8 @@ void putblock(uint8_t *vram, uint16_t scr_x, uint16_t pxsize, uint16_t pysize, u
     uint16_t x, y;
     for (y = 0; y < pysize; y++) {
         for (x = 0; x < pxsize; x++) {
-            vram[(py0 + y) * scr_x + (px0 + x)] = buf[y * bxsize + x];
+            if (px0 + x < scr_x)
+                vram[(py0 + y) * scr_x + (px0 + x)] = buf[y * bxsize + x];
         }
     }
 }

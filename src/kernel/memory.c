@@ -110,16 +110,19 @@ void page_add_used() {
 
 void page_init() {
     uint32_t i, j, base, count;
+    PTE_s *pte;
     for (i = 0; protected_page_map[i][1] != 0; i++) {
         base = protected_page_map[i][0];
         count = protected_page_map[i][1];
         for (j = 0; j < count; j++) {
-            PTE_s *pte = get_PTE((void *)base);
-            set_PTE(pte, (void *)base, (uint16_t)(pte->flags & 0x0ffd));
+            pte = get_PTE((void *)base);
+            set_PTE(pte, (void *)base, (uint16_t)(pte->flags & 0x0ffd) | PTE_PROTECTED);
             page_protected++;
             base += 0x1000;
         }
     }
+    pte = get_PTE((void *)0);
+    set_PTE(pte, (void *)0, (uint16_t)(pte->flags & 0x0ffc) | PTE_PROTECTED);
 }
 
 void page_fault(int32_t *esp) {
@@ -131,7 +134,11 @@ void page_fault(int32_t *esp) {
             return;
         }
     } else {
-        set_PTE(pte, error_addr, PTE_P | PTE_RW);
-        page_add_used();
+        if (pte->flags & PTE_PROTECTED) {
+            return;
+        } else {
+            set_PTE(pte, error_addr, PTE_P | PTE_RW);
+            page_add_used();
+        }
     }
 }

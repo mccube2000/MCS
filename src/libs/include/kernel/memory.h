@@ -4,14 +4,14 @@
 #include "types.h"
 
 #define bios_info_addr 0x00000500
-#define gdt_addr 0x00000600
-#define gdt_size 0x000001ff
-#define idt_addr 0x00000800
+#define gdt_addr 0x00002000
+#define gdt_size 0x000007ff
+#define idt_addr 0x00002800
 #define idt_size 0x000007ff
 #define pdt_addr 0xfffff000 // 0x1000
 #define pt_addr 0xffc00000  // 0x10_0000
-#define e820_size_addr 0x00002000
-#define e820_map_addr 0x00002004
+#define e820_size_addr 0x00000600
+#define e820_map_addr 0x00000604
 #define kernel_addr 0x00500000
 #define kernel_size 0x002fffff
 
@@ -60,7 +60,7 @@ typedef union PTE {
 #define PTE_PS 0x80
 
 #define PTE_G 0x0100
-#define PTE_F2 0x0200
+#define PTE_PROTECTED 0x0200
 #define PTE_F3 0x0400
 #define PTE_F4 0x0800
 

@@ -13,26 +13,28 @@ PCB_s *a_task = 0x00700100;
 
 extern uint8_t *vram;
 extern uint16_t scr_x, scr_y;
-
+extern time_s show_tm;
 void a_func() {
     for (;;) {
-        gui_boxfill(vram, scr_x, COL8_FFFFFF, 250, 200, 350, 520);
-        gui_putf_x(vram, scr_x, 0, 250, 200, 8, current_process->id, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 220, 8, current_process->count, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 240, 8, current_process->jiffies, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 260, 8, current_process->priority, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 280, 8, current_process->reg.eflags, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 300, 8, current_process->reg.eip, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 320, 8, current_process->reg.cs, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 340, 8, current_process->reg.r32.esp, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 360, 8, current_process->reg.r32.ebp, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 380, 8, current_process->reg.r32.esi, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 400, 8, current_process->reg.r32.edi, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 420, 8, current_process->start_time, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 440, 8, current_process->reg.r16.ss, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 460, 8, current_process->reg.r16.ds, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 480, 8, current_process->reg.r16.fs, 16);
-        gui_putf_x(vram, scr_x, 0, 250, 500, 8, current_process->reg.r16.gs, 16);
+        // continue;
+        // show_time(&show_tm);
+        gui_boxfill(vram, scr_x, COL8_FFFFFF, 521, 200, 651, 520);
+        gui_putf_x(vram, scr_x, 0, 521, 200, 8, current_process->id, 16);
+        gui_putf_x(vram, scr_x, 0, 521, 220, 8, current_process->count, 16);
+        gui_putf_x(vram, scr_x, 0, 521, 240, 8, current_process->jiffies, 16);
+        gui_putf_x(vram, scr_x, 0, 521, 260, 8, current_process->priority, 16);
+        gui_putf_x(vram, scr_x, 0, 521, 280, 8, current_process->reg.eflags, 16);
+        gui_putf_x(vram, scr_x, 0, 521, 300, 8, current_process->reg.eip, 16);
+        gui_putf_x(vram, scr_x, 0, 521, 320, 8, current_process->reg.cs, 16);
+        gui_putf_x(vram, scr_x, 0, 521, 340, 8, current_process->reg.r32.esp, 16);
+        gui_putf_x(vram, scr_x, 0, 521, 360, 8, current_process->reg.r32.ebp, 16);
+        gui_putf_x(vram, scr_x, 0, 521, 380, 8, current_process->reg.r32.esi, 16);
+        gui_putf_x(vram, scr_x, 0, 521, 400, 8, current_process->reg.r32.edi, 16);
+        gui_putf_x(vram, scr_x, 0, 521, 420, 8, current_process->start_time, 16);
+        gui_putf_x(vram, scr_x, 0, 521, 440, 8, current_process->reg.r16.ss, 16);
+        gui_putf_x(vram, scr_x, 0, 521, 460, 8, current_process->reg.r16.ds, 16);
+        gui_putf_x(vram, scr_x, 0, 521, 480, 8, current_process->reg.r16.fs, 16);
+        gui_putf_x(vram, scr_x, 0, 521, 500, 8, current_process->reg.r16.gs, 16);
     }
 }
 
@@ -53,6 +55,7 @@ void init_process() {
     main_task->reg.r16.fs = 0x10;
     main_task->reg.r16.gs = 0x10;
     main_task->reg.r16.ss = 0x10;
+    main_task->reg.r32.esp = 0x00800000;
 
     *a_task = *main_task;
     a_task->id++;
@@ -61,14 +64,26 @@ void init_process() {
     a_task->next = nullptr;
     a_task->prev = main_task;
     a_task->reg.eip = a_func;
-    a_task->reg.r32.esp = 0x00800000;
 }
+
+// void create_process() {
+//     *a_task = *main_task;
+//     a_task->id++;
+//     a_task->count = 15;
+//     a_task->priority = 15;
+//     a_task->next = nullptr;
+//     a_task->prev = main_task;
+//     a_task->reg.eip = a_func;
+//     a_task->reg.r32.esp = 0x00800000;
+// }
 
 void schedule(int32_t *esp) {
     current_process->jiffies++;
     if (--current_process->count > 0)
         return;
     current_reg = (p_reg_s *)esp;
+    if (current_reg->eip < 0x00500000 && current_process->id)
+        current_reg->eip = a_func;
     current_process->reg = *current_reg;
     current_process->count = 0;
     PCB_s *next_p = current_process->next;

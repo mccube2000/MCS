@@ -7,6 +7,7 @@ vmode               equ 0x503       ; 保存关于颜色的信息
 scrnX               equ 0x504       ; 保存屏幕X分辨率
 scrnY               equ 0x506       ; 保存屏幕Y分辨率
 vram                equ 0x508       ; 保存图像缓冲区的起始地址
+e820_addr           equ 0x600       ; e820
 
 ; 显示模式
 ; 0x100       ;  640 x  400 x 8bit 彩色
@@ -76,7 +77,7 @@ start:
 ;     mov [mmap_ent], bp              ; store the entry count
 ; .failed:
 ; ==============================================
-    mov di, 0x2004
+    mov di, e820_addr + 4
     xor ebx, ebx
     xor bp, bp
     mov edx, 0x534d4150
@@ -102,7 +103,7 @@ start:
     test ebx, ebx                   ; if ebx resets to 0, list is complete
     jne .e820lp
 .e820f:
-    mov [0x2000], bp              ; store the entry count
+    mov [e820_addr], bp              ; store the entry count
 
 ;     ;在所有ards结构中找出（base_addr_low + length_low)的最大值，即为内存的容量
 ;     mov cx, [ards_nr]
