@@ -51,7 +51,7 @@ void init_rtc_pit() {
     // 即平均每10000年慢1.1343932879370741510762640939725秒
 }
 
-void inthandler20(int32_t *esp) {
+void int_pit(int32_t *esp) {
     io_out(PIC0_OCW2, 0x60);
     jiffies++;
     if (jiffies % TIME_ADD_COUNT == 0)
@@ -62,8 +62,7 @@ void inthandler20(int32_t *esp) {
 void init_time(time_s *t, time_s *base) {
     read_rtc(t);
     tm_t_get_wday(t, base);
-    start_time = tm_s2s(t, 1900);
-    gui_putf_x(vram, scr_x, 0, 300, 500, 10, start_time, 10);
+    start_time = time_s2s(t, 1900);
 }
 
 int32_t get_update_in_progress_flag() {
@@ -114,7 +113,7 @@ void read_rtc(time_s *t) {
 }
 
 // time_s 转换为相对于base_year.1.1天数
-time_t tm_s2d(time_s *t, time_t base_year) {
+time_t time_s2d(time_s *t, time_t base_year) {
     base_year--, t->year--; // 对应下面leap_range [x, y)
     time_t leap = leap_range(base_year, t->year);
     // 年 月 日 同时复原tm_year
@@ -122,10 +121,10 @@ time_t tm_s2d(time_s *t, time_t base_year) {
 }
 
 // time_s 转换为相对于base_year.1.1的秒数
-time_t tm_s2s(time_s *t, time_t base_year) {
-    return DAY_S * tm_s2d(t, base_year) + HOUR_S * t->hour + MIN_S * t->min + t->sec;
+time_t time_s2s(time_s *t, time_t base_year) {
+    return DAY_S * time_s2d(t, base_year) + HOUR_S * t->hour + MIN_S * t->min + t->sec;
 }
-// time_t tm_s2s(time_s *t, time_t base_year) {
+// time_t time_s2s(time_s *t, time_t base_year) {
 //     base_year--, t->year--; // 对应下面leap_range [x, y)
 //     time_t s = 0, leap = leap_range(base_year, t->year);
 //     // 年 月日
@@ -137,7 +136,7 @@ time_t tm_s2s(time_s *t, time_t base_year) {
 //     return s;
 // }
 
-void tm_t_get_wday(time_s *t, time_s *base) { t->wday = (base->wday + tm_s2d(t, base->year)) % 7; }
+void tm_t_get_wday(time_s *t, time_s *base) { t->wday = (base->wday + time_s2d(t, base->year)) % 7; }
 
 void show_next_process(PCB_s *current, uint16_t x, uint16_t y) {
     gui_boxfill(vram, scr_x, COL8_FFFFFF, x, y, x + 100, y + 320);
@@ -153,7 +152,7 @@ void show_next_process(PCB_s *current, uint16_t x, uint16_t y) {
     gui_putf_x(vram, scr_x, 0, x, y + 180, 8, current->reg.r32.esi, 16);
     gui_putf_x(vram, scr_x, 0, x, y + 200, 8, current->reg.r32.edi, 16);
     gui_putf_x(vram, scr_x, 0, x, y + 220, 8, current->start_time, 16);
-    gui_putf_x(vram, scr_x, 0, x, y + 240, 8, current->reg.xss, 16);
+    gui_putf_x(vram, scr_x, 0, x, y + 240, 8, current->reg.ss, 16);
     gui_putf_x(vram, scr_x, 0, x, y + 260, 8, current->reg.r16.ds, 16);
     gui_putf_x(vram, scr_x, 0, x, y + 280, 8, current->reg.r16.fs, 16);
     gui_putf_x(vram, scr_x, 0, x, y + 300, 8, current->reg.r16.gs, 16);
@@ -175,7 +174,7 @@ void show_process(PCB_s *current, uint16_t x, uint16_t y) {
     gui_putfs_asc816(vram, scr_x, 0, x, y + 180, "esi:");
     gui_putfs_asc816(vram, scr_x, 0, x, y + 200, "edi:");
     gui_putfs_asc816(vram, scr_x, 0, x, y + 220, "start_time:");
-    gui_putfs_asc816(vram, scr_x, 0, x, y + 240, "xss:");
+    gui_putfs_asc816(vram, scr_x, 0, x, y + 240, "ss:");
     gui_putfs_asc816(vram, scr_x, 0, x, y + 260, "ds:");
     gui_putfs_asc816(vram, scr_x, 0, x, y + 280, "fs:");
     gui_putfs_asc816(vram, scr_x, 0, x, y + 300, "gs:");
@@ -213,6 +212,6 @@ void show_time(time_s *t) {
         gui_putf_x(vram, scr_x, 0, 172, 500, 2, t->min, 10);
         gui_putfs_asc816(vram, scr_x, 0, 192, 500, ":");
         gui_putf_x(vram, scr_x, 0, 204, 500, 2, t->sec, 10);
-        show_process(process_link, 0, 180);
+        show_process(process_lh, 0, 180);
     }
 }

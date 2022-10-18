@@ -4,6 +4,7 @@
 #include "kernel/gidt.h"
 #include "kernel/graphic.h"
 #include "kernel/info.h"
+#include "kernel/init.h"
 #include "kernel/int.h"
 #include "kernel/key.h"
 #include "kernel/memory.h"
@@ -17,22 +18,26 @@ uint16_t scr_x, scr_y;
 extern time_s base_tm_2000;
 time_s show_tm;
 
-void MSC_main() {
+void init() {
     bootinfo = (BIOS_info_s *)bios_info_addr;
     vram = bootinfo->vram;
     scr_x = bootinfo->scrnX;
     scr_y = bootinfo->scrnY;
     init_gdtidt();
     init_task();
-    init_pic();
     init_screen(vram, scr_x, scr_y);
     init_memory();
     init_time(&tm, &base_tm_2000);
+    init_pic();
+    MCS_main();
+}
 
+void MCS_main() {
     show_tm = tm;
     uint8_t mcursor[256];
     int32_t mx = scr_x / 2, my = scr_y / 2, old_mx = -1, old_my = -1;
     uint32_t info, dinfo;
+    bool show_time_p_info = false;
 
     circ_queue queue;
     keyboard_data_s kd;
@@ -47,12 +52,9 @@ void MSC_main() {
     init_mouse_cursor(mcursor, COL8_008484);
     putblock(vram, scr_x, 8, 16, mx, my, mcursor, 8);
 
-    uint8_t s[20] = "MCS OS\0";
-    gui_putfs_asc816(vram, scr_x, 0, scr_x / 2, scr_y / 2, s);
-    gui_putfs_asc816(vram, scr_x, 15, scr_x / 2 + 1, scr_y / 2 + 1, s);
-
     for (;;) {
-        show_time(&show_tm);
+        if (show_time_p_info)
+            show_time(&show_tm);
         if (de_queue(&queue, &info)) {
             info_dbg(info);
             if (info & keyboard_info_flag) {
@@ -83,6 +85,10 @@ void MSC_main() {
                 old_my = my;
                 putblock(vram, scr_x, 8, 16, mx, my, mcursor, 8);
                 mouse_dbg(&md, info, mx, my);
+                if (md.top)
+                    show_time_p_info = true;
+                else if (md.btm)
+                    show_time_p_info = false;
             }
         } else {
             hlt();

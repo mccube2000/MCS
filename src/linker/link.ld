@@ -1,4 +1,4 @@
-ENTRY(_MSC_main)
+ENTRY(_init)
 SECTIONS
 {
 	. = 0x00500000;

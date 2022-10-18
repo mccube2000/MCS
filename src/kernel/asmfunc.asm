@@ -7,8 +7,8 @@
     global	_load_gdtr, _load_idtr
     global	_load_cr0, _store_cr0, _load_cr2
     global	_load_tr, _save_context, _load_context
-    global	_asm_page_fault, _asm_inthandler20, _asm_inthandler21, _asm_inthandler27, _asm_inthandler2c
-    extern	_page_fault, _inthandler20, _inthandler21, _inthandler27, _inthandler2c
+    global	_asm_page_fault, _asm_int_pit, _asm_int_keyboard, _asm_inthandler27, _asm_int_mouse
+    extern	_page_fault, _int_pit, _int_keyboard, _inthandler27, _int_mouse
 
 SECTION .text
 
@@ -97,7 +97,7 @@ _asm_page_fault:
     add esp, 4
     IRETD
 
-; _asm_inthandler20:
+; _asm_int_pit:
 ;     PUSH	ES
 ;     PUSH	DS
 ;     PUSHAD
@@ -106,14 +106,14 @@ _asm_page_fault:
 ;     MOV		AX,SS
 ;     MOV		DS,AX
 ;     MOV		ES,AX
-;     CALL	_inthandler20
+;     CALL	_int_pit
 ;     POP		EAX
 ;     POPAD
 ;     POP		DS
 ;     POP		ES
 ;     IRETD
 
-_asm_inthandler20:
+_asm_int_pit:
     ; pushad
     push eax
     push ecx
@@ -133,7 +133,7 @@ _asm_inthandler20:
     mov ds, ax
     mov es, ax
 
-    call _inthandler20
+    call _int_pit
 
     pop eax
     pop gs
@@ -150,7 +150,7 @@ _asm_inthandler20:
     ; popad
     iretd
 
-_asm_inthandler21:
+_asm_int_keyboard:
     PUSH		ES
     PUSH		DS
     PUSHAD
@@ -159,7 +159,7 @@ _asm_inthandler21:
     MOV		AX,SS
     MOV		DS,AX
     MOV		ES,AX
-    CALL	_inthandler21
+    CALL	_int_keyboard
     POP		EAX
     POPAD
     POP		DS
@@ -182,7 +182,7 @@ _asm_inthandler27:
     POP		ES
     IRETD
 
-_asm_inthandler2c:
+_asm_int_mouse:
     PUSH	ES
     PUSH	DS
     PUSHAD
@@ -191,7 +191,7 @@ _asm_inthandler2c:
     MOV		AX,SS
     MOV		DS,AX
     MOV		ES,AX
-    CALL	_inthandler2c
+    CALL	_int_mouse
     POP		EAX
     POPAD
     POP		DS

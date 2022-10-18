@@ -21,7 +21,7 @@ void init_keyboard(keyboard_data_s *data) {
     io_out(PORT_KEYDAT, KBC_MODE);
 }
 
-void inthandler21(int32_t *esp) {
+void int_keyboard(int32_t *esp) {
     io_out(PIC0_OCW2, 0x61);
     en_queue(kd->queue, kd->info_flag | io_in8(PORT_KEYDAT));
 }
@@ -104,7 +104,7 @@ void mouse_dec(mouse_data_s *md, uint32_t data) {
     md->y = -md->y;
 }
 
-void inthandler2c(int32_t *esp) {
+void int_mouse(int32_t *esp) {
     io_out(PIC1_OCW2, 0x64);
     io_out(PIC0_OCW2, 0x62);
     if (md->z & MOUSE_Z) // 如果启用滚轮。则入队两次数据，有效数据量为4字节

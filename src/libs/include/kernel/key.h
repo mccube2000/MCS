@@ -38,10 +38,10 @@ typedef struct mouse_data {
 void wait_KBC_sendready();
 void init_keyboard(keyboard_data_s *kd);
 
-void inthandler21(int32_t *esp);
+void int_keyboard(int32_t *esp);
 
 void init_mouse(mouse_data_s *md);
 void mouse_dec(mouse_data_s *md, uint32_t data);
 
-void inthandler2c(int32_t *esp);
+void int_mouse(int32_t *esp);
 #endif

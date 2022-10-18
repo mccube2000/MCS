@@ -2,6 +2,7 @@
 #define _TASK_H_
 
 #include "types.h"
+#include "kernel/gidt.h"
 
 typedef struct segment_reg16 {
     int32_t es; // low 16 bit
@@ -41,6 +42,11 @@ typedef struct tss32 {
     int32_t ssp;          // 32 bit
 } tss32_s;
 
+typedef struct task {
+    tss32_s tss;
+    int32_t tss_sel;
+    segment_desc_s *ldt;
+} task_s;
 void init_task();
 
 #endif

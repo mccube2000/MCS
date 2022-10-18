@@ -30,7 +30,7 @@ typedef struct p_reg {
     int32_t cs;     // low 16 bit
     int32_t eflags; // 32 bit
     int32_t esp;    // 32 bit
-    int32_t xss;    // 32 bit
+    int32_t ss;    // 32 bit
 } p_reg_s;
 
 typedef struct PCB {
@@ -46,10 +46,12 @@ typedef struct PCB {
     p_reg_s reg;
 } __attribute__((packed)) PCB_s;
 
-extern PCB_s *current_process;
-extern PCB_s *process_link;
+extern PCB_s *process_crt;
+extern PCB_s *process_lh;
+extern PCB_s *process_lr;
 
 void init_process();
+void create_process(uint8_t priority, int32_t func, int32_t esp);
 void schedule(int32_t *esp);
 
 #endif

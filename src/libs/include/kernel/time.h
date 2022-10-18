@@ -70,7 +70,7 @@ void init_rtc_pit();
 #define time_in_range(a, b, c) (time_after_eq(a, b) && time_before_eq(a, c))
 #define time_in_range_open(a, b, c) (time_after_eq(a, b) && time_before(a, c))
 
-void inthandler20(int32_t *esp);
+void int_pit(int32_t *esp);
 
 void init_time(time_s *t, time_s *base);
 
@@ -84,8 +84,8 @@ void init_time(time_s *t, time_s *base);
 int32_t get_update_in_progress_flag();
 uint8_t get_RTC_register(int32_t reg);
 void read_rtc(time_s *t);
-time_t tm_s2d(time_s *t, time_t base_year);
-time_t tm_s2s(time_s *t, time_t base_year);
+time_t time_s2d(time_s *t, time_t base_year);
+time_t time_s2s(time_s *t, time_t base_year);
 void tm_t_get_wday(time_s *t, time_s *base);
 
 void show_time(time_s *t);
