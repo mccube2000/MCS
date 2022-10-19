@@ -147,12 +147,12 @@ void show_next_process(PCB_s *current, uint16_t x, uint16_t y) {
     gui_putf_x(vram, scr_x, 0, x, y + 80, 8, current->reg.eflags, 16);
     gui_putf_x(vram, scr_x, 0, x, y + 100, 8, current->reg.eip, 16);
     gui_putf_x(vram, scr_x, 0, x, y + 120, 8, current->reg.cs, 16);
-    gui_putf_x(vram, scr_x, 0, x, y + 140, 8, current->reg.esp, 16);
+    gui_putf_x(vram, scr_x, 0, x, y + 140, 8, current->reg.r32.esp, 16);
     gui_putf_x(vram, scr_x, 0, x, y + 160, 8, current->reg.r32.ebp, 16);
     gui_putf_x(vram, scr_x, 0, x, y + 180, 8, current->reg.r32.esi, 16);
     gui_putf_x(vram, scr_x, 0, x, y + 200, 8, current->reg.r32.edi, 16);
     gui_putf_x(vram, scr_x, 0, x, y + 220, 8, current->start_time, 16);
-    gui_putf_x(vram, scr_x, 0, x, y + 240, 8, current->reg.ss, 16);
+    // gui_putf_x(vram, scr_x, 0, x, y + 240, 8, current->reg.ss, 16);
     gui_putf_x(vram, scr_x, 0, x, y + 260, 8, current->reg.r16.ds, 16);
     gui_putf_x(vram, scr_x, 0, x, y + 280, 8, current->reg.r16.fs, 16);
     gui_putf_x(vram, scr_x, 0, x, y + 300, 8, current->reg.r16.gs, 16);

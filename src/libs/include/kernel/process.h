@@ -16,6 +16,7 @@ typedef struct p_reg32 {
     int32_t edi; // 32 bit
     int32_t esi; // 32 bit
     int32_t ebp; // 32 bit
+    int32_t esp; // 32 bit
     int32_t ebx; // 32 bit
     int32_t edx; // 32 bit
     int32_t ecx; // 32 bit
@@ -29,8 +30,8 @@ typedef struct p_reg {
     int32_t eip;    // 32 bit
     int32_t cs;     // low 16 bit
     int32_t eflags; // 32 bit
-    int32_t esp;    // 32 bit
-    int32_t ss;    // 32 bit
+    // int32_t esp;    // 32 bit
+    // int32_t ss;    // 32 bit
 } p_reg_s;
 
 typedef struct PCB {

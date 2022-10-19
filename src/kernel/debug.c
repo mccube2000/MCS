@@ -19,7 +19,6 @@ extern uint32_t year;
 uint16_t km_debug_y = 20, k_info_c = 0;
 int32_t i = 0, j = 0;
 
-#ifdef KM_DBG
 void info_dbg(uint32_t info) {
     gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, km_debug_y, 200, km_debug_y + 20);
     gui_putf_x(vram, scr_x, 0, 0, km_debug_y, 8, info, 16);
@@ -60,9 +59,3 @@ void mouse_dbg(mouse_data_s *md, uint32_t info, int32_t mx, int32_t my) {
     gui_putf_x(vram, scr_x, 0, 100, km_debug_y + 80, 4, mx, 10);
     gui_putf_x(vram, scr_x, 0, 148, km_debug_y + 80, 4, my, 10);
 }
-#endif
-#ifndef KM_DBG
-void info_dbg(uint32_t info) {}
-void key_dbg(uint32_t info) {}
-void mouse_dbg(mouse_data_s *md, uint32_t info, int32_t mx, int32_t my) {}
-#endif

@@ -47,6 +47,8 @@ typedef struct task {
     int32_t tss_sel;
     segment_desc_s *ldt;
 } task_s;
+
+extern task_s task;
 void init_task();
 
 #endif

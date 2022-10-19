@@ -29,7 +29,8 @@ void init() {
     init_memory();
     init_time(&tm, &base_tm_2000);
     init_pic();
-    MCS_main();
+    for (;;)
+        hlt();
 }
 
 void MCS_main() {
@@ -37,7 +38,7 @@ void MCS_main() {
     uint8_t mcursor[256];
     int32_t mx = scr_x / 2, my = scr_y / 2, old_mx = -1, old_my = -1;
     uint32_t info, dinfo;
-    bool show_time_p_info = false;
+    bool show_debug_info = false;
 
     circ_queue queue;
     keyboard_data_s kd;
@@ -53,13 +54,15 @@ void MCS_main() {
     putblock(vram, scr_x, 8, 16, mx, my, mcursor, 8);
 
     for (;;) {
-        if (show_time_p_info)
+        if (show_debug_info)
             show_time(&show_tm);
         if (de_queue(&queue, &info)) {
-            info_dbg(info);
+            if (show_debug_info)
+                info_dbg(info);
             if (info & keyboard_info_flag) {
 
-                key_dbg(info);
+                if (show_debug_info)
+                    key_dbg(info);
             } else if (info & mouse_info_flag) {
                 info <<= 8;
                 // 如果mouse id为0，则info左移后的ao位恰好为mouse_info_flag
@@ -83,12 +86,15 @@ void MCS_main() {
                     my = scr_y - 1, md.y = 0;
                 old_mx = mx;
                 old_my = my;
-                putblock(vram, scr_x, 8, 16, mx, my, mcursor, 8);
-                mouse_dbg(&md, info, mx, my);
+                if (show_debug_info)
+                    mouse_dbg(&md, info, mx, my);
                 if (md.top)
-                    show_time_p_info = true;
+                    show_debug_info = true;
                 else if (md.btm)
-                    show_time_p_info = false;
+                    show_debug_info = false;
+                else if (md.mid)
+                    init_screen(vram, scr_x, scr_y);
+                putblock(vram, scr_x, 8, 16, mx, my, mcursor, 8);
             }
         } else {
             hlt();

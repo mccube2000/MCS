@@ -114,14 +114,7 @@ _asm_page_fault:
 ;     IRETD
 
 _asm_int_pit:
-    ; pushad
-    push eax
-    push ecx
-    push edx
-    push ebx
-    push ebp
-    push esi
-    push edi
+    pushad
     push ds
     push es
     push fs
@@ -135,19 +128,19 @@ _asm_int_pit:
 
     call _int_pit
 
-    pop eax
+    pop eax                         ; 取出esp
+    mov edi, [eax + 4 * 7]          ; 获取接下来popad时会被忽略的esp作为目标栈
+    mov esi, esp                    ; 将iretd需要的参数复制到目标栈
+    add esi, 0x30
+    mov ecx, 4 * 3                  ; 复制3个
+    rep movsb
+
     pop gs
     pop fs
     pop es
     pop ds
-    pop edi
-    pop esi
-    pop ebp
-    pop ebx
-    pop edx
-    pop ecx
-    pop eax
-    ; popad
+    popad ; popad会忽略esp，不会pop esp，只是 + 4
+    mov esp, [esp - 4 * 5]
     iretd
 
 _asm_int_keyboard:
