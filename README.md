@@ -19,6 +19,7 @@ A Modular Customized System(Operating System).
 ## Done List
 
 ### kernel
+* [x] 任务切换
 * [x] 进程结构
 * [x] 任务结构
 * [x] 时钟中断处理
