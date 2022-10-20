@@ -36,6 +36,7 @@ typedef struct p_reg {
 
 typedef struct PCB {
     uint32_t id;
+    int8_t *name;
     int8_t count;     // [0, 127]
     uint8_t priority; // [0, 63]
     int8_t state;     //

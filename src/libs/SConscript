@@ -2,10 +2,8 @@ from pathlib import Path, PurePath
 
 root = PurePath(Path('.').absolute())
 
-Import('gcc_env')
-Import('nasm_env')
-env = gcc_env
-nasm = nasm_env
+Import('env')
+env = env
 
 build = str(env['BUILD'] / root.relative_to(env['SRC']))
 

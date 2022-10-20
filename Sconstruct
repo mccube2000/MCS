@@ -32,7 +32,7 @@ def action_ld(target, source, env):
     for src in source:
         source_str += ' ' + str(src)
     if target[0].name.split(".")[1] == 'obj':
-        cmd = f'ld {env["LDFLAGS"]} {source_str} -o {target[0]}'
+        cmd = f'ld {env["LDFLAGS"]}{source_str} -o {target[0]}'
     else:
         cmd = f'ld {env["LDFLAGS"]} -T {env["LD"]}{source_str} -o {target[0]}'
     print(cmd)
@@ -56,9 +56,8 @@ def action_objcopy(target, source, env):
 objcopy_builder = Builder(
     action=action_objcopy,
     suffix='.bin',
-    src_suffix='.b',
+    src_suffix='.obj',
 )
-
 
 # def action_copy(target, source, env):
 #     source_str = ''
@@ -69,21 +68,16 @@ objcopy_builder = Builder(
 #     print(cmd)
 #     os.system(cmd)
 
-
 # copy_builder = Builder(
 #     action=action_copy,
 #     suffix='.sys',
 # )
 
 # global env
-nasm_env = Environment(ENV=environ,
-                       AS='nasm',
-                       ASFLAGS='-f bin',
-                       SRC=abs_path / src,
-                       BUILD=abs_path / build,
-                       ROOT=abs_path)
-gcc_env = Environment(
+env = Environment(
     ENV=environ,
+    AS='nasm',
+    ASFLAGS='-f elf',
     BUILDERS={
         'Ld': ld_builder,
         'Objcopy': objcopy_builder,
@@ -98,8 +92,7 @@ gcc_env = Environment(
     SRC=abs_path / src,
     BUILD=abs_path / build,
     ROOT=abs_path)
-Export('nasm_env')
-Export('gcc_env')
+Export('env')
 
 # build src
 src_script = SConscript(dirs=[src])

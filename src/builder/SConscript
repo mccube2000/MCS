@@ -3,8 +3,8 @@ from pathlib import Path, PurePath
 
 root = PurePath(Path('.').absolute())
 
-Import('gcc_env')
-env = gcc_env
+Import('env')
+env = env
 vhd = 'C:\\Users\\mccube\\VirtualBox_VMs\\MCS\\MCS.vhd'
 build = env['BUILD']
 AddOption(
@@ -39,7 +39,7 @@ env = env.Clone(run=GetOption('run'))
 cmd = ''
 print(env['run'])
 if env['run'] != None:
-    bcmd = f'dd if={build}\\boot\\x86\\boot.bin of={vhd} bs=512 count=2'
+    bcmd = f'dd if={build}\\boot\\x86\\bootsect.bin of={vhd} bs=512 count=2'
     print(bcmd)
     os.system(bcmd)
     bcmd = f'dd if={build}\\kernel\\kernel.bin of={vhd} bs=512 count=100 seek=2'

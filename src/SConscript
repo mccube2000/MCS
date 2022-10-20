@@ -2,27 +2,36 @@ from pathlib import Path, PurePath
 
 root = PurePath(Path('.').absolute())
 
-Import('gcc_env')
-env = gcc_env
+Import('env')
+env = env
 
 build = str(env['BUILD'] / root.relative_to(env['SRC']))
 
 dir_list = [f'boot\\{env["ARCH"]}', 'kernel', 'libs']
 
-SConscript(dirs=dir_list)
+SConscript(dirs=['libs'])
 # env.Copy(f'{build}\\MSC', [f'{build}\\boot\\x86\\boot.bin', f'{build}\\kernel\\kernel.bin'])
 
+sources = Glob("*.c") + Glob("*\\*.c")
+
 o_list = [f'{build}\\kernel\\main']
-
+build_path = ''
 for dir in dir_list:
-    sources = Glob(dir + '\\*.c')
+    sources = Glob(dir + '\\*.c') + Glob(dir + '\\*\\*.c') + Glob(dir + '\\*.asm')
     for file in sources:
-        if file.name != 'main.c':
-            o_list.append(f'{build}\\{dir}\\{file.name.split(".")[0]}')
+        build_path = f'{build}\\{str(file).split(".")[0]}'
+        if file.name == 'bootsect.asm':
+            env.Object(build_path + '.bin', file, ASFLAGS='-f bin')
+            # env.Object(build_path, file, ASFLAGS='-l bootsect.list -f bin')
+        else:
+            env.Object(build_path, file)
+            o_list.append(build_path)
 
-o_list.append(f'{build}\\kernel\\asmfunc.obj')
+        if file.name == 'main.c':
+            o_list.pop()
+
 o_list.append(f'{build}\\libs\\libs.obj')
 o_list.append(f'{build}\\kernel\\hankaku.obj')
 
-env.Ld(f'{build}\\kernel\\kernel', o_list)
-env.Objcopy(f'{build}\\kernel\\kernel')
+env.Ld(f'{build}\\kernel\\kernel.obj', o_list)
+env.Objcopy(f'{build}\\kernel\\kernel.obj')
