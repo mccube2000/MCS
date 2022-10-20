@@ -4,7 +4,7 @@ A Modular Customized System(Operating System).
 ## Todo List
 
 ### bug
-* [ ] 进程1异常跳转到0x8(eip=0x8)
+* [ ] [暂无]
 
 ### kernel
 * [ ] TSS处理
