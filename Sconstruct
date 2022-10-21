@@ -31,10 +31,10 @@ def action_ld(target, source, env):
     source_str = ''
     for src in source:
         source_str += ' ' + str(src)
-    if target[0].name.split(".")[1] == 'obj':
-        cmd = f'ld {env["LDFLAGS"]}{source_str} -o {target[0]}'
-    else:
+    if target[0].name.split(".")[0] == 'kernel':
         cmd = f'ld {env["LDFLAGS"]} -T {env["LD"]}{source_str} -o {target[0]}'
+    else:
+        cmd = f'ld {env["LDFLAGS"]}{source_str} -o {target[0]}'
     print(cmd)
     os.system(cmd)
     return None
