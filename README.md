@@ -7,10 +7,11 @@ A Modular Customized System(Operating System).
 * [ ] [暂无]
 
 ### kernel
+* [ ] 线程实现
+* [ ] 单链表
+* [ ] 线程调度
 * [ ] TSS处理
 * [ ] 用户态切换
-* [ ] 线程实现
-* [ ] 线程调度
 * [ ] 进程实现
 * [ ] 进程调度
 * [ ] GDT重新规划
