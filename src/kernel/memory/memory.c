@@ -1,6 +1,6 @@
 #include "kernel/memory.h"
-#include "kernel/asmfunc.h"
 #include "device/graphic.h"
+#include "kernel/asmfunc.h"
 #include "types.h"
 
 extern uint8_t *vram;
@@ -10,9 +10,9 @@ int8_t type_map[6][20] = {"\0",    "Available\0", "Reserved\0", "ACPI Reclaimabl
                           "NVS\0", "BadRAM\0"};
 uint32_t protected_page_map[][2] = {
     // 地址      页数
-    {0x00000000, 1},     // BIOS_info, gdt, idt
+    {0x00000000, 1},     // BIOS_info, e820 info
     {0x00001000, 1},     // pdt一级页表
-    {0x00002000, 1},     // e820和内核栈保护区
+    {0x00002000, 1},     // gdt, idt内核栈保护区
     {0x0009f000, 1},     // 内核栈保护区和扩展BIOS数据区
     {0x000a0000, 0x60},  // 硬件预留区
     {0x00100000, 0x3ff}, // pt二级页表
@@ -32,6 +32,10 @@ uint32_t kernel_text_end, kernel_data_end, kernel_bss_end, kernel_end;
 
 void init_memory() {
     page_total = 0, page_used = 0, page_unused = 0, page_reserved = 0, page_protected = 0;
+    kernel_text_end = (uint32_t)&kernel_text_end;
+    kernel_data_end = (uint32_t)&kernel_data_end;
+    kernel_bss_end = (uint32_t)&kernel_bss_end;
+    kernel_end = (uint32_t)&kernel_end;
     e820_count(false);
     page_count();
     page_init();
@@ -44,8 +48,8 @@ void init_memory() {
     gui_putf_x(vram, scr_x, 0, 600, 0, 8, page_used, -10);
     gui_putfs_asc816(vram, scr_x, 0, 700, 0, "protected page:");
     gui_putf_x(vram, scr_x, 0, 800, 0, 8, page_protected, -10);
-    gui_putf_x(vram, scr_x, 0, 800, 20, 8, &kernel_bss_end, -16);
-    gui_putf_x(vram, scr_x, 0, 800, 40, 8, &kernel_end, -16);
+    gui_putf_x(vram, scr_x, 0, 800, 20, 8, kernel_bss_end, -16);
+    gui_putf_x(vram, scr_x, 0, 800, 40, 8, kernel_end, -16);
 }
 
 PTE_s *get_PTE(void *v_addr) {
@@ -104,14 +108,20 @@ void page_count() {
     page_used = 0;
     for (i = 0; i < 0x100000; i++) {
         if ((page_table[i].flags & PTE_A) || (page_table[i].flags & PTE_D)) {
-            page_add_used();
+            page_add_used(&page_table[i], 1);
         }
     }
 }
 
-void page_add_used() {
-    page_used++;
-    page_unused--;
+void page_add_used(PTE_s *pte, uint32_t count) {
+    uint32_t i;
+    for (i = 0; i < count; i++, pte++) {
+        if (pte->flags & PTE_PROTECTED)
+            continue;
+        pte->flags |= PTE_USED;
+        page_used++;
+        page_unused--;
+    }
 }
 
 void page_init() {
@@ -122,13 +132,16 @@ void page_init() {
         count = protected_page_map[i][1];
         for (j = 0; j < count; j++) {
             pte = get_PTE((void *)base);
-            set_PTE(pte, (void *)base, (uint16_t)(pte->flags & 0x0ffd) | PTE_PROTECTED);
+            set_PTE(pte, (void *)base, (uint16_t)(pte->flags & 0x0ffd) | PTE_PROTECTED | PTE_USED);
             page_protected++;
             base += 0x1000;
         }
     }
     pte = get_PTE((void *)0);
     set_PTE(pte, (void *)0, (uint16_t)(pte->flags & 0x0ffc) | PTE_PROTECTED);
+
+    pte = get_PTE((void *)kernel_addr);
+    page_add_used(pte, (kernel_end - kernel_addr) / 0x1000);
 }
 
 void page_fault(int32_t *esp) {
@@ -144,7 +157,7 @@ void page_fault(int32_t *esp) {
             return;
         } else {
             set_PTE(pte, error_addr, PTE_P | PTE_RW);
-            page_add_used();
+            page_add_used(pte, 1);
         }
     }
 }

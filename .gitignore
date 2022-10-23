@@ -4,6 +4,9 @@
 # Scons
 .sconsign.dblite
 
+# doc
+idea.md
+
 # Prerequisites
 *.d
 

@@ -9,6 +9,7 @@
 #define idt_addr 0x00002800
 #define idt_size 0x000007ff
 #define pdt_addr 0xfffff000 // 0x1000
+#define pdt_addr_limit 0xfffff000
 #define pt_addr 0xffc00000  // 0x10_0000
 #define e820_size_addr 0x00000600
 #define e820_map_addr 0x00000604
@@ -60,8 +61,8 @@ typedef union PTE {
 #define PTE_PS 0x80
 
 #define PTE_G 0x0100
-#define PTE_PROTECTED 0x0200
-#define PTE_F3 0x0400
+#define PTE_USED 0x0200
+#define PTE_PROTECTED 0x0400
 #define PTE_F4 0x0800
 
 #define PTE_ADDR 0xfffff000
