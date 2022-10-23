@@ -35,7 +35,7 @@ typedef struct SMAP_entry {
     uint32_t LengthH;
     uint32_t Type; // entry Type
     uint32_t ACPI; // extended
-} __attribute__((packed)) SMAP_entry_s;
+} SMAP_entry_s;
 
 // SMAP_entry Type
 #define MEMORY_AVAILABLE 1

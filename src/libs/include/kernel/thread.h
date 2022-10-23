@@ -29,7 +29,7 @@ typedef struct TCB {
     time_t start_time;
     t_reg_s reg;
     void *lpParameter; //线程函数的参数
-} __attribute__((packed)) TCB_s;
+} TCB_s;
 
 extern TCB_s *thread_crt;
 extern TCB_s *thread_lh;

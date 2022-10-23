@@ -46,7 +46,7 @@ typedef struct PCB {
     time_t start_time;
     long32_t jiffies;
     p_reg_s reg;
-} __attribute__((packed)) PCB_s;
+} PCB_s;
 
 extern PCB_s *process_crt;
 extern PCB_s *process_lh;

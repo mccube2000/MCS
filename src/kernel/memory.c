@@ -26,6 +26,10 @@ static SMAP_entry_s *e820_map = (SMAP_entry_s *)e820_map_addr;
 // 内存统计，在初始化内存前会触发缺页，page_unused设为0xffffffff防止下溢
 uint32_t page_total = 0, page_used = 0, page_unused = 0xffffffff, page_reserved = 0,
          page_protected = 0;
+
+// 在link.ld中赋值
+uint32_t kernel_text_end, kernel_data_end, kernel_bss_end, kernel_end;
+
 void init_memory() {
     page_total = 0, page_used = 0, page_unused = 0, page_reserved = 0, page_protected = 0;
     e820_count(false);
@@ -40,6 +44,8 @@ void init_memory() {
     gui_putf_x(vram, scr_x, 0, 600, 0, 8, page_used, -10);
     gui_putfs_asc816(vram, scr_x, 0, 700, 0, "protected page:");
     gui_putf_x(vram, scr_x, 0, 800, 0, 8, page_protected, -10);
+    gui_putf_x(vram, scr_x, 0, 800, 20, 8, &kernel_bss_end, -16);
+    gui_putf_x(vram, scr_x, 0, 800, 40, 8, &kernel_end, -16);
 }
 
 PTE_s *get_PTE(void *v_addr) {

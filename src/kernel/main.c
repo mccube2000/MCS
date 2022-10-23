@@ -24,10 +24,10 @@ void init() {
     scr_x = bootinfo->scrnX;
     scr_y = bootinfo->scrnY;
     init_gdtidt();
-    init_task();
     init_screen(vram, scr_x, scr_y);
     init_memory();
     init_time(&tm, &base_tm_2000);
+    init_task();
     init_pic();
     for (;;)
         hlt();

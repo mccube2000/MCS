@@ -51,7 +51,7 @@ typedef struct time {
     uint8_t wday;  // [0, 6] Sun - Sat
     int16_t yday;  // [0, 365] 1.1 - 12.31 包括闰年
     bool isdst;    // {true, false} 夏时令标记
-} __attribute__((packed)) time_s;
+} time_s;
 
 extern time_s tm;
 
