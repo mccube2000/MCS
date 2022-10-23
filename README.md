@@ -7,16 +7,15 @@ A Modular Customized System(Operating System).
 * [ ] [暂无]
 
 ### kernel
+* [ ] 资源结构
+* [ ] 项目(进程的超集)结构
 * [ ] 线程实现
 * [ ] 单链表
 * [ ] 线程调度
 * [ ] TSS处理
 * [ ] 用户态切换
-* [ ] 进程实现
-* [ ] 进程调度
 * [ ] GDT重新规划
 * [ ] hash map
-* [ ] 资源结构
 
 ### boot
 * [ ] [暂无]
@@ -25,7 +24,6 @@ A Modular Customized System(Operating System).
 
 ### kernel
 * [x] 任务切换
-* [x] 进程结构
 * [x] 任务结构
 * [x] 时钟中断处理
 * [x] 日期时间处理
