@@ -1,4 +1,4 @@
-#include "kernel/graphic.h"
+#include "device/graphic.h"
 #include "kernel/asmfunc.h"
 #include "types.h"
 

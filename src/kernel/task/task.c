@@ -3,7 +3,7 @@
 #include "kernel/gidt.h"
 #include "kernel/init.h"
 #include "kernel/memory.h"
-#include "kernel/process.h"
+#include "kernel/resource/process.h"
 #include "types.h"
 
 task_s task;

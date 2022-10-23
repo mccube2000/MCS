@@ -1,6 +1,6 @@
-#include "kernel/int.h"
+#include "device/int.h"
 #include "kernel/asmfunc.h"
-#include "kernel/graphic.h"
+#include "device/graphic.h"
 #include "kernel/time.h"
 #include "types.h"
 

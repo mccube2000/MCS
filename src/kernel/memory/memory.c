@@ -1,6 +1,6 @@
 #include "kernel/memory.h"
 #include "kernel/asmfunc.h"
-#include "kernel/graphic.h"
+#include "device/graphic.h"
 #include "types.h"
 
 extern uint8_t *vram;

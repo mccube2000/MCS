@@ -1,4 +1,4 @@
-#include "kernel/key.h"
+#include "device/key.h"
 #include "types.h"
 
 void info_dbg(uint32_t info);

@@ -1,7 +1,7 @@
 #include "kernel/debug.h"
-#include "kernel/graphic.h"
+#include "device/graphic.h"
 #include "kernel/info.h"
-#include "kernel/key.h"
+#include "device/key.h"
 #include "kernel/memory.h"
 #include "types.h"
 

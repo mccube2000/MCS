@@ -1,9 +1,9 @@
 #include "kernel/time.h"
 #include "kernel/asmfunc.h"
-#include "kernel/graphic.h"
-#include "kernel/int.h"
+#include "device/graphic.h"
+#include "device/int.h"
 #include "kernel/memory.h"
-#include "kernel/process.h"
+#include "kernel/resource/process.h"
 #include "types.h"
 
 extern uint8_t *vram;
@@ -136,7 +136,9 @@ time_t time_s2s(time_s *t, time_t base_year) {
 //     return s;
 // }
 
-void tm_t_get_wday(time_s *t, time_s *base) { t->wday = (base->wday + time_s2d(t, base->year)) % 7; }
+void tm_t_get_wday(time_s *t, time_s *base) {
+    t->wday = (base->wday + time_s2d(t, base->year)) % 7;
+}
 
 void show_next_process(PCB_s *current, uint16_t x, uint16_t y) {
     gui_boxfill(vram, scr_x, COL8_FFFFFF, x, y, x + 100, y + 320);

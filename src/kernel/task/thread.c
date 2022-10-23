@@ -1,6 +1,6 @@
-#include "kernel/thread.h"
+#include "kernel/resource/thread.h"
 #include "kernel/asmfunc.h"
-#include "kernel/graphic.h"
+#include "device/graphic.h"
 #include "kernel/init.h"
 #include "kernel/memory.h"
 #include "types.h"

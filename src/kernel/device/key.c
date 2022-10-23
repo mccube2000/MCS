@@ -1,8 +1,8 @@
-#include "kernel/key.h"
+#include "device/key.h"
 #include "algorithm/queue.h"
 #include "kernel/asmfunc.h"
 #include "kernel/info.h"
-#include "kernel/int.h"
+#include "device/int.h"
 #include "types.h"
 
 keyboard_data_s *kd;
