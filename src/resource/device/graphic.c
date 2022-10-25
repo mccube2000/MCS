@@ -125,32 +125,6 @@ void gui_putf_x(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, uint16
 
 void init_screen(uint8_t *vram, uint16_t x, uint16_t y) {
     init_palette();
-    /*
-    uint8_t h=20;
-    gui_boxfill(vram, x, 11,	0,		0,			x - 1, y
-    - h);
-    //gui_boxfill(vram, x, 0,		0,		(y - h) / 2,x - 1, (y -
-    h) / 2);
-    //gui_boxfill(vram, x, 0,		x / 2,	0,			x / 2, y
-    -
-    1); gui_boxfill(vram, x, 3,		0,		y - (h - 1),x - 1, y -
-    (h - 1));
-    gui_boxfill(vram, x, 15,	0,		y - (h - 2),x - 1, y - (h - 2));
-    gui_boxfill(vram, x, 3,		0,		y - (h - 3),x - 1, y -
-    1);
-
-    scr_boxfill(vram, x, 15,  3,     y - 24, 59,     y - 24);
-    scr_boxfill(vram, x, 15,  2,     y - 24,  2,     y -  4);
-    scr_boxfill(vram, x, 4,  3,     y -  4, 59,     y -  4);
-    scr_boxfill(vram, x, 4, 59,     y - 23, 59,     y -  5);
-    scr_boxfill(vram, x, 0,  2,     y -  3, 59,     y -  3);
-    scr_boxfill(vram, x, 0, 60,     y - 24, 60,     y -  3);
-
-    scr_boxfill(vram, x, 4, x - 47, y - 24, x -  4, y - 24);
-    scr_boxfill(vram, x, 4, x - 47, y - 23, x - 47, y -  4);
-    scr_boxfill(vram, x, 15, x - 47, y -  3, x -  4, y -  3);
-    scr_boxfill(vram, x, 15, x -  3, y - 24, x -  3, y -  3);
-*/
     gui_boxfill(vram, x, COL8_008484, 0, 0, x - 1, y - 29);
     gui_boxfill(vram, x, COL8_C6C6C6, 0, y - 28, x - 1, y - 28);
     gui_boxfill(vram, x, COL8_FFFFFF, 0, y - 27, x - 1, y - 27);

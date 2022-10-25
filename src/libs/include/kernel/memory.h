@@ -10,7 +10,7 @@
 #define idt_size 0x000007ff
 #define pdt_addr 0xfffff000 // 0x1000
 #define pdt_addr_limit 0xfffff000
-#define pt_addr 0xffc00000  // 0x10_0000
+#define pt_addr 0xffc00000 // 0x10_0000
 #define e820_size_addr 0x00000600
 #define e820_map_addr 0x00000604
 #define kernel_addr 0x00500000
@@ -67,15 +67,22 @@ typedef union PTE {
 
 #define PTE_ADDR 0xfffff000
 
+extern uint32_t page_total, page_used, page_unused, page_reserved, page_protected;
+extern uint32_t kernel_text_end, kernel_data_end, kernel_bss_end, kernel_end;
+
 void init_memory();
 
+// e820
+void e820_count(bool show_e820_map);
+
+// page
 PTE_s *get_PTE(void *v_addr);
 void set_PTE(PTE_s *pte, void *p_addr, uint16_t flags);
-
-void e820_count(bool show_e820_map);
 void page_count();
 void page_add_used();
 void page_init();
+void show_page_info();
 
 void page_fault(int32_t *esp);
+
 #endif

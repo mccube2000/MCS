@@ -1,4 +1,4 @@
-#include "kernel/resource/process.h"
+#include "resource/process.h"
 #include "kernel/asmfunc.h"
 #include "device/graphic.h"
 #include "kernel/init.h"

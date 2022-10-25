@@ -1,7 +1,7 @@
 #ifndef _ASMFUNC_H_
 #define _ASMFUNC_H_
 
-#include "kernel/resource/process.h"
+#include "resource/process.h"
 #include "types.h"
 
 #define hlt() __asm__("hlt" ::)

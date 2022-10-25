@@ -7,7 +7,7 @@ env = env
 
 build = str(env['BUILD'] / root.relative_to(env['SRC']))
 
-dir_list = [f'boot\\{env["ARCH"]}', 'kernel', 'libs']
+dir_list = [f'boot\\{env["ARCH"]}', 'kernel', 'project', 'resource']
 
 SConscript(dirs=['libs'])
 # env.Copy(f'{build}\\MSC', [f'{build}\\boot\\x86\\boot.bin', f'{build}\\kernel\\kernel.bin'])

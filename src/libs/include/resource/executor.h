@@ -2,7 +2,7 @@
 // #define _EXECUTOR_H_
 
 // #include "kernel/time.h"
-// #include "kernel/resource/process.h"
+// #include "resource/process.h"
 // #include "types.h"
 
 // typedef struct reg32 {

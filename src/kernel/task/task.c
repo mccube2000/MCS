@@ -3,7 +3,7 @@
 #include "kernel/gidt.h"
 #include "kernel/init.h"
 #include "kernel/memory.h"
-#include "kernel/resource/process.h"
+#include "resource/process.h"
 #include "types.h"
 
 task_s task;
@@ -11,7 +11,7 @@ task_s task;
 void init_task() {
     init_process();
     segment_desc_s *gdt = (segment_desc_s *)gdt_addr;
-    task = (task_s){0};
+    task.tss = (tss32_s){0};
     task.ldt = gdt;
     task.tss.reg.eip = process_crt->reg.eip;
     task.tss.reg.eflags = process_crt->reg.eflags;

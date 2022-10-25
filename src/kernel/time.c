@@ -1,23 +1,27 @@
 #include "kernel/time.h"
-#include "kernel/asmfunc.h"
 #include "device/graphic.h"
 #include "device/int.h"
+#include "kernel/asmfunc.h"
 #include "kernel/memory.h"
-#include "kernel/resource/process.h"
+#include "resource/process.h"
 #include "types.h"
 
 extern uint8_t *vram;
 extern uint16_t scr_x, scr_y;
 
-time_s const base_tm_1900 = {0, 0, 0, 1, 0, 0, 1, 0, false}; // 1900.1.1 周一 0:00:00
-time_s const base_tm_2000 = {0, 0, 0, 1, 0, 0, 6, 0, false}; // 2000.1.1 周六 0:00:00
+time_s const base_tm_1900 = {0, 0, 0, 1, 0, 1900, 1, 0, false}; // 1900.1.1 周一 0:00:00
+time_s const base_tm_2000 = {0, 0, 0, 1, 0, 2000, 6, 0, false}; // 2000.1.1 周六 0:00:00
 time_s tm;
 
-time_t start_time = 0;
-time_t time_diff = 0;
-long32_t volatile jiffies = 0;
+// 未初始化的bss变量将被设为0。
+// 当手动初始化为0时，仅仅是分配空间但不初始化。如果对应内存区域不为0，则手动初始化为0的值不为0。
+// 手动初始化为其他值好像不存在此问题，均会分配空间并初始化。
 
-uint32_t last_sec = 0;
+time_t start_time;
+time_t time_diff;
+long32_t volatile jiffies;
+
+uint32_t last_sec;
 
 static int8_t week[7][5] = {"Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat"};
 static int8_t month[12][5] = {"Jan", "Feb", "Mar",  "Apr", "May",  "Jun",
@@ -62,7 +66,7 @@ void int_pit(int32_t *esp) {
 void init_time(time_s *t, time_s *base) {
     read_rtc(t);
     tm_t_get_wday(t, base);
-    start_time = time_s2s(t, 1900);
+    start_time = time_s2s(t, base->year);
 }
 
 int32_t get_update_in_progress_flag() {
@@ -181,6 +185,7 @@ void show_process(PCB_s *current, uint16_t x, uint16_t y) {
     gui_putfs_asc816(vram, scr_x, 0, x, y + 280, "fs:");
     gui_putfs_asc816(vram, scr_x, 0, x, y + 300, "gs:");
     show_next_process(current, x + 80, y);
+    show_page_info();
 }
 
 void show_time(time_s *t) {

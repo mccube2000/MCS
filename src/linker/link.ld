@@ -18,8 +18,8 @@ SECTIONS
     .bss :
     {
         *(.bss)
-        . = ALIGN(4096);
         _kernel_bss_end = .;
+        . = ALIGN(4096);
     }
     /DISCARD/ : { *(.comment) *(.eh_frame) }
 }

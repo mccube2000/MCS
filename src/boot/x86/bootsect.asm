@@ -26,7 +26,6 @@ section mbr vstart=0x7c00
 start:
 ; 初始化寄存器
     mov ax, cs
-    mov sp, 0x7c00
 
 ; 保存led信息
     mov ah, 0x02
@@ -34,49 +33,6 @@ start:
     mov [leds], al
 
 ; 保存内存e820信息
-; ==============================================
-; do_e820:
-;     mov di, 0x8004                  ; Set di to 0x8004. Otherwise this code will get stuck in `int 0x15` after some entries are fetched 
-;     xor ebx, ebx                    ; ebx must be 0 to start
-;     xor bp, bp                      ; keep an entry count in bp
-;     mov edx, 0x0534D4150            ; Place "SMAP" into edx
-;     mov eax, 0xe820
-;     mov [es:di + 20], dword 1       ; force a valid ACPI 3.X entry
-;     mov ecx, 24                     ; ask for 24 bytes
-;     int 0x15
-;     jc .failed                      ; carry set on first call means "unsupported function"
-;     mov edx, 0x0534D4150            ; Some BIOSes apparently trash this register?
-;     cmp eax, edx                    ; on success, eax must have been reset to "SMAP"
-;     jne .failed
-;     test ebx, ebx                   ; ebx = 0 implies list is only 1 entry long (worthless)
-;     je .failed
-;     jmp .jmpin
-; .e820lp:
-;     mov eax, 0xe820                 ; eax, ecx get trashed on every int 0x15 call
-;     mov [es:di + 20], dword 1       ; force a valid ACPI 3.X entry
-;     mov ecx, 24                     ; ask for 24 bytes again
-;     int 0x15
-;     jc .e820f                       ; carry set means "end of list already reached"
-;     mov edx, 0x0534D4150            ; repair potentially trashed register
-; .jmpin:
-;     jcxz .skipent                   ; skip any 0 length entries
-;     cmp cl, 20                      ; got a 24 byte ACPI 3.X response?
-;     jbe .notext
-;     test byte [es:di + 20], 1       ; if so: is the "ignore this data" bit clear?
-;     je .skipent
-; .notext:
-;     mov ecx, [es:di + 8]            ; get lower uint32_t of memory region length
-;     or ecx, [es:di + 12]            ; "or" it with upper uint32_t to test for zero
-;     jz .skipent                     ; if length uint64_t is 0, skip entry
-;     inc bp                          ; got a good entry: ++count, move to next storage spot
-;     add di, 24
-; .skipent:
-;     test ebx, ebx                   ; if ebx resets to 0, list is complete
-;     jne .e820lp
-; .e820f:
-;     mov [mmap_ent], bp              ; store the entry count
-; .failed:
-; ==============================================
     mov di, e820_addr + 4
     xor ebx, ebx
     xor bp, bp
@@ -88,41 +44,22 @@ start:
     int 0x15
     jc .e820f
     mov edx, 0x0534D4150
-    jcxz .skipent                   ; skip any 0 length entries
-    cmp cl, 20                      ; got a 24 byte ACPI 3.X response?
+    jcxz .skipent
+    cmp cl, 20
     jbe .notext
-    test byte [es:di + 20], 1       ; if so: is the "ignore this data" bit clear?
+    test byte [es:di + 20], 1
     je .skipent
 .notext:
-    mov ecx, [es:di + 8]            ; get lower uint32_t of memory region length
-    or ecx, [es:di + 12]            ; "or" it with upper uint32_t to test for zero
-    jz .skipent                     ; if length uint64_t is 0, skip entry
-    inc bp                          ; got a good entry: ++count, move to next storage spot
+    mov ecx, [es:di + 8]
+    or ecx, [es:di + 12]
+    jz .skipent
+    inc bp
     add di, 24
 .skipent:
-    test ebx, ebx                   ; if ebx resets to 0, list is complete
+    test ebx, ebx
     jne .e820lp
 .e820f:
-    mov [e820_addr], bp              ; store the entry count
-
-;     ;在所有ards结构中找出（base_addr_low + length_low)的最大值，即为内存的容量
-;     mov cx, [ards_nr]
-;     mov ebx, ards_buf
-;     xor edx, edx
-;   .find_max_mem_area:
-;     mov eax, [ebx]  ;base_addr_low
-;     add eax, [ebx + 8] ;length_low
-;     add ebx, 20
-;     cmp edx, eax
-;     jge .next_ards
-;     mov edx, eax
-;   .next_ards:
-;     loop .find_max_mem_area
-;     jmp .mem_get_ok
-
-;   .mem_get_ok:
-;     mov [0x7ff0], edx
-; ==============================================
+    mov [e820_addr], bp
 
 ; 设置VBE显示模式
     ; 检查VBE
@@ -209,10 +146,11 @@ flush:
     mov eax, 0x0010                 ; 加载数据段(4GB)选择子, 选择GDT对应的第2项
     mov ds, eax
     mov es, eax
-    mov fs, eax
-    mov gs, eax
+    ; mov fs, eax
+    ; mov gs, eax
     mov ss, eax                     ; 加载堆栈段(4GB)选择子
-    mov esp, 0x9f000                ; 堆栈指针
+    mov esp, 0x9eff8                ; 堆栈指针
+    mov ebp, 0x9effc                ; 堆栈指针
 
 ; 加载内核至内存
     mov ecx, sector_count           ; 32位模式下的LOOP使用ECX，读取扇区数量

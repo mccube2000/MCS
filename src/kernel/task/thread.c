@@ -1,4 +1,4 @@
-#include "kernel/resource/thread.h"
+#include "resource/thread.h"
 #include "kernel/asmfunc.h"
 #include "device/graphic.h"
 #include "kernel/init.h"
