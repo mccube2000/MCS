@@ -1,8 +1,8 @@
 #include "resource/executor.h"
 #include "kernel/asmfunc.h"
-#include "resource/screen/graphic.h"
 #include "kernel/init.h"
 #include "resource/cache.h"
+#include "resource/screen/graphic.h"
 #include "types.h"
 
 exe_reg_s *reg_crt;
@@ -39,8 +39,8 @@ void init_executor() {
     main_task->reg.r16.es = 0x10;
     main_task->reg.r16.fs = 0x10;
     main_task->reg.r16.gs = 0x10;
-    main_task->reg.r32.ebp = 0x9effc;
-    main_task->reg.r32.esp = 0x9effc - 4 * 3;
+    main_task->reg.r32.ebp = 0x9f000 - 4;
+    main_task->reg.r32.esp = 0x9f000 - 4 * 4;
     now_pid++;
     create_executor(15, (int32_t)a_func, 0x00800000 - 4);
 }

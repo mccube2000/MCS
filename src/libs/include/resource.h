@@ -26,6 +26,7 @@ typedef struct resource {
 // 包含resource_s的结构体，例如executor、cache等等
 typedef struct _resource_ {
     resource_s s;
+    uint32_t data[64 - 7];
 
 } resource_ss;
 

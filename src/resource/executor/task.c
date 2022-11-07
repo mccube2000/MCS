@@ -27,11 +27,11 @@ void init_task() {
     // task.tss.ss1 = executor_crt->reg.ss;
     // task.tss.esp1 = executor_crt->reg.esp;
     task.tss.ss0 = 0x10;
-    task.tss.esp0 = 0x9effc;
+    task.tss.esp0 = 0x9f000 - 4;
     task.tss.ss1 = 0x10;
-    task.tss.esp1 = 0x9effc;
+    task.tss.esp1 = 0x9f000 - 4;
     task.tss.ss2 = 0x10;
-    task.tss.esp2 = 0x00800000;
+    task.tss.esp2 = 0x00800000 - 4;
     task.tss.iomap = 0x40000000;
 
     task.tss_sel = 3 * 8;

@@ -98,7 +98,7 @@ void MCS_main() {
                 else if (md.btm)
                     show_debug_info = false;
                 else if (md.mid)
-                    init_screen(vram, scr_x, scr_y);
+                    fill_screen(vram, scr_x, scr_y);
                 putblock(vram, scr_x, 8, 16, mx, my, mcursor, 8);
             }
         } else {
