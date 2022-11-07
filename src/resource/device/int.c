@@ -1,6 +1,6 @@
 #include "device/int.h"
 #include "kernel/asmfunc.h"
-#include "device/graphic.h"
+#include "resource/screen/graphic.h"
 #include "kernel/time.h"
 #include "types.h"
 

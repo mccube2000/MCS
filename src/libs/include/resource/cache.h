@@ -1,6 +1,7 @@
-#ifndef _MEMORY_H_
-#define _MEMORY_H_
+#ifndef _CACHE_H_
+#define _CACHE_H_
 
+#include "resource.h"
 #include "types.h"
 
 #define bios_info_addr 0x00000500
@@ -70,7 +71,7 @@ typedef union PTE {
 extern uint32_t page_total, page_used, page_unused, page_reserved, page_protected;
 extern uint32_t kernel_text_end, kernel_data_end, kernel_bss_end, kernel_end;
 
-void init_memory();
+void init_cache(res_mgr_s *rmgr);
 
 // e820
 void e820_count(bool show_e820_map);

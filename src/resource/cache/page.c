@@ -1,5 +1,5 @@
-#include "kernel/memory.h"
-#include "device/graphic.h"
+#include "resource/cache.h"
+#include "resource/screen/graphic.h"
 #include "kernel/asmfunc.h"
 #include "types.h"
 

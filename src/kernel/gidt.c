@@ -1,6 +1,6 @@
 #include "kernel/gidt.h"
 #include "kernel/asmfunc.h"
-#include "kernel/memory.h"
+#include "resource/cache.h"
 #include "types.h"
 
 void init_gdtidt() {

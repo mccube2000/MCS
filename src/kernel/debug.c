@@ -1,8 +1,8 @@
 #include "kernel/debug.h"
-#include "device/graphic.h"
+#include "resource/screen/graphic.h"
 #include "kernel/info.h"
 #include "device/key.h"
-#include "kernel/memory.h"
+#include "resource/cache.h"
 #include "types.h"
 
 extern BIOS_info_s *bootinfo;

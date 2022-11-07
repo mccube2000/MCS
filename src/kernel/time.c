@@ -1,9 +1,9 @@
 #include "kernel/time.h"
-#include "device/graphic.h"
+#include "resource/screen/graphic.h"
 #include "device/int.h"
 #include "kernel/asmfunc.h"
-#include "kernel/memory.h"
-#include "resource/process.h"
+#include "resource/cache.h"
+#include "resource/executor.h"
 #include "types.h"
 
 extern uint8_t *vram;
@@ -144,7 +144,7 @@ void tm_t_get_wday(time_s *t, time_s *base) {
     t->wday = (base->wday + time_s2d(t, base->year)) % 7;
 }
 
-void show_next_process(PCB_s *current, uint16_t x, uint16_t y) {
+void show_next_executor(executor_s *current, uint16_t x, uint16_t y) {
     gui_boxfill(vram, scr_x, COL8_FFFFFF, x, y, x + 100, y + 320);
     gui_putf_x(vram, scr_x, 0, x, y, 8, current->id, 16);
     gui_putf_x(vram, scr_x, 0, x, y + 20, 8, current->count, 16);
@@ -163,10 +163,10 @@ void show_next_process(PCB_s *current, uint16_t x, uint16_t y) {
     gui_putf_x(vram, scr_x, 0, x, y + 280, 8, current->reg.r16.fs, 16);
     gui_putf_x(vram, scr_x, 0, x, y + 300, 8, current->reg.r16.gs, 16);
     if (current->next)
-        show_next_process((PCB_s *)(current->next), x + 100, y);
+        show_next_executor((executor_s *)(current->next), x + 100, y);
 }
 
-void show_process(PCB_s *current, uint16_t x, uint16_t y) {
+void show_executor(executor_s *current, uint16_t x, uint16_t y) {
     gui_boxfill(vram, scr_x, COL8_FFFFFF, x, y, x + 80, y + 320);
     gui_putfs_asc816(vram, scr_x, 0, x, y, "id:");
     gui_putfs_asc816(vram, scr_x, 0, x, y + 20, "count:");
@@ -184,7 +184,7 @@ void show_process(PCB_s *current, uint16_t x, uint16_t y) {
     gui_putfs_asc816(vram, scr_x, 0, x, y + 260, "ds:");
     gui_putfs_asc816(vram, scr_x, 0, x, y + 280, "fs:");
     gui_putfs_asc816(vram, scr_x, 0, x, y + 300, "gs:");
-    show_next_process(current, x + 80, y);
+    show_next_executor(current, x + 80, y);
     show_page_info();
 }
 
@@ -219,6 +219,6 @@ void show_time(time_s *t) {
         gui_putf_x(vram, scr_x, 0, 172, 500, 2, t->min, 10);
         gui_putfs_asc816(vram, scr_x, 0, 192, 500, ":");
         gui_putf_x(vram, scr_x, 0, 204, 500, 2, t->sec, 10);
-        show_process(process_lh, 0, 180);
+        show_executor(executor_lh, 0, 180);
     }
 }

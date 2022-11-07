@@ -1,4 +1,4 @@
-#include "device/graphic.h"
+#include "resource/screen/graphic.h"
 #include "kernel/asmfunc.h"
 #include "types.h"
 
@@ -123,8 +123,7 @@ void gui_putf_x(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, uint16
     gui_putfs_asc816(vram, scr_x, color, x, y, buf + i + 1);
 }
 
-void init_screen(uint8_t *vram, uint16_t x, uint16_t y) {
-    init_palette();
+void fill_screen(uint8_t *vram, uint16_t x, uint16_t y) {
     gui_boxfill(vram, x, COL8_008484, 0, 0, x - 1, y - 29);
     gui_boxfill(vram, x, COL8_C6C6C6, 0, y - 28, x - 1, y - 28);
     gui_boxfill(vram, x, COL8_FFFFFF, 0, y - 27, x - 1, y - 27);

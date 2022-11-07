@@ -54,9 +54,9 @@ typedef struct res_manager {
     int8_t *name;
     res_class_ss **arr;
     uint32_t len;
-    uint32_t (*rc_register)(struct res_manager *, res_class_ss *);
+    uint32_t (*rc_register)(res_class_ss *);
 } res_mgr_s;
 
-void init_res_mgr0(res_mgr_s *rmgr);
+void init_res_mgr0();
 
 #endif

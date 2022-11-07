@@ -1,5 +1,5 @@
 #include "algorithm/queue.h"
-#include "device/graphic.h"
+#include "resource/screen/graphic.h"
 #include "device/int.h"
 #include "device/key.h"
 #include "kernel/asmfunc.h"
@@ -7,7 +7,7 @@
 #include "kernel/gidt.h"
 #include "kernel/info.h"
 #include "kernel/init.h"
-#include "kernel/memory.h"
+#include "resource/cache.h"
 #include "kernel/task.h"
 #include "kernel/time.h"
 #include "resource.h"
@@ -22,9 +22,6 @@ extern time_s base_tm_2000;
 extern time_s tm;
 time_s show_tm;
 
-res_mgr_s rmgr0;
-res_class_ss screen;
-uint32_t init_screen_res();
 void init() {
     bootinfo = (BIOS_info_s *)bios_info_addr;
     vram = bootinfo->vram;
@@ -32,22 +29,13 @@ void init() {
     scr_y = bootinfo->scrnY;
     init_gdtidt();
     // 初始化所有resource
-    init_res_mgr0(&rmgr0);
-    screen.s.name = "screen";
-    screen.init = init_screen_res;
-    rmgr0.rc_register(&rmgr0, &screen);
-    init_memory();
+    init_res_mgr0();
     init_time(&tm, &base_tm_1900);
     init_task();
     init_pic();
     // 初始化project，新建kernel project，idle project
     for (;;)
         hlt();
-}
-
-uint32_t init_screen_res(res_class_ss *rc) {
-    init_screen(vram, scr_x, scr_y);
-    return 1;
 }
 
 void MCS_main() {

@@ -2,30 +2,30 @@
 #include "kernel/asmfunc.h"
 #include "kernel/gidt.h"
 #include "kernel/init.h"
-#include "kernel/memory.h"
-#include "resource/process.h"
+#include "resource/cache.h"
+#include "resource/executor.h"
 #include "types.h"
 
 task_s task;
 
 void init_task() {
-    init_process();
+    init_executor();
     segment_desc_s *gdt = (segment_desc_s *)gdt_addr;
     task.tss = (tss32_s){0};
     task.ldt = gdt;
-    task.tss.reg.eip = process_crt->reg.eip;
-    task.tss.reg.eflags = process_crt->reg.eflags;
-    task.tss.sreg.es = process_crt->reg.r16.es;
+    task.tss.reg.eip = executor_crt->reg.eip;
+    task.tss.reg.eflags = executor_crt->reg.eflags;
+    task.tss.sreg.es = executor_crt->reg.r16.es;
     task.tss.sreg.cs = 0x08;
     task.tss.sreg.ss = 0x10;
-    task.tss.sreg.ds = process_crt->reg.r16.ds;
-    task.tss.sreg.fs = process_crt->reg.r16.fs;
-    task.tss.sreg.gs = process_crt->reg.r16.gs;
+    task.tss.sreg.ds = executor_crt->reg.r16.ds;
+    task.tss.sreg.fs = executor_crt->reg.r16.fs;
+    task.tss.sreg.gs = executor_crt->reg.r16.gs;
 
-    // task.tss.ss0 = process_crt->reg.ss;
-    // task.tss.esp0 = process_crt->reg.esp;
-    // task.tss.ss1 = process_crt->reg.ss;
-    // task.tss.esp1 = process_crt->reg.esp;
+    // task.tss.ss0 = executor_crt->reg.ss;
+    // task.tss.esp0 = executor_crt->reg.esp;
+    // task.tss.ss1 = executor_crt->reg.ss;
+    // task.tss.esp1 = executor_crt->reg.esp;
     task.tss.ss0 = 0x10;
     task.tss.esp0 = 0x9effc;
     task.tss.ss1 = 0x10;
