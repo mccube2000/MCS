@@ -41,7 +41,7 @@ void init() {
 void MCS_main() {
     show_tm = tm;
     uint8_t mcursor[256];
-    int32_t mx = scr_x / 2, my = scr_y / 2, old_mx = -1, old_my = -1;
+    int32_t mx = scr_x / 2, my = scr_y / 2;
     uint32_t info, dinfo;
     bool show_debug_info = false;
 
@@ -89,8 +89,6 @@ void MCS_main() {
                     mx = scr_x - 1, md.x = 0;
                 if (my > scr_y - 1)
                     my = scr_y - 1, md.y = 0;
-                old_mx = mx;
-                old_my = my;
                 if (show_debug_info)
                     mouse_dbg(&md, info, mx, my);
                 if (md.top)

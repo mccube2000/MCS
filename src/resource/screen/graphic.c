@@ -69,7 +69,7 @@ void gui_putf_816(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, uint
 }
 
 void gui_putfs_asc816(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, uint16_t y,
-                      uint8_t *s) {
+                      int8_t *s) {
     extern uint8_t hankaku[4096];
 
     while (*s) {
@@ -83,7 +83,7 @@ void gui_putfs_asc816(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, 
 }
 
 void gui_putfx(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, uint16_t y, uint8_t n,
-               uint8_t *s) {
+               int8_t *s) {
     extern uint8_t hankaku[4096];
     while (--n) {
         gui_putf_816(vram, scr_x, color, x, y, hankaku + ((*s++) + 48) * 16);
@@ -93,7 +93,7 @@ void gui_putfx(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, uint16_
 
 void gui_putf_x(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, uint16_t y, uint16_t len,
                 uint32_t num, int8_t mod) {
-    uint8_t buf[32] = {0};
+    int8_t buf[32] = {0};
     uint8_t i = 30, f = 0, temp, pp = '0';
     uint32_t m = num;
     if (len > 32)

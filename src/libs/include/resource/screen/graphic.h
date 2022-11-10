@@ -27,9 +27,9 @@ void gui_boxfill(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x1, uint
 void gui_putf_816(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, uint16_t y,
                   uint8_t *font);
 void gui_putfs_asc816(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, uint16_t y,
-                      uint8_t *s);
+                      int8_t *s);
 void gui_putfx(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, uint16_t y, uint8_t n,
-               uint8_t *s);
+               int8_t *s);
 void gui_putf_x(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, uint16_t y, uint16_t len,
                 uint32_t num, int8_t mod);
 void fill_screen(uint8_t *vram, uint16_t x, uint16_t y);

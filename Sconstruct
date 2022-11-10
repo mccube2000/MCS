@@ -8,9 +8,7 @@ build = 'build\\'
 
 environ = os.environ
 # 'C:\\Users\\mccube\\User\\Code\\C\\os\\z_tool\\mingw\\bin'
-# 'C:\\Users\\mccube\\Downloads\\w64devkit-1.16.0\\w64devkit\\bin'
-environ[
-    'PATH'] = 'C:\\Users\\mccube\\User\\Code\\C\\os\\z_tool\\mingw\\bin;C:\\Users\\mccube\\User\\Tools\\nasm;'
+# environ['PATH'] = 'C:\\Users\\mccube\\User\\Code\\C\\os\\z_tool\\mingw\\bin;' + environ['PATH']
 vhd = 'C:\\Users\\mccube\\VirtualBox_VMs\\MCS\\MCS.vhd'
 current_plt = platform.system()
 config_plt = 'pc'
