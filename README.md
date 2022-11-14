@@ -7,8 +7,6 @@ A Modular Customized System(Operating System).
 * [ ] [暂无]
 
 ### kernel
-* [ ] 资源结构
-* [ ] 项目(进程的超集)结构
 * [ ] 线程实现
 * [ ] 单链表
 * [ ] 线程调度
@@ -23,6 +21,8 @@ A Modular Customized System(Operating System).
 ## Done List
 
 ### kernel
+* [x] 资源结构
+* [x] 项目结构
 * [x] 任务切换
 * [x] 任务结构
 * [x] 时钟中断处理
