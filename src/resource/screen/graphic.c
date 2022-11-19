@@ -28,6 +28,8 @@ void set_palette(int32_t start, int32_t end, uint8_t *rgb) {
 
 void gui_boxfill(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x1, uint16_t y1,
                  uint16_t x2, uint16_t y2) {
+    if (x2 > scr_x)
+        x2 = scr_x - 1;
     int i, j;
     for (i = x1; i <= x2; i++)
         for (j = y1; j <= y2; j++)
@@ -74,8 +76,9 @@ void gui_putfs_asc816(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, 
 
     while (*s) {
         if (x + 8 > scr_x) {
-            x = 0;
-            y += 16;
+            // x = 0;
+            // y += 16;
+            return;
         }
         gui_putf_816(vram, scr_x, color, x, y, hankaku + *s++ * 16);
         x += 8;

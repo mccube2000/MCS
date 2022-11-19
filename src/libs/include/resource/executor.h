@@ -45,7 +45,7 @@ typedef struct executor {
     uint32_t *next, *prev;
     uint32_t addr_limit;
     time_t start_time;
-    long32_t jiffies;
+    long32_t jiff;
     exe_reg_s reg;
     // void *lpParameter;
 } executor_s;
