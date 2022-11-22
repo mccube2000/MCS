@@ -24,7 +24,7 @@ void a_func() {
 }
 
 void init_executor() {
-    HWMTSupported();
+    HWMT_Supported();
     executor_lh = task_arr;
     executor_lr = task_arr;
     executor_crt = task_arr;

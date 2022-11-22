@@ -13,6 +13,6 @@ typedef struct cpuid_data {
     int8_t end0;
 } cpuid_data_s;
 
-uint32_t HWMTSupported();
+bool HWMT_Supported();
 
 #endif
