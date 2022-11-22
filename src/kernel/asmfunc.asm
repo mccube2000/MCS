@@ -81,21 +81,21 @@ _load_tr:		; void load_tr(int tr);
     RET
 
 _asm_page_fault:
-    PUSH		ES
-    PUSH		DS
-    PUSHAD
-    MOV		EAX,ESP
-    PUSH		EAX
-    MOV		AX,SS
-    MOV		DS,AX
-    MOV		ES,AX
-    CALL	_page_fault
-    POP		EAX
-    POPAD
-    POP		DS
-    POP		ES
+    push es
+    push ds
+    pushad
+    mov eax, esp
+    push eax
+    mov ax, ss
+    mov ds, ax
+    mov es, ax
+    call _page_fault
+    pop eax
+    popad
+    pop ds
+    pop es
     add esp, 4
-    IRETD
+    iretd
 
 ; _asm_int_pit:
 ;     PUSH	ES

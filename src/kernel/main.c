@@ -1,5 +1,4 @@
 #include "algorithm/queue.h"
-#include "resource/screen/graphic.h"
 #include "device/int.h"
 #include "device/key.h"
 #include "kernel/asmfunc.h"
@@ -7,10 +6,12 @@
 #include "kernel/gidt.h"
 #include "kernel/info.h"
 #include "kernel/init.h"
-#include "resource/cache.h"
 #include "kernel/task.h"
 #include "kernel/time.h"
 #include "resource.h"
+#include "resource/cache.h"
+#include "resource/executor/cpu.h"
+#include "resource/screen/graphic.h"
 #include "types.h"
 
 BIOS_info_s *bootinfo;
@@ -100,6 +101,7 @@ void MCS_main() {
                 putblock(vram, scr_x, 8, 16, mx, my, mcursor, 8);
             }
         } else {
+            gui_boxfill(vram, scr_x, COL8_008484, 863, 160, 863 + 160, 320);
             hlt();
         }
     }

@@ -13,19 +13,18 @@ uint32_t now_pid = 0;
 
 extern uint8_t *vram;
 extern uint16_t scr_x, scr_y;
-extern time_s show_tm;
 void a_func() {
     for (;;) {
         int32_t i = 0;
         for (; i < 10000000; i++)
             ;
-        gui_boxfill(vram, scr_x, COL8_008484, 80, 160, 180 + 5 * 100, 170);
-        gui_boxfill(vram, scr_x, executor_crt->id, 80 + executor_crt->id * 100, 160,
-                    180 + executor_crt->id * 100, 170);
+        uint32_t id = executor_crt->id, mod = id % 16, div = id / 16;
+        gui_boxfill(vram, scr_x, mod, 863 + mod * 10, 160 + div * 10, 873 + mod * 10, 170 + div * 10);
     }
 }
 
 void init_executor() {
+    HWMTSupported();
     executor_lh = task_arr;
     executor_lr = task_arr;
     executor_crt = task_arr;
@@ -47,7 +46,7 @@ void init_executor() {
     task_arr->reg.r32.esp = 0x9f000 - 4 * 4;
     now_pid++;
     int32_t i = 0;
-    for (; i < 100; i++) {
+    for (; i < 50; i++) {
         create_executor(2, (int32_t)a_func, 0x00800000 - i * 0x10000 - 4);
     }
 }
