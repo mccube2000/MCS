@@ -1,6 +1,22 @@
 # MCS
 A Modular Customized System(Operating System).
 
+## 构建&运行
+构建：
+```bash
+scons build
+```
+
+运行：
+```bash
+scons --run vhd
+```
+
+调试：
+```bash
+scons --run vhd-debug
+```
+
 ## Todo List
 
 ### bug
