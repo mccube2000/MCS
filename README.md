@@ -37,6 +37,7 @@ scons --run vhd-debug
 ## Done List
 
 ### kernel
+* [x] ms时间显示
 * [x] 资源结构
 * [x] 项目结构
 * [x] 任务切换
