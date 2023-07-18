@@ -10,4 +10,6 @@
 #define other_info_flag7 0x40000000
 #define other_info_flag8 0x80000000
 
+bool show_debug_info;
+bool show_time_info;
 #endif

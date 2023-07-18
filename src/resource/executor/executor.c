@@ -24,6 +24,12 @@ void a_func() {
     }
 }
 
+void time_func() {
+    for (;;) {
+        show_time(&tm);
+    }
+}
+
 void init_executor() {
     HWMT_Supported();
     executor_lh = task_arr;
@@ -46,8 +52,9 @@ void init_executor() {
     task_arr->reg.r32.ebp = 0x9f000 - 4;
     task_arr->reg.r32.esp = 0x9f000 - 4 * 4;
     now_pid++;
-    int32_t i = 0;
-    for (; i < 50; i++) {
+    create_executor(2, (int32_t)time_func, 0x00800000 - 4);
+    int32_t i = 1;
+    for (; i <= 50; i++) {
         create_executor(2, (int32_t)a_func, 0x00800000 - i * 0x10000 - 4);
     }
 }

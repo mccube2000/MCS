@@ -21,7 +21,6 @@ uint16_t scr_x, scr_y;
 extern time_s base_tm_1900;
 extern time_s base_tm_2000;
 extern time_s tm;
-time_s show_tm;
 
 void init() {
     bootinfo = (BIOS_info_s *)bios_info_addr;
@@ -40,11 +39,10 @@ void init() {
 }
 
 void MCS_main() {
-    show_tm = tm;
+    show_debug_info = false;
     uint8_t mcursor[256];
     int32_t mx = scr_x / 2, my = scr_y / 2;
     uint32_t info, dinfo;
-    bool show_debug_info = false;
 
     circ_queue queue;
     keyboard_data_s kd;
@@ -60,11 +58,11 @@ void MCS_main() {
     putblock(vram, scr_x, 8, 16, mx, my, mcursor, 8);
 
     for (;;) {
-        if (show_debug_info)
-            show_time(&show_tm);
         if (de_queue(&queue, &info)) {
-            if (show_debug_info)
+            if (show_debug_info) {
                 info_dbg(info);
+                show_executor(executor_lh, 0, 180);
+            }
             if (info & keyboard_info_flag) {
 
                 if (show_debug_info)
@@ -96,6 +94,10 @@ void MCS_main() {
                     show_debug_info = true;
                 else if (md.btm)
                     show_debug_info = false;
+                else if (md.left)
+                    show_time_info = true;
+                else if (md.right)
+                    show_time_info = false;
                 else if (md.mid)
                     fill_screen(vram, scr_x, scr_y);
                 putblock(vram, scr_x, 8, 16, mx, my, mcursor, 8);

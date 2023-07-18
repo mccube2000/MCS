@@ -1,6 +1,7 @@
 #include "kernel/time.h"
 #include "device/int.h"
 #include "kernel/asmfunc.h"
+#include "kernel/info.h"
 #include "resource/cache.h"
 #include "resource/executor.h"
 #include "resource/screen/graphic.h"
@@ -22,7 +23,7 @@ time_t time_diff;
 long32_t volatile jiffies;
 
 uint32_t last_sec;
-// uint32_t last_sec10;
+uint32_t last_sec10;
 
 static int8_t week[7][5] = {"Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat"};
 static int8_t month[12][5] = {"Jan", "Feb", "Mar",  "Apr", "May",  "Jun",
@@ -68,6 +69,7 @@ void init_time(time_s *t, time_s *base) {
     read_rtc(t);
     tm_t_get_wday(t, base);
     start_time = time_s2s(t, base->year);
+    show_time_info = true;
 }
 
 int32_t get_update_in_progress_flag() {
@@ -191,7 +193,7 @@ void show_executor(executor_s *current, uint16_t x, uint16_t y) {
 
 void show_time(time_s *t) {
     time_t now_sec = (jiffies + time_diff) / Hz;
-    // time_t now_sec10 = (jiffies + time_diff) / 100;
+    time_t now_sec10 = (jiffies + time_diff) / 10;
     if (now_sec != last_sec) {
         last_sec = now_sec;
         t->sec++;
@@ -208,24 +210,28 @@ void show_time(time_s *t) {
                 }
             }
         }
-        gui_boxfill(vram, scr_x, COL8_BLACK, 0, 500, 500, 520);
-        gui_putf_x(vram, scr_x, COL8_WHITE, 0, 500, 4, t->year, -10);
-        // gui_putf_x(vram, scr_x, COL8_WHITE, 40, 500, 2, t->mon, -10);
-        gui_putfs_asc816(vram, scr_x, COL8_WHITE, 40, 500, month[t->mon]);
-        gui_putf_x(vram, scr_x, COL8_WHITE, 80, 500, 2, t->mday, -10);
-        // gui_putf_x(vram, scr_x, COL8_WHITE, 100, 500, 2, t->wday, 10);
-        gui_putfs_asc816(vram, scr_x, COL8_WHITE, 100, 500, week[t->wday]);
+        if (show_time_info) {
+            gui_boxfill(vram, scr_x, COL8_BLACK, 0, 500, 220, 520);
+            gui_putf_x(vram, scr_x, COL8_WHITE, 0, 500, 4, t->year, -10);
+            // gui_putf_x(vram, scr_x, COL8_WHITE, 40, 500, 2, t->mon, -10);
+            gui_putfs_asc816(vram, scr_x, COL8_WHITE, 40, 500, month[t->mon]);
+            gui_putf_x(vram, scr_x, COL8_WHITE, 80, 500, 2, t->mday, -10);
+            // gui_putf_x(vram, scr_x, COL8_WHITE, 100, 500, 2, t->wday, 10);
+            gui_putfs_asc816(vram, scr_x, COL8_WHITE, 100, 500, week[t->wday]);
 
-        gui_putf_x(vram, scr_x, COL8_WHITE, 140, 500, 2, t->hour, -10);
-        gui_putfs_asc816(vram, scr_x, COL8_WHITE, 160, 500, ":");
-        gui_putf_x(vram, scr_x, COL8_WHITE, 172, 500, 2, t->min, 10);
-        gui_putfs_asc816(vram, scr_x, COL8_WHITE, 192, 500, ":");
-        gui_putf_x(vram, scr_x, COL8_WHITE, 204, 500, 2, t->sec, 10);
-        show_executor(executor_lh, 0, 180);
+            gui_putf_x(vram, scr_x, COL8_WHITE, 140, 500, 2, t->hour, -10);
+            gui_putfs_asc816(vram, scr_x, COL8_WHITE, 160, 500, ":");
+            gui_putf_x(vram, scr_x, COL8_WHITE, 172, 500, 2, t->min, 10);
+            gui_putfs_asc816(vram, scr_x, COL8_WHITE, 192, 500, ":");
+            gui_putf_x(vram, scr_x, COL8_WHITE, 204, 500, 2, t->sec, 10);
+        }
     }
-    // } else if (now_sec10 != last_sec10) {
-    //     last_sec10 = now_sec10;
-    //     gui_putfs_asc816(vram, scr_x, COL8_WHITE, 224, 500, ":");
-    //     gui_putf_x(vram, scr_x, COL8_WHITE, 256, 500, 2, last_sec10, 10);
-    // }
+    if (now_sec10 != last_sec10) {
+        last_sec10 = now_sec10;
+        if (show_time_info) {
+            gui_boxfill(vram, scr_x, COL8_BLACK, 220, 500, 250, 520);
+            gui_putfs_asc816(vram, scr_x, COL8_FF0000, 224, 500, ":");
+            gui_putf_x(vram, scr_x, COL8_FF0000, 232, 500, 2, last_sec10 % 100, 10);
+        }
+    }
 }
