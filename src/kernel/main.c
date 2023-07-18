@@ -61,7 +61,7 @@ void MCS_main() {
         if (de_queue(&queue, &info)) {
             if (show_debug_info) {
                 info_dbg(info);
-                show_executor(executor_lh, 0, 180);
+                executor_dbg(executor_lh, 0, 180);
             }
             if (info & keyboard_info_flag) {
 
