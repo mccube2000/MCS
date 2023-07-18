@@ -77,17 +77,17 @@ void page_init() {
 }
 
 void show_page_info() {
-    gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 0, scr_x, 20);
-    gui_putfs_asc816(vram, scr_x, 0, 100, 0, page_info[0]);
-    gui_putf_x(vram, scr_x, 0, 200, 0, 8, page_total, -10);
-    gui_putfs_asc816(vram, scr_x, 0, 300, 0, page_info[1]);
-    gui_putf_x(vram, scr_x, 0, 400, 0, 8, page_unused, -10);
-    gui_putfs_asc816(vram, scr_x, 0, 500, 0, page_info[2]);
-    gui_putf_x(vram, scr_x, 0, 600, 0, 8, page_used, -10);
-    gui_putfs_asc816(vram, scr_x, 0, 700, 0, page_info[3]);
-    gui_putf_x(vram, scr_x, 0, 800, 0, 8, page_protected, -10);
-    gui_putf_x(vram, scr_x, 0, 800, 20, 8, kernel_bss_end, -16);
-    gui_putf_x(vram, scr_x, 0, 800, 40, 8, kernel_end, -16);
+    gui_boxfill(vram, scr_x, COL8_BLACK, 0, 0, scr_x, 20);
+    gui_putfs_asc816(vram, scr_x, COL8_WHITE, 100, 0, page_info[0]);
+    gui_putf_x(vram, scr_x, COL8_WHITE, 200, 0, 8, page_total, -10);
+    gui_putfs_asc816(vram, scr_x, COL8_WHITE, 300, 0, page_info[1]);
+    gui_putf_x(vram, scr_x, COL8_WHITE, 400, 0, 8, page_unused, -10);
+    gui_putfs_asc816(vram, scr_x, COL8_WHITE, 500, 0, page_info[2]);
+    gui_putf_x(vram, scr_x, COL8_WHITE, 600, 0, 8, page_used, -10);
+    gui_putfs_asc816(vram, scr_x, COL8_WHITE, 700, 0, page_info[3]);
+    gui_putf_x(vram, scr_x, COL8_WHITE, 800, 0, 8, page_protected, -10);
+    gui_putf_x(vram, scr_x, COL8_WHITE, 800, 20, 8, kernel_bss_end, -16);
+    gui_putf_x(vram, scr_x, COL8_WHITE, 800, 40, 8, kernel_end, -16);
 }
 
 void page_fault(int32_t *esp) {

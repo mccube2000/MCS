@@ -20,6 +20,16 @@
 #define COL8_008484 14
 #define COL8_848484 15
 
+// #define COL8_BACK COL8_008484
+// #define COL8_BLACK COL8_FFFFFF
+// #define COL8_WHITE COL8_000000
+
+#define COL8_BACK COL8_000000
+#define COL8_BLACK COL8_000000
+#define COL8_WHITE COL8_FFFFFF
+
+#define TASK_BAR true
+
 void init_palette();
 void set_palette(int32_t start, int32_t end, uint8_t *rgb);
 void gui_boxfill(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x1, uint16_t y1,

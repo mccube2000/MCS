@@ -18,8 +18,9 @@ void a_func() {
         int32_t i = 0;
         for (; i < 10000000; i++)
             ;
-        uint32_t id = executor_crt->id, mod = id % 16, div = id / 16;
-        gui_boxfill(vram, scr_x, mod, 863 + mod * 10, 160 + div * 10, 873 + mod * 10, 170 + div * 10);
+        uint32_t id = executor_crt->id - 1, mod = id % 16, div = id / 16;
+        gui_boxfill(vram, scr_x, mod, 863 + mod * 10, 160 + div * 10, 873 + mod * 10,
+                    170 + div * 10);
     }
 }
 

@@ -56,7 +56,7 @@ void MCS_main() {
     init_queue(&queue);
     init_keyboard(&kd);
     init_mouse(&md);
-    init_mouse_cursor(mcursor, COL8_008484);
+    init_mouse_cursor(mcursor, COL8_BACK);
     putblock(vram, scr_x, 8, 16, mx, my, mcursor, 8);
 
     for (;;) {
@@ -79,7 +79,7 @@ void MCS_main() {
                     info = (info << 16) | (dinfo ^ mouse_info_flag);
                     mouse_dec(&md, info);
                 }
-                gui_boxfill(vram, scr_x, COL8_008484, mx, my, mx + 8, my + 16);
+                gui_boxfill(vram, scr_x, COL8_BACK, mx, my, mx + 8, my + 16);
                 mx += md.x;
                 my += md.y;
                 if (mx < 0)
@@ -101,7 +101,7 @@ void MCS_main() {
                 putblock(vram, scr_x, 8, 16, mx, my, mcursor, 8);
             }
         } else {
-            gui_boxfill(vram, scr_x, COL8_008484, 863, 160, 863 + 160, 320);
+            gui_boxfill(vram, scr_x, COL8_BACK, 863, 160, 863 + 160, 320);
             hlt();
         }
     }

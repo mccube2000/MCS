@@ -35,12 +35,12 @@ void e820_count(bool show_e820_map) {
         if ((e820_map[i].BaseL < h_reserved_addr && !e820_map[i].BaseH) || e820_map[i].BaseH)
             page_total += temp_count;
         if (show_e820_map) {
-            gui_boxfill(vram, scr_x, COL8_FFFFFF, 200, 20 * i + 20, 800, 20 * i + 40);
-            gui_putf_x(vram, scr_x, 0, 200, 20 * i + 20, 8, e820_map[i].BaseH, 16);
-            gui_putf_x(vram, scr_x, 0, 300, 20 * i + 20, 8, e820_map[i].BaseL, 16);
-            gui_putf_x(vram, scr_x, 0, 400, 20 * i + 20, 8, e820_map[i].LengthH, 16);
-            gui_putf_x(vram, scr_x, 0, 500, 20 * i + 20, 8, e820_map[i].LengthL, 16);
-            gui_putfs_asc816(vram, scr_x, 0, 600, 20 * i + 20, type_map[e820_map[i].Type]);
+            gui_boxfill(vram, scr_x, COL8_BLACK, 200, 20 * i + 20, 800, 20 * i + 40);
+            gui_putf_x(vram, scr_x, COL8_WHITE, 200, 20 * i + 20, 8, e820_map[i].BaseH, 16);
+            gui_putf_x(vram, scr_x, COL8_WHITE, 300, 20 * i + 20, 8, e820_map[i].BaseL, 16);
+            gui_putf_x(vram, scr_x, COL8_WHITE, 400, 20 * i + 20, 8, e820_map[i].LengthH, 16);
+            gui_putf_x(vram, scr_x, COL8_WHITE, 500, 20 * i + 20, 8, e820_map[i].LengthL, 16);
+            gui_putfs_asc816(vram, scr_x, COL8_WHITE, 600, 20 * i + 20, type_map[e820_map[i].Type]);
         }
     }
     uint32_t l1m_reserved_page = (l1m_reserved_size + 1) >> 12;

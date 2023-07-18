@@ -127,22 +127,24 @@ void gui_putf_x(uint8_t *vram, uint16_t scr_x, uint8_t color, uint16_t x, uint16
 }
 
 void fill_screen(uint8_t *vram, uint16_t x, uint16_t y) {
-    gui_boxfill(vram, x, COL8_008484, 0, 0, x - 1, y - 29);
-    gui_boxfill(vram, x, COL8_C6C6C6, 0, y - 28, x - 1, y - 28);
-    gui_boxfill(vram, x, COL8_FFFFFF, 0, y - 27, x - 1, y - 27);
-    gui_boxfill(vram, x, COL8_C6C6C6, 0, y - 26, x - 1, y - 1);
+    gui_boxfill(vram, x, COL8_BACK, 0, 0, x - 1, y - 1);
+    if (TASK_BAR) {
+        gui_boxfill(vram, x, COL8_C6C6C6, 0, y - 28, x - 1, y - 28);
+        gui_boxfill(vram, x, COL8_FFFFFF, 0, y - 27, x - 1, y - 27);
+        gui_boxfill(vram, x, COL8_C6C6C6, 0, y - 26, x - 1, y - 1);
 
-    gui_boxfill(vram, x, COL8_FFFFFF, 3, y - 24, 59, y - 24);
-    gui_boxfill(vram, x, COL8_FFFFFF, 2, y - 24, 2, y - 4);
-    gui_boxfill(vram, x, COL8_848484, 3, y - 4, 59, y - 4);
-    gui_boxfill(vram, x, COL8_848484, 59, y - 23, 59, y - 5);
-    gui_boxfill(vram, x, COL8_000000, 2, y - 3, 59, y - 3);
-    gui_boxfill(vram, x, COL8_000000, 60, y - 24, 60, y - 3);
+        gui_boxfill(vram, x, COL8_FFFFFF, 3, y - 24, 59, y - 24);
+        gui_boxfill(vram, x, COL8_FFFFFF, 2, y - 24, 2, y - 4);
+        gui_boxfill(vram, x, COL8_848484, 3, y - 4, 59, y - 4);
+        gui_boxfill(vram, x, COL8_848484, 59, y - 23, 59, y - 5);
+        gui_boxfill(vram, x, COL8_000000, 2, y - 3, 59, y - 3);
+        gui_boxfill(vram, x, COL8_000000, 60, y - 24, 60, y - 3);
 
-    gui_boxfill(vram, x, COL8_848484, x - 47, y - 24, x - 4, y - 24);
-    gui_boxfill(vram, x, COL8_848484, x - 47, y - 23, x - 47, y - 4);
-    gui_boxfill(vram, x, COL8_FFFFFF, x - 47, y - 3, x - 4, y - 3);
-    gui_boxfill(vram, x, COL8_FFFFFF, x - 3, y - 24, x - 3, y - 3);
+        gui_boxfill(vram, x, COL8_848484, x - 47, y - 24, x - 4, y - 24);
+        gui_boxfill(vram, x, COL8_848484, x - 47, y - 23, x - 47, y - 4);
+        gui_boxfill(vram, x, COL8_FFFFFF, x - 47, y - 3, x - 4, y - 3);
+        gui_boxfill(vram, x, COL8_FFFFFF, x - 3, y - 24, x - 3, y - 3);
+    }
 }
 
 void init_mouse_cursor(uint8_t *mouse, uint8_t bc) {
@@ -155,10 +157,10 @@ void init_mouse_cursor(uint8_t *mouse, uint8_t bc) {
     for (y = 0; y < 16; y++) {
         for (x = 0; x < 8; x++) {
             if (cursor[y][x] == '*') {
-                mouse[y * 8 + x] = 0;
+                mouse[y * 8 + x] = COL8_WHITE;
             }
             if (cursor[y][x] == 'O') {
-                mouse[y * 8 + x] = COL8_FFFFFF;
+                mouse[y * 8 + x] = COL8_BLACK;
             }
             if (cursor[y][x] == '.') {
                 mouse[y * 8 + x] = bc;

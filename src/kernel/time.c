@@ -22,6 +22,7 @@ time_t time_diff;
 long32_t volatile jiffies;
 
 uint32_t last_sec;
+// uint32_t last_sec10;
 
 static int8_t week[7][5] = {"Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat"};
 static int8_t month[12][5] = {"Jan", "Feb", "Mar",  "Apr", "May",  "Jun",
@@ -145,51 +146,52 @@ void tm_t_get_wday(time_s *t, time_s *base) {
 }
 
 void show_next_executor(executor_s *current, uint16_t x, uint16_t y) {
-    gui_boxfill(vram, scr_x, COL8_FFFFFF, x, y, x + 100, y + 320);
-    gui_putf_x(vram, scr_x, 0, x, y, 8, current->id, 16);
-    gui_putf_x(vram, scr_x, 0, x, y + 20, 8, current->count, 16);
-    gui_putf_x(vram, scr_x, 0, x, y + 40, 8, current->jiff, 16);
-    gui_putf_x(vram, scr_x, 0, x, y + 60, 8, current->priority, 16);
-    gui_putf_x(vram, scr_x, 0, x, y + 80, 8, current->reg.eflags, 16);
-    gui_putf_x(vram, scr_x, 0, x, y + 100, 8, current->reg.eip, 16);
-    gui_putf_x(vram, scr_x, 0, x, y + 120, 8, current->reg.cs, 16);
-    gui_putf_x(vram, scr_x, 0, x, y + 140, 8, current->reg.r32.esp, 16);
-    gui_putf_x(vram, scr_x, 0, x, y + 160, 8, current->reg.r32.ebp, 16);
-    gui_putf_x(vram, scr_x, 0, x, y + 180, 8, current->reg.r32.esi, 16);
-    gui_putf_x(vram, scr_x, 0, x, y + 200, 8, current->reg.r32.edi, 16);
-    gui_putf_x(vram, scr_x, 0, x, y + 220, 8, current->start_time, 16);
-    // gui_putf_x(vram, scr_x, 0, x, y + 240, 8, ((executor_s *)current->next)->id, 16);
-    gui_putf_x(vram, scr_x, 0, x, y + 260, 8, current->reg.r16.ds, 16);
-    gui_putf_x(vram, scr_x, 0, x, y + 280, 8, current->reg.r16.fs, 16);
-    gui_putf_x(vram, scr_x, 0, x, y + 300, 8, current->reg.r16.gs, 16);
+    gui_boxfill(vram, scr_x, COL8_BLACK, x, y, x + 100, y + 320);
+    gui_putf_x(vram, scr_x, COL8_WHITE, x, y, 8, current->id, 16);
+    gui_putf_x(vram, scr_x, COL8_WHITE, x, y + 20, 8, current->count, 16);
+    gui_putf_x(vram, scr_x, COL8_WHITE, x, y + 40, 8, current->jiff, 16);
+    gui_putf_x(vram, scr_x, COL8_WHITE, x, y + 60, 8, current->priority, 16);
+    gui_putf_x(vram, scr_x, COL8_WHITE, x, y + 80, 8, current->reg.eflags, 16);
+    gui_putf_x(vram, scr_x, COL8_WHITE, x, y + 100, 8, current->reg.eip, 16);
+    gui_putf_x(vram, scr_x, COL8_WHITE, x, y + 120, 8, current->reg.cs, 16);
+    gui_putf_x(vram, scr_x, COL8_WHITE, x, y + 140, 8, current->reg.r32.esp, 16);
+    gui_putf_x(vram, scr_x, COL8_WHITE, x, y + 160, 8, current->reg.r32.ebp, 16);
+    gui_putf_x(vram, scr_x, COL8_WHITE, x, y + 180, 8, current->reg.r32.esi, 16);
+    gui_putf_x(vram, scr_x, COL8_WHITE, x, y + 200, 8, current->reg.r32.edi, 16);
+    gui_putf_x(vram, scr_x, COL8_WHITE, x, y + 220, 8, current->start_time, 16);
+    // gui_putf_x(vram, scr_x, COL8_WHITE, x, y + 240, 8, ((executor_s *)current->next)->id, 16);
+    gui_putf_x(vram, scr_x, COL8_WHITE, x, y + 260, 8, current->reg.r16.ds, 16);
+    gui_putf_x(vram, scr_x, COL8_WHITE, x, y + 280, 8, current->reg.r16.fs, 16);
+    gui_putf_x(vram, scr_x, COL8_WHITE, x, y + 300, 8, current->reg.r16.gs, 16);
     if (current->next)
         show_next_executor((executor_s *)(current->next), x + 100, y);
 }
 
 void show_executor(executor_s *current, uint16_t x, uint16_t y) {
-    gui_boxfill(vram, scr_x, COL8_FFFFFF, x, y, x + 80, y + 320);
-    gui_putfs_asc816(vram, scr_x, 0, x, y, "id:");
-    gui_putfs_asc816(vram, scr_x, 0, x, y + 20, "count:");
-    gui_putfs_asc816(vram, scr_x, 0, x, y + 40, "jiffies:");
-    gui_putfs_asc816(vram, scr_x, 0, x, y + 60, "priority:");
-    gui_putfs_asc816(vram, scr_x, 0, x, y + 80, "eflags:");
-    gui_putfs_asc816(vram, scr_x, 0, x, y + 100, "eip:");
-    gui_putfs_asc816(vram, scr_x, 0, x, y + 120, "cs:");
-    gui_putfs_asc816(vram, scr_x, 0, x, y + 140, "esp:");
-    gui_putfs_asc816(vram, scr_x, 0, x, y + 160, "ebp:");
-    gui_putfs_asc816(vram, scr_x, 0, x, y + 180, "esi:");
-    gui_putfs_asc816(vram, scr_x, 0, x, y + 200, "edi:");
-    gui_putfs_asc816(vram, scr_x, 0, x, y + 220, "start_time:");
-    gui_putfs_asc816(vram, scr_x, 0, x, y + 240, "ss:");
-    gui_putfs_asc816(vram, scr_x, 0, x, y + 260, "ds:");
-    gui_putfs_asc816(vram, scr_x, 0, x, y + 280, "fs:");
-    gui_putfs_asc816(vram, scr_x, 0, x, y + 300, "gs:");
+    gui_boxfill(vram, scr_x, COL8_BLACK, x, y, x + 80, y + 320);
+    gui_putfs_asc816(vram, scr_x, COL8_WHITE, x, y, "id:");
+    gui_putfs_asc816(vram, scr_x, COL8_WHITE, x, y + 20, "count:");
+    gui_putfs_asc816(vram, scr_x, COL8_WHITE, x, y + 40, "jiffies:");
+    gui_putfs_asc816(vram, scr_x, COL8_WHITE, x, y + 60, "priority:");
+    gui_putfs_asc816(vram, scr_x, COL8_WHITE, x, y + 80, "eflags:");
+    gui_putfs_asc816(vram, scr_x, COL8_WHITE, x, y + 100, "eip:");
+    gui_putfs_asc816(vram, scr_x, COL8_WHITE, x, y + 120, "cs:");
+    gui_putfs_asc816(vram, scr_x, COL8_WHITE, x, y + 140, "esp:");
+    gui_putfs_asc816(vram, scr_x, COL8_WHITE, x, y + 160, "ebp:");
+    gui_putfs_asc816(vram, scr_x, COL8_WHITE, x, y + 180, "esi:");
+    gui_putfs_asc816(vram, scr_x, COL8_WHITE, x, y + 200, "edi:");
+    gui_putfs_asc816(vram, scr_x, COL8_WHITE, x, y + 220, "start_time:");
+    gui_putfs_asc816(vram, scr_x, COL8_WHITE, x, y + 240, "ss:");
+    gui_putfs_asc816(vram, scr_x, COL8_WHITE, x, y + 260, "ds:");
+    gui_putfs_asc816(vram, scr_x, COL8_WHITE, x, y + 280, "fs:");
+    gui_putfs_asc816(vram, scr_x, COL8_WHITE, x, y + 300, "gs:");
     show_next_executor(current, x + 80, y);
     show_page_info();
 }
 
 void show_time(time_s *t) {
     time_t now_sec = (jiffies + time_diff) / Hz;
+    // time_t now_sec10 = (jiffies + time_diff) / 100;
     if (now_sec != last_sec) {
         last_sec = now_sec;
         t->sec++;
@@ -206,19 +208,24 @@ void show_time(time_s *t) {
                 }
             }
         }
-        gui_boxfill(vram, scr_x, COL8_FFFFFF, 0, 500, 250, 520);
-        gui_putf_x(vram, scr_x, 0, 0, 500, 4, t->year, -10);
-        // gui_putf_x(vram, scr_x, 0, 40, 500, 2, t->mon, -10);
-        gui_putfs_asc816(vram, scr_x, 0, 40, 500, month[t->mon]);
-        gui_putf_x(vram, scr_x, 0, 80, 500, 2, t->mday, -10);
-        // gui_putf_x(vram, scr_x, 0, 100, 500, 2, t->wday, 10);
-        gui_putfs_asc816(vram, scr_x, 0, 100, 500, week[t->wday]);
+        gui_boxfill(vram, scr_x, COL8_BLACK, 0, 500, 500, 520);
+        gui_putf_x(vram, scr_x, COL8_WHITE, 0, 500, 4, t->year, -10);
+        // gui_putf_x(vram, scr_x, COL8_WHITE, 40, 500, 2, t->mon, -10);
+        gui_putfs_asc816(vram, scr_x, COL8_WHITE, 40, 500, month[t->mon]);
+        gui_putf_x(vram, scr_x, COL8_WHITE, 80, 500, 2, t->mday, -10);
+        // gui_putf_x(vram, scr_x, COL8_WHITE, 100, 500, 2, t->wday, 10);
+        gui_putfs_asc816(vram, scr_x, COL8_WHITE, 100, 500, week[t->wday]);
 
-        gui_putf_x(vram, scr_x, 0, 140, 500, 2, t->hour, -10);
-        gui_putfs_asc816(vram, scr_x, 0, 160, 500, ":");
-        gui_putf_x(vram, scr_x, 0, 172, 500, 2, t->min, 10);
-        gui_putfs_asc816(vram, scr_x, 0, 192, 500, ":");
-        gui_putf_x(vram, scr_x, 0, 204, 500, 2, t->sec, 10);
+        gui_putf_x(vram, scr_x, COL8_WHITE, 140, 500, 2, t->hour, -10);
+        gui_putfs_asc816(vram, scr_x, COL8_WHITE, 160, 500, ":");
+        gui_putf_x(vram, scr_x, COL8_WHITE, 172, 500, 2, t->min, 10);
+        gui_putfs_asc816(vram, scr_x, COL8_WHITE, 192, 500, ":");
+        gui_putf_x(vram, scr_x, COL8_WHITE, 204, 500, 2, t->sec, 10);
         show_executor(executor_lh, 0, 180);
     }
+    // } else if (now_sec10 != last_sec10) {
+    //     last_sec10 = now_sec10;
+    //     gui_putfs_asc816(vram, scr_x, COL8_WHITE, 224, 500, ":");
+    //     gui_putf_x(vram, scr_x, COL8_WHITE, 256, 500, 2, last_sec10, 10);
+    // }
 }

@@ -23,11 +23,11 @@ bool HWMT_Supported() {
     // int feature_flag_edx = cpuid(1, 0);
     cpuid_data_s d;
     cpuid(&d, 0, 0);
-    gui_putf_x(vram, scr_x, 0, 600, 600, 8, d.eax, 16);
-    gui_putfs_asc816(vram, scr_x, 0, 700, 600, &d.ebx);
+    gui_putf_x(vram, scr_x, COL8_WHITE, 600, 600, 8, d.eax, 16);
+    gui_putfs_asc816(vram, scr_x, COL8_WHITE, 700, 600, &d.ebx);
     if (!strcmp(&d.ebx, Intel)) {
         cpuid(&d, 1, 0);
-        gui_putf_x(vram, scr_x, 0, 900, 600, 8, d.edx, 16);
+        gui_putf_x(vram, scr_x, COL8_WHITE, 900, 600, 8, d.edx, 16);
         return (d.edx & HWMT_BIT); // bit 28
     }
     return 0;
